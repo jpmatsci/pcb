@@ -13,7 +13,7 @@ noinst_LIBRARIES = @HIDLIBS@
 EXTRA_LIBRARIES = \
 	libgtk.a liblesstif.a libbatch.a \
 	liblpr.a libgerber.a libbom.a libpng.a libps.a libnelma.a \
-	libgcode.a
+	libgcode.a libopenscad.a
 
 pcblib_DATA= \
 	default_font \
@@ -230,6 +230,7 @@ EXTRA_DIST= \
 	$(srcdir)/hid/gtk/pcb.rc \
 	$(srcdir)/hid/lesstif/hid.conf \
 	$(srcdir)/hid/lpr/hid.conf \
+	$(srcdir)/hid/openscad/hid.conf \
 	$(srcdir)/hid/png/hid.conf \
 	$(srcdir)/hid/nelma/hid.conf \
 	$(srcdir)/hid/ps/hid.conf \
@@ -457,6 +458,10 @@ hid/nelma/nelma_lists.h : ${LIBNELMA_SRCS} Makefile
 liblpr_a_SOURCES = \
 	hid/hidint.h \
 	hid/lpr/lpr.c
+
+libopenscad_a_SOURCES = \
+	hid/hidint.h \
+	hid/openscad/openscad.c
 
 DISTCLEANFILES= pcbtest.sh gpcb-menu.h pcb-menu.h \
 	hid/batch/batch_lists.h \
