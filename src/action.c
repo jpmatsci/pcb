@@ -211,7 +211,10 @@ typedef enum
 }
 FunctionID;
 
-typedef struct			/* used to identify subfunctions */
+/*!
+ * \brief Used to identify subfunctions.
+ */
+typedef struct
 {
   char *Identifier;
   FunctionID ID;
@@ -465,8 +468,8 @@ static void ChangeFlag (char *, char *, int, char *);
 
 #ifdef HAVE_LIBSTROKE
 
-/* ---------------------------------------------------------------------------
- * FinishStroke - try to recognize the stroke sent
+/*!
+ * \brief FinishStroke - try to recognize the stroke sent.
  */
 void
 FinishStroke (void)
@@ -574,8 +577,8 @@ FinishStroke (void)
 }
 #endif
 
-/* ---------------------------------------------------------------------------
- * Clear warning color from pins/pads
+/*!
+ * \brief Clear warning color from pins/pads.
  */
 static void
 ClearWarnings ()
@@ -602,6 +605,9 @@ ClearWarnings ()
   Draw ();
 }
 
+/*!
+ * \brief Callback for mouse click events.
+ */
 static void
 click_cb (hidval hv)
 {
@@ -654,6 +660,9 @@ click_cb (hidval hv)
     }
 }
 
+/*!
+ * \brief Callback for mouse release events.
+ */
 static void
 ReleaseMode (void)
 {
@@ -724,9 +733,6 @@ ReleaseMode (void)
   saved_mode = false;
 }
 
-/* ---------------------------------------------------------------------------
- * get function ID of passed string
- */
 #define HSIZE 257
 static char function_hash[HSIZE];
 static int hash_initted = 0;
@@ -745,6 +751,9 @@ hashfunc(String s)
   return i;
 }
 
+/*!
+ * \brief Get function ID of passed string
+ */
 static int
 GetFunctionID (String Ident)
 {
@@ -793,9 +802,9 @@ GetFunctionID (String Ident)
     }
 }
 
-/* ---------------------------------------------------------------------------
- * set new coordinates if in 'RECTANGLE' mode
- * the cursor shape is also adjusted
+/*!
+ * \brief Set new coordinates if in 'RECTANGLE' mode the cursor shape is also
+ * adjusted.
  */
 static void
 AdjustAttachedBox (void)
@@ -817,8 +826,8 @@ AdjustAttachedBox (void)
     }
 }
 
-/* ---------------------------------------------------------------------------
- * adjusts the objects which are to be created like attached lines...
+/*!
+ * \brief Adjusts the objects which are to be created like attached lines...
  */
 void
 AdjustAttachedObjects (void)
@@ -865,8 +874,8 @@ AdjustAttachedObjects (void)
     }
 }
 
-/* ---------------------------------------------------------------------------
- * creates points of a line
+/*!
+ * \brief Creates points of a line
  */
 static void
 NotifyLine (void)
@@ -936,8 +945,8 @@ NotifyLine (void)
     }
 }
 
-/* ---------------------------------------------------------------------------
- * create first or second corner of a marked block
+/*!
+ * \brief Create first or second corner of a marked block.
  */
 static void
 NotifyBlock (void)
@@ -961,12 +970,13 @@ NotifyBlock (void)
 }
 
 
-/* ---------------------------------------------------------------------------
+/*!
+ * \brief Does what's appropriate for the current mode setting.
  *
- * does what's appropriate for the current mode setting. This normally
- * means creation of an object at the current crosshair location.
+ * This normally means creation of an object at the current crosshair
+ * location.
  *
- * new created objects are added to the create undo list of course
+ * New created objects are added to the create undo list of course.
  */
 static void
 NotifyMode (void)
@@ -2105,11 +2115,11 @@ ActionSetThermal (int argc, char **argv, Coord x, Coord y)
   AFAIL (setthermal);
 }
 
-/* ---------------------------------------------------------------------------
- * !!! no action routine !!!
+/*!
+ * \brief Event handler to set the cursor according to the X pointer
+ * position called from inside main.c.
  *
- * event handler to set the cursor according to the X pointer position
- * called from inside main.c
+ * !!! no action routine !!!
  */
 void
 EventMoveCrosshair (int ev_x, int ev_y)
@@ -7288,12 +7298,16 @@ pcb_spawnvp (char **argv)
 }
 
 /* ---------------------------------------------------------------- */
-/* 
- * Creates a new temporary file name.  Hopefully the operating system
- * provides a mkdtemp() function to securily create a temporary
- * directory with mode 0700.  If so then that directory is created and
- * the returned string is made up of the directory plus the name
- * variable.  For example:
+
+/*! 
+ * \brief Creates a new temporary file name.
+ * 
+ * Hopefully the operating system provides a mkdtemp() function to
+ * securily create a temporary directory with mode 0700.
+ * If so then that directory is created and the returned string is made
+ * up of the directory plus the name variable.
+ * 
+ * For example:
  *
  * tempfile_name_new ("myfile") might return
  * "/var/tmp/pcb.123456/myfile".
@@ -7384,10 +7398,12 @@ tempfile_name_new (char * name)
 }
 
 /* ---------------------------------------------------------------- */
-/*
- * Unlink a temporary file.  If we have mkdtemp() then our temp file
- * lives in a temporary directory and we need to remove that directory
- * too.
+
+/*!
+ * \brief Unlink a temporary file.
+ * 
+ * If we have mkdtemp() then our temp file lives in a temporary
+ * directory and we need to remove that directory too.
  */
 static int
 tempfile_unlink (char * name)
