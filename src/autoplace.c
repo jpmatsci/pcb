@@ -145,9 +145,10 @@ PerturbationType;
  * some local identifiers
  */
 
-/* ---------------------------------------------------------------------------
- * Update the X, Y and group position information stored in the NetList after
- * elements have possibly been moved, rotated, flipped, etc.
+/*!
+ * \brief Update the X, Y and group position information stored in the
+ * NetList after elements have possibly been moved, rotated, flipped,
+ * etc.
  */
 static void
 UpdateXY (NetListType *Nets)
@@ -185,8 +186,8 @@ UpdateXY (NetListType *Nets)
     }
 }
 
-/* ---------------------------------------------------------------------------
- * Create a list of selected elements.
+/*!
+ * \brief Create a list of selected elements.
  */
 static PointerListType
 collectSelectedElements ()
@@ -206,7 +207,10 @@ collectSelectedElements ()
 
 #if 0				/* only for debugging box lists */
 #include "create.h"
-/* makes a line on the solder layer surrounding all boxes in blist */
+/*!
+ * \brief Makes a line on the solder layer surrounding all boxes in
+ * blist.
+ */
 static void
 showboxes (BoxListType *blist)
 {
@@ -243,7 +247,9 @@ struct r_neighbor_info
     t = (box).X2; (box).X2 = - (box).Y2; (box).Y2 = t;\
     t = (box).X1; (box).X1 =   (box).X2; (box).X2 = t;\
 }
-/* helper methods for __r_find_neighbor */
+/*!
+ * \brief Helper methods for __r_find_neighbor.
+ */
 static int
 __r_find_neighbor_reg_in_sea (const BoxType * region, void *cl)
 {
@@ -285,8 +291,11 @@ __r_find_neighbor_rect_in_reg (const BoxType * box, void *cl)
   return r;
 }
 
-/* main r_find_neighbor routine.  Returns NULL if no neighbor in the
- * requested direction. */
+/*!
+ * \brief Main r_find_neighbor routine.
+ * 
+ * Returns NULL if no neighbor in the requested direction.
+ */
 static const BoxType *
 r_find_neighbor (rtree_t * rtree, const BoxType * box,
 		 direction_t search_direction)
@@ -313,14 +322,15 @@ r_find_neighbor (rtree_t * rtree, const BoxType * box,
   return ni.neighbor;
 }
 
-/* ---------------------------------------------------------------------------
- * Compute cost function.
- *  note that area overlap cost is correct for SMD devices: SMD devices on
- *  opposite sides of the board don't overlap.
+/*!
+ * \brief Compute cost function.
+ * 
+ * Note that area overlap cost is correct for SMD devices: SMD devices on
+ * opposite sides of the board don't overlap.
  *
  * Algorithms follow those described in sections 4.1 of
- *  "Placement and Routing of Electronic Modules" edited by Michael Pecht
- *  Marcel Dekker, Inc. 1993.  ISBN: 0-8247-8916-4 TK7868.P7.P57 1993
+ * "Placement and Routing of Electronic Modules" edited by Michael Pecht
+ * Marcel Dekker, Inc. 1993.  ISBN: 0-8247-8916-4 TK7868.P7.P57 1993
  */
 static double
 ComputeCost (NetListType *Nets, double T0, double T)
@@ -604,7 +614,9 @@ ComputeCost (NetListType *Nets, double T0, double T)
   return W + (delta1 + delta2 + delta3 - delta4 + delta5);
 }
 
-/* ---------------------------------------------------------------------------
+/*!
+ * \brief Create perturbation.
+ *
  * Perturb:
  *  1) flip SMD from solder side to component side or vice-versa.
  *  2) rotate component 90, 180, or 270 degrees.
@@ -742,8 +754,8 @@ doPerturb (PerturbationType * pt, bool undo)
     }
 }
 
-/* ---------------------------------------------------------------------------
- * Auto-place selected components.
+/*!
+ * \brief Auto-place selected components.
  */
 bool
 AutoPlaceSelected (void)
