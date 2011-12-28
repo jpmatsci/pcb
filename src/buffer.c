@@ -111,8 +111,8 @@ MoveLineToBuffer,
 
 static int ExtraFlag = 0;
 
-/* ---------------------------------------------------------------------------
- * copies a via to paste buffer
+/*!
+ * \brief Copies a via to paste buffer.
  */
 static void *
 AddViaToBuffer (PinType *Via)
@@ -122,8 +122,8 @@ AddViaToBuffer (PinType *Via)
 			MaskFlags (Via->Flags, FOUNDFLAG | ExtraFlag)));
 }
 
-/* ---------------------------------------------------------------------------
- * copies a rat-line to paste buffer
+/*!
+ * \brief Copies a rat-line to paste buffer.
  */
 static void *
 AddRatToBuffer (RatType *Rat)
@@ -134,8 +134,8 @@ AddRatToBuffer (RatType *Rat)
 			MaskFlags (Rat->Flags, FOUNDFLAG | ExtraFlag)));
 }
 
-/* ---------------------------------------------------------------------------
- * copies a line to buffer  
+/*!
+ * \brief Copies a line to buffer.
  */
 static void *
 AddLineToBuffer (LayerType *Layer, LineType *Line)
@@ -153,8 +153,8 @@ AddLineToBuffer (LayerType *Layer, LineType *Line)
   return (line);
 }
 
-/* ---------------------------------------------------------------------------
- * copies an arc to buffer  
+/*!
+ * \brief Copies an arc to buffer.
  */
 static void *
 AddArcToBuffer (LayerType *Layer, ArcType *Arc)
@@ -168,8 +168,8 @@ AddArcToBuffer (LayerType *Layer, ArcType *Arc)
 					  FOUNDFLAG | ExtraFlag)));
 }
 
-/* ---------------------------------------------------------------------------
- * copies a text to buffer
+/*!
+ * \brief Copies a text to buffer.
  */
 static void *
 AddTextToBuffer (LayerType *Layer, TextType *Text)
@@ -181,8 +181,8 @@ AddTextToBuffer (LayerType *Layer, TextType *Text)
 			 MaskFlags (Text->Flags, ExtraFlag)));
 }
 
-/* ---------------------------------------------------------------------------
- * copies a polygon to buffer
+/*!
+ * \brief Copies a polygon to buffer.
  */
 static void *
 AddPolygonToBuffer (LayerType *Layer, PolygonType *Polygon)
@@ -205,8 +205,8 @@ AddPolygonToBuffer (LayerType *Layer, PolygonType *Polygon)
   return (polygon);
 }
 
-/* ---------------------------------------------------------------------------
- * copies a element to buffer
+/*!
+ * \brief Copies an element to buffer.
  */
 static void *
 AddElementToBuffer (ElementType *Element)
@@ -237,8 +237,9 @@ AddElementToBuffer (ElementType *Element)
   return (element);
 }
 
-/* ---------------------------------------------------------------------------
- * moves a via to paste buffer without allocating memory for the name
+/*!
+ * \brief Moves a via to paste buffer without allocating memory for the
+ * name.
  */
 static void *
 MoveViaToBuffer (PinType *via)
@@ -260,8 +261,8 @@ MoveViaToBuffer (PinType *via)
   return via;
 }
 
-/* ---------------------------------------------------------------------------
- * moves a rat-line to paste buffer
+/*!
+ * \brief Moves a rat-line to paste buffer.
  */
 static void *
 MoveRatToBuffer (RatType *rat)
@@ -281,8 +282,8 @@ MoveRatToBuffer (RatType *rat)
   return rat;
 }
 
-/* ---------------------------------------------------------------------------
- * moves a line to buffer  
+/*!
+ * \brief Moves a line to buffer.
  */
 static void *
 MoveLineToBuffer (LayerType *layer, LineType *line)
@@ -306,8 +307,8 @@ MoveLineToBuffer (LayerType *layer, LineType *line)
   return (line);
 }
 
-/* ---------------------------------------------------------------------------
- * moves an arc to buffer  
+/*!
+ * \brief Moves an arc to buffer.
  */
 static void *
 MoveArcToBuffer (LayerType *layer, ArcType *arc)
@@ -331,8 +332,8 @@ MoveArcToBuffer (LayerType *layer, ArcType *arc)
   return (arc);
 }
 
-/* ---------------------------------------------------------------------------
- * moves a text to buffer without allocating memory for the name
+/*!
+ * \brief Moves a text to buffer without allocating memory for the name.
  */
 static void *
 MoveTextToBuffer (LayerType *layer, TextType *text)
@@ -354,8 +355,10 @@ MoveTextToBuffer (LayerType *layer, TextType *text)
   return (text);
 }
 
-/* ---------------------------------------------------------------------------
- * moves a polygon to buffer. Doesn't allocate memory for the points
+/*!
+ * \brief Moves a polygon to buffer.
+ *
+ * Doesn't allocate memory for the points.
  */
 static void *
 MovePolygonToBuffer (LayerType *layer, PolygonType *polygon)
@@ -377,8 +380,9 @@ MovePolygonToBuffer (LayerType *layer, PolygonType *polygon)
   return (polygon);
 }
 
-/* ---------------------------------------------------------------------------
- * moves a element to buffer without allocating memory for pins/names
+/*!
+ * \brief Moves an element to buffer without allocating memory for
+ * pins/names.
  */
 static void *
 MoveElementToBuffer (ElementType *element)
@@ -424,8 +428,8 @@ MoveElementToBuffer (ElementType *element)
   return element;
 }
 
-/* ---------------------------------------------------------------------------
- * calculates the bounding box of the buffer
+/*!
+ * \brief Calculates the bounding box of the buffer.
  */
 void
 SetBufferBoundingBox (BufferType *Buffer)
@@ -436,8 +440,8 @@ SetBufferBoundingBox (BufferType *Buffer)
     Buffer->BoundingBox = *box;
 }
 
-/* ---------------------------------------------------------------------------
- * clears the contents of the paste buffer
+/*!
+ * \brief Clears the contents of the paste buffer.
  */
 void
 ClearBuffer (BufferType *Buffer)
@@ -449,9 +453,10 @@ ClearBuffer (BufferType *Buffer)
     }
 }
 
-/* ----------------------------------------------------------------------
- * copies all selected and visible objects to the paste buffer
- * returns true if any objects have been removed
+/*!
+ * \brief Copies all selected and visible objects to the paste buffer.
+ *
+ * Returns true if any objects have been removed.
  */
 void
 AddSelectedToBuffer (BufferType *Buffer, Coord X, Coord Y, bool LeaveSelected)
@@ -481,11 +486,12 @@ AddSelectedToBuffer (BufferType *Buffer, Coord X, Coord Y, bool LeaveSelected)
   ExtraFlag = 0;
 }
 
-/* ---------------------------------------------------------------------------
- * loads element data from file/library into buffer
- * parse the file with disabled 'PCB mode' (see parser)
- * returns false on error
- * if successful, update some other stuff and reposition the pastebuffer
+/*!
+ * \brief Loads element data from file/library into buffer.
+ *
+ * Parse the file with disabled 'PCB mode' (see parser).
+ * Returns false on error.
+ * If successful, update some other stuff and reposition the pastebuffer
  */
 bool
 LoadElementToBuffer (BufferType *Buffer, char *Name, bool FromFile)
@@ -579,9 +585,12 @@ clear_footprint_hash ()
   footprint_hash_size = 0;
 }
 
-/* Used to sort footprint pointer entries.  Note we include the index
-   numbers so that same-named footprints are sorted by the library
-   search order.  */
+/*!
+ * \brief Used to sort footprint pointer entries.
+ *
+ * Note we include the index numbers so that same-named footprints are
+ * sorted by the library search order.
+ */
 static int
 footprint_hash_cmp (const void *va, const void *vb)
 {
@@ -714,7 +723,9 @@ search_footprint_hash (const char *footprint)
   return NULL;
 }
 
-/* Returns zero on success, non-zero on error.  */
+/*!
+ * Returns zero on success, non-zero on error.
+ */
 int
 LoadFootprintByName (BufferType *Buffer, char *Footprint)
 {
@@ -852,9 +863,8 @@ LoadFootprint (int argc, char **argv, Coord x, Coord y)
   return 0;
 }
 
-/*---------------------------------------------------------------------------
- *
- * break buffer element into pieces
+/*!
+ * \brief Break buffer element into pieces.
  */
 bool
 SmashBufferElement (BufferType *Buffer)
@@ -934,9 +944,10 @@ SmashBufferElement (BufferType *Buffer)
   return (true);
 }
 
-/*---------------------------------------------------------------------------
+/*!
+ * \brief See if a polygon is a rectangle.
  *
- * see if a polygon is a rectangle.  If so, canonicalize it.
+ * If so, canonicalize it.
  */
 
 static int
@@ -971,9 +982,8 @@ polygon_is_rectangle (PolygonType *poly)
   return 0;
 }
 
-/*---------------------------------------------------------------------------
- *
- * convert buffer contents into an element
+/*!
+ * \brief Convert buffer contents into an element.
  */
 bool
 ConvertBufferToElement (BufferType *Buffer)
@@ -1138,10 +1148,11 @@ ConvertBufferToElement (BufferType *Buffer)
   return (true);
 }
 
-/* ---------------------------------------------------------------------------
- * load PCB into buffer
- * parse the file with enabled 'PCB mode' (see parser)
- * if successful, update some other stuff
+/*!
+ * \brief Load PCB into buffer.
+ *
+ * Parse the file with enabled 'PCB mode' (see parser).
+ * If successful, update some other stuff.
  */
 bool
 LoadLayoutToBuffer (BufferType *Buffer, char *Filename)
@@ -1169,8 +1180,8 @@ LoadLayoutToBuffer (BufferType *Buffer, char *Filename)
   return (false);
 }
 
-/* ---------------------------------------------------------------------------
- * rotates the contents of the pastebuffer
+/*!
+ * \brief Rotates the contents of the pastebuffer.
  */
 void
 RotateBuffer (BufferType *Buffer, BYTE Number)
@@ -1398,8 +1409,8 @@ ActionFreeRotateBuffer(int argc, char **argv, Coord x, Coord y)
   return 0;
 }
 
-/* ---------------------------------------------------------------------------
- * initializes the buffers by allocating memory
+/*!
+ * \brief Initializes the buffers by allocating memory.
  */
 void
 InitBuffers (void)
@@ -1481,8 +1492,8 @@ MirrorBuffer (BufferType *Buffer)
 }
 
 
-/* ---------------------------------------------------------------------------
- * flip components/tracks from one side to the other
+/*!
+ * \brief Flip components/tracks from one side to the other.
  */
 static void
 SwapBuffer (BufferType *Buffer)
@@ -1607,9 +1618,9 @@ SwapBuffer (BufferType *Buffer)
   SetCrosshairRangeToBuffer ();
 }
 
-/* ----------------------------------------------------------------------
- * moves the passed object to the passed buffer and removes it
- * from its original place
+/*!
+ * \brief Moves the passed object to the passed buffer and removes it
+ * from its original place.
  */
 void *
 MoveObjectToBuffer (DataType *Destination, DataType *Src,
@@ -1621,8 +1632,8 @@ MoveObjectToBuffer (DataType *Destination, DataType *Src,
   return (ObjectOperation (&MoveBufferFunctions, Type, Ptr1, Ptr2, Ptr3));
 }
 
-/* ----------------------------------------------------------------------
- * Adds the passed object to the passed buffer
+/*!
+ * \brief Adds the passed object to the passed buffer.
  */
 void *
 CopyObjectToBuffer (DataType *Destination, DataType *Src,
