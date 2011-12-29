@@ -78,8 +78,9 @@ thindraw_moved_pv (PinType *pv, Coord x, Coord y)
   gui->thindraw_pcb_pv (Crosshair.GC, Crosshair.GC, &moved_pv, true, false);
 }
 
-/* ---------------------------------------------------------------------------
- * creates a tmp polygon with coordinates converted to screen system
+/*!
+ * \brief Creates a tmp polygon with coordinates converted to screen
+ * system.
  */
 static void
 XORPolygon (PolygonType *polygon, Coord dx, Coord dy)
@@ -96,8 +97,8 @@ XORPolygon (PolygonType *polygon, Coord dx, Coord dy)
     }
 }
 
-/*-----------------------------------------------------------
- * Draws the outline of an arc
+/*!
+ * \brief Draws the outline of an arc.
  */
 static void
 XORDrawAttachedArc (Coord thick)
@@ -154,8 +155,8 @@ XORDrawAttachedArc (Coord thick)
     }
 }
 
-/*-----------------------------------------------------------
- * Draws the outline of a line
+/*!
+ * \brief Draws the outline of a line.
  */
 static void
 XORDrawAttachedLine (Coord x1, Coord y1, Coord x2, Coord y2, Coord thick)
@@ -182,8 +183,9 @@ XORDrawAttachedLine (Coord x1, Coord y1, Coord x2, Coord y2, Coord thick)
     }
 }
 
-/* ---------------------------------------------------------------------------
- * draws the elements of a loaded circuit which is to be merged in
+/*!
+ * \brief Draws the elements of a loaded circuit which is to be merged
+ * in.
  */
 static void
 XORDrawElement (ElementType *Element, Coord DX, Coord DY)
@@ -274,8 +276,8 @@ XORDrawElement (ElementType *Element, Coord DX, Coord DY)
 		  Element->MarkX + DX, Element->MarkY + DY + EMARK_SIZE);
 }
 
-/* ---------------------------------------------------------------------------
- * draws all visible and attached objects of the pastebuffer
+/*!
+ * \brief Draws all visible and attached objects of the pastebuffer.
  */
 static void
 XORDrawBuffer (BufferType *Buffer)
@@ -349,8 +351,8 @@ XORDrawBuffer (BufferType *Buffer)
   END_LOOP;
 }
 
-/* ---------------------------------------------------------------------------
- * draws the rubberband to insert points into polygons/lines/...
+/*!
+ * \brief Draws the rubberband to insert points into polygons/lines/...
  */
 static void
 XORDrawInsertPointObject (void)
@@ -367,8 +369,8 @@ XORDrawInsertPointObject (void)
     }
 }
 
-/* ---------------------------------------------------------------------------
- * draws the attached object while in MOVE_MODE or COPY_MODE
+/*!
+ * \brief Draws the attached object while in MOVE_MODE or COPY_MODE.
  */
 static void
 XORDrawMoveOrCopyObject (void)
@@ -530,8 +532,8 @@ XORDrawMoveOrCopyObject (void)
     }
 }
 
-/* ---------------------------------------------------------------------------
- * draws additional stuff that follows the crosshair
+/*!
+ * \brief Draws additional stuff that follows the crosshair.
  */
 void
 DrawAttached (void)
@@ -661,8 +663,8 @@ DrawAttached (void)
 }
 
 
-/* --------------------------------------------------------------------------
- * draw the marker position
+/*!
+ * \brief Draw the marker position.
  */
 void
 DrawMark (void)
@@ -681,8 +683,8 @@ DrawMark (void)
                   Marked.X - MARK_SIZE, Marked.Y + MARK_SIZE);
 }
 
-/* ---------------------------------------------------------------------------
- * Returns the nearest grid-point to the given Coord
+/*!
+ * \brief Returns the nearest grid-point to the given Coord.
  */
 Coord
 GridFit (Coord x, Coord grid_spacing, Coord grid_offset)
@@ -694,8 +696,9 @@ GridFit (Coord x, Coord grid_spacing, Coord grid_offset)
 }
 
 
-/* ---------------------------------------------------------------------------
- * notify the GUI that data relating to the crosshair is being changed.
+/*!
+ * \brief Notify the GUI that data relating to the crosshair is being
+ * changed.
  *
  * The argument passed is false to notify "changes are about to happen",
  * and true to notify "changes have finished".
@@ -717,8 +720,8 @@ notify_crosshair_change (bool changes_complete)
 }
 
 
-/* ---------------------------------------------------------------------------
- * notify the GUI that data relating to the mark is being changed.
+/*!
+ * \brief Notify the GUI that data relating to the mark is being changed.
  *
  * The argument passed is false to notify "changes are about to happen",
  * and true to notify "changes have finished".
@@ -739,10 +742,11 @@ notify_mark_change (bool changes_complete)
 }
 
 
-/* ---------------------------------------------------------------------------
- * Convenience for plugins using the old {Hide,Restore}Crosshair API.
- * This links up to notify the GUI of the expected changes using the new APIs.
+/*!
+ * \brief This links up to notify the GUI of the expected changes using
+ * the new APIs.
  *
+ * Convenience for plugins using the old {Hide,Restore}Crosshair API.
  * Use of this old API is deprecated, as the names don't necessarily reflect
  * what all GUIs may do in response to the notifications. Keeping these APIs
  * is aimed at easing transition to the newer API, they will emit a harmless
@@ -779,8 +783,8 @@ RestoreCrosshair (void)
   notify_mark_change (true);
 }
 
-/* ---------------------------------------------------------------------------
- * Returns the square of the given number
+/*!
+ * \brief Returns the square of the given number.
  */
 static double
 square (double x)
@@ -801,7 +805,10 @@ struct snap_data {
   Coord x, y;
 };
 
-/* Snap to a given location if it is the closest thing we found so far.
+/*!
+ * \brief Snap to a given location if it is the closest thing we found
+ * so far.
+ *
  * If "prefer_to_grid" is set, the passed location will take preference
  * over a closer grid points we already snapped to UNLESS the user is
  * pressing the SHIFT key. If the SHIFT key is pressed, the closest object
@@ -915,8 +922,9 @@ check_snap_offgrid_line (struct snap_data *snap_data,
     }
 }
 
-/* ---------------------------------------------------------------------------
- * recalculates the passed coordinates to fit the current grid setting
+/*!
+ * \brief Recalculates the passed coordinates to fit the current grid
+ * setting.
  */
 void
 FitCrosshairIntoGrid (Coord X, Coord Y)
@@ -1111,8 +1119,8 @@ FitCrosshairIntoGrid (Coord X, Coord Y)
   gui->set_crosshair (Crosshair.X, Crosshair.Y, HID_SC_DO_NOTHING);
 }
 
-/* ---------------------------------------------------------------------------
- * move crosshair relative (has to be switched off)
+/*!
+ * \brief Move crosshair relative (has to be switched off).
  */
 void
 MoveCrosshairRelative (Coord DeltaX, Coord DeltaY)
@@ -1120,9 +1128,10 @@ MoveCrosshairRelative (Coord DeltaX, Coord DeltaY)
   FitCrosshairIntoGrid (Crosshair.X + DeltaX, Crosshair.Y + DeltaY);
 }
 
-/* ---------------------------------------------------------------------------
- * move crosshair absolute
- * return true if the crosshair was moved from its existing position
+/*!
+ * \brief Move crosshair absolute.
+ *
+ * Return true if the crosshair was moved from its existing position.
  */
 bool
 MoveCrosshairAbsolute (Coord X, Coord Y)
@@ -1149,8 +1158,8 @@ MoveCrosshairAbsolute (Coord X, Coord Y)
   return (false);
 }
 
-/* ---------------------------------------------------------------------------
- * sets the valid range for the crosshair cursor
+/*!
+ * \brief Sets the valid range for the crosshair cursor.
  */
 void
 SetCrosshairRange (Coord MinX, Coord MinY, Coord MaxX, Coord MaxY)
@@ -1164,9 +1173,10 @@ SetCrosshairRange (Coord MinX, Coord MinY, Coord MaxX, Coord MaxY)
   MoveCrosshairRelative (0, 0);
 }
 
-/* ---------------------------------------------------------------------------
- * initializes crosshair stuff
- * clears the struct, allocates to graphical contexts
+/*!
+ * \brief Initializes crosshair stuff.
+ *
+ * Clears the struct, allocates to graphical contexts.
  */
 void
 InitCrosshair (void)
@@ -1190,8 +1200,8 @@ InitCrosshair (void)
   Marked.status = false;
 }
 
-/* ---------------------------------------------------------------------------
- * exits crosshair routines, release GCs
+/*!
+ * \brief Exits crosshair routines, release GCs.
  */
 void
 DestroyCrosshair (void)
