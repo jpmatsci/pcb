@@ -318,6 +318,10 @@ handle_dbus_message (DBusConnection * connection, DBusMessage * message,
 }
 
 
+/*!
+ * \brief Carry out all actions to setup the D-Bus and register
+ * appropriate callbacks.
+ */
 void
 pcb_dbus_setup (void)
 {
@@ -374,6 +378,9 @@ pcb_dbus_setup (void)
 }
 
 
+/*!
+ * \brief Carry out all actions to finalise the D-Bus connection.
+ */
 void
 pcb_dbus_finish (void)
 {
