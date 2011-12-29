@@ -43,9 +43,12 @@
 #include <dmalloc.h>
 #endif
 
-/* Clip the line to the clipBox
- * return true if something to be drawn
- * false if the whole thing is clipped
+/*!
+ * \brief Clip the line to the clipBox.
+ *
+ * Clip X,Y to the given bounding box, plus a margin.
+ * Return true if something is left to be drawn, false if the whole
+ * thing is clipped.
  */
 bool
 ClipLine (double minx, double miny, double maxx, double maxy,
