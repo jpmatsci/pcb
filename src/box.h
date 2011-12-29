@@ -173,7 +173,10 @@ bloat_box (const BoxType * box, Coord amount)
   return shrink_box (box, -amount);
 }
 
-/* construct a minimum box that touches the input box at the center */
+/*!
+ * \brief Construct a minimum box that touches the input box at the
+ * center.
+ */
 static inline BoxType
 box_center (const BoxType * box)
 {
@@ -185,7 +188,10 @@ box_center (const BoxType * box)
   return r;
 }
 
-/* construct a minimum box that touches the input box at the corner */
+/*!
+ * \brief Construct a minimum box that touches the input box at the
+ * corner.
+ */
 static inline BoxType
 box_corner (const BoxType * box)
 {
@@ -197,7 +203,9 @@ box_corner (const BoxType * box)
   return r;
 }
 
-/* construct a box that holds a single point */
+/*!
+ * \brief Construct a box that holds a single point.
+ */
 static inline BoxType
 point_box (Coord X, Coord Y)
 {
@@ -209,7 +217,9 @@ point_box (Coord X, Coord Y)
   return r;
 }
 
-/* close a bounding box by pushing its upper right corner */
+/*!
+ * \brief Close a bounding box by pushing its upper right corner.
+ */
 static inline void
 close_box (BoxType * r)
 {
@@ -217,9 +227,13 @@ close_box (BoxType * r)
   r->Y2++;
 }
 
-/* return the square of the minimum distance from a point to some point
- * inside a box.  The box is half-closed!  That is, the top-left corner
- * is considered in the box, but the bottom-right corner is not. */
+/*!
+ * \brief return the square of the minimum distance from a point to some
+ * point inside a box.
+ *
+ * The box is half-closed!  That is, the top-left corner is considered
+ * in the box, but the bottom-right corner is not.
+ */
 static inline double
 dist2_to_box (const CheapPointType * p, const BoxType * b)
 {
