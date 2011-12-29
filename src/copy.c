@@ -84,9 +84,10 @@ static ObjectFunctionType CopyFunctions = {
   NULL
 };
 
-/* ---------------------------------------------------------------------------
- * copies data from one polygon to another
- * 'Dest' has to exist
+/*!
+ * \brief Copies data from one polygon to another.
+ *
+ * 'Dest' has to exist.
  */
 PolygonType *
 CopyPolygonLowLevel (PolygonType *Dest, PolygonType *Src)
@@ -109,9 +110,9 @@ CopyPolygonLowLevel (PolygonType *Dest, PolygonType *Src)
   return (Dest);
 }
 
-/* ---------------------------------------------------------------------------
- * copies data from one element to another and creates the destination 
- * if necessary
+/*!
+ * \brief Copies data from one element to another and creates the
+ * destination if necessary.
  */
 ElementType *
 CopyElementLowLevel (DataType *Data, ElementType *Dest,
@@ -180,8 +181,8 @@ CopyElementLowLevel (DataType *Data, ElementType *Dest,
   return (Dest);
 }
 
-/* ---------------------------------------------------------------------------
- * copies a via 
+/*!
+ * \brief Copies a via.
  */
 static void *
 CopyVia (PinType *Via)
@@ -199,8 +200,8 @@ CopyVia (PinType *Via)
   return (via);
 }
 
-/* ---------------------------------------------------------------------------
- * copies a line 
+/*!
+ * \brief Copies a line.
  */
 static void *
 CopyLine (LayerType *Layer, LineType *Line)
@@ -222,8 +223,8 @@ CopyLine (LayerType *Layer, LineType *Line)
   return (line);
 }
 
-/* ---------------------------------------------------------------------------
- * copies an arc
+/*!
+ * \brief Copies an arc.
  */
 static void *
 CopyArc (LayerType *Layer, ArcType *Arc)
@@ -241,8 +242,8 @@ CopyArc (LayerType *Layer, ArcType *Arc)
   return (arc);
 }
 
-/* ---------------------------------------------------------------------------
- * copies a text 
+/*!
+ * \brief Copies a text.
  */
 static void *
 CopyText (LayerType *Layer, TextType *Text)
@@ -258,8 +259,8 @@ CopyText (LayerType *Layer, TextType *Text)
   return (text);
 }
 
-/* ---------------------------------------------------------------------------
- * copies a polygon 
+/*!
+ * \brief Copies a polygon.
  */
 static void *
 CopyPolygon (LayerType *Layer, PolygonType *Polygon)
@@ -278,8 +279,8 @@ CopyPolygon (LayerType *Layer, PolygonType *Polygon)
   return (polygon);
 }
 
-/* ---------------------------------------------------------------------------
- * copies an element onto the PCB.  Then does a draw. 
+/*!
+ * \brief Copies an element onto the PCB, then does a draw.
  */
 static void *
 CopyElement (ElementType *Element)
@@ -313,9 +314,10 @@ CopyElement (ElementType *Element)
   return (element);
 }
 
-/* ---------------------------------------------------------------------------
- * pastes the contents of the buffer to the layout. Only visible objects
- * are handled by the routine.
+/*!
+ * \brief Pastes the contents of the buffer to the layout.
+ *
+ * Only visible objects are handled by the routine.
  */
 bool
 CopyPastebufferToLayout (Coord X, Coord Y)
@@ -407,10 +409,11 @@ CopyPastebufferToLayout (Coord X, Coord Y)
   return (changed);
 }
 
-/* ---------------------------------------------------------------------------
- * copies the object identified by its data pointers and the type
- * the new objects is moved by DX,DY
- * I assume that the appropriate layer ... is switched on
+/*!
+ * \brief Copies the object identified by its data pointers and the type.
+ *
+ * The new objects is moved by DX,DY
+ * I assume that the appropriate layer ... is switched on.
  */
 void *
 CopyObject (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
