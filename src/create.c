@@ -72,8 +72,8 @@ static void AddTextToElement (TextType *, FontType *,
 			      Coord, Coord, unsigned, char *, int,
 			      FlagType);
 
-/* ---------------------------------------------------------------------------
- *  Set the lenience mode.
+/*!
+ * \brief Set the lenience mode.
  */
 
 void
@@ -82,8 +82,12 @@ CreateBeLenient (bool v)
   be_lenient = v;
 }
 
-/* ---------------------------------------------------------------------------
- * creates a new paste buffer
+/*!
+ * \brief Creates a new paste buffer.
+ *
+ * TRUE during file loads, for example to allow overlapping vias.
+ * FALSE otherwise, to stop the user from doing normally dangerous
+ * things.
  */
 DataType *
 CreateNewBuffer (void)
@@ -94,9 +98,11 @@ CreateNewBuffer (void)
   return data;
 }
 
-/* ---------------------------------------------------------------------------
- * Perhaps PCB should internally just use the Settings colors?  For now,
- * use this to set PCB colors so the config can reassign PCB colors.
+/*!
+ * \brief Perhaps PCB should internally just use the Settings colors?
+ *
+ * For now, use this to set PCB colors so the config can reassign PCB
+ * colors.
  */
 void
 pcb_colors_from_settings (PCBType *ptr)
@@ -135,8 +141,8 @@ pcb_colors_from_settings (PCBType *ptr)
     Settings.ElementSelectedColor;
 }
 
-/* ---------------------------------------------------------------------------
- * creates a new PCB
+/*!
+ * \brief Creates a new PCB.
  */
 PCBType *
 CreateNewPCB (bool SetDefaultNames)
@@ -209,8 +215,12 @@ CreateNewPCB (bool SetDefaultNames)
   return (ptr);
 }
 
-/* This post-processing step adds the top and bottom silk layers to a
- * pre-existing PCB.
+/*!
+ * \brief This post-processing step adds the top and bottom silk layers
+ * to a pre-existing PCB.
+ *
+ * Called after PCB->Data->LayerN is set.
+ * Returns zero if no errors, else nonzero.
  */
 int
 CreateNewPCBPost (PCBType *pcb, int use_defaults)
@@ -229,8 +239,8 @@ CreateNewPCBPost (PCBType *pcb, int use_defaults)
   return 0;
 }
 
-/* ---------------------------------------------------------------------------
- * creates a new via
+/*!
+ * \brief Creates a new via.
  */
 PinType *
 CreateNewVia (DataType *Data,
@@ -393,8 +403,9 @@ line_callback (const BoxType * b, void *cl)
 }
 
 
-/* ---------------------------------------------------------------------------
- * creates a new line on a layer and checks for overlap and extension
+/*!
+ * \brief Creates a new line on a layer and checks for overlap and
+ * extension.
  */
 LineType *
 CreateDrawnLineOnLayer (LayerType *Layer,
@@ -480,8 +491,8 @@ CreateNewLineOnLayer (LayerType *Layer,
   return (Line);
 }
 
-/* ---------------------------------------------------------------------------
- * creates a new rat-line
+/*!
+ * \brief Creates a new rat-line.
  */
 RatType *
 CreateNewRat (DataType *Data, Coord X1, Coord Y1,
@@ -512,8 +523,8 @@ CreateNewRat (DataType *Data, Coord X1, Coord Y1,
   return (Line);
 }
 
-/* ---------------------------------------------------------------------------
- * creates a new arc on a layer
+/*!
+ * \brief Creates a new arc on a layer.
  */
 ArcType *
 CreateNewArcOnLayer (LayerType *Layer,
@@ -556,8 +567,8 @@ CreateNewArcOnLayer (LayerType *Layer,
 }
 
 
-/* ---------------------------------------------------------------------------
- * creates a new polygon from the old formats rectangle data
+/*!
+ * \brief Creates a new polygon from the old formats rectangle data.
  */
 PolygonType *
 CreateNewPolygonFromRectangle (LayerType *Layer,
@@ -580,8 +591,8 @@ CreateNewPolygonFromRectangle (LayerType *Layer,
   return (polygon);
 }
 
-/* ---------------------------------------------------------------------------
- * creates a new text on a layer
+/*!
+ * \brief Creates a new text on a layer.
  */
 TextType *
 CreateNewText (LayerType *Layer, FontType *PCBFont,
@@ -616,8 +627,8 @@ CreateNewText (LayerType *Layer, FontType *PCBFont,
   return (text);
 }
 
-/* ---------------------------------------------------------------------------
- * creates a new polygon on a layer
+/*!
+ * \brief Creates a new polygon on a layer.
  */
 PolygonType *
 CreateNewPolygon (LayerType *Layer, FlagType Flags)
@@ -633,8 +644,8 @@ CreateNewPolygon (LayerType *Layer, FlagType Flags)
   return (polygon);
 }
 
-/* ---------------------------------------------------------------------------
- * creates a new point in a polygon
+/*!
+ * \brief Creates a new point in a polygon.
  */
 PointType *
 CreateNewPointInPolygon (PolygonType *Polygon, Coord X, Coord Y)
@@ -648,8 +659,8 @@ CreateNewPointInPolygon (PolygonType *Polygon, Coord X, Coord Y)
   return (point);
 }
 
-/* ---------------------------------------------------------------------------
- * creates a new hole in a polygon
+/*!
+ * \brief Creates a new hole in a polygon.
  */
 PolygonType *
 CreateNewHoleInPolygon (PolygonType *Polygon)
@@ -659,9 +670,10 @@ CreateNewHoleInPolygon (PolygonType *Polygon)
   return Polygon;
 }
 
-/* ---------------------------------------------------------------------------
- * creates an new element
- * memory is allocated if needed
+/*!
+ * \brief Creates an new element.
+ *
+ * Memory is allocated if needed.
  */
 ElementType *
 CreateNewElement (DataType *Data, ElementType *Element,
@@ -701,8 +713,8 @@ CreateNewElement (DataType *Data, ElementType *Element,
   return (Element);
 }
 
-/* ---------------------------------------------------------------------------
- * creates a new arc in an element
+/*!
+ * \brief Creates a new arc in an element.
  */
 ArcType *
 CreateNewArcInElement (ElementType *Element,
@@ -739,8 +751,8 @@ CreateNewArcInElement (ElementType *Element,
   return arc;
 }
 
-/* ---------------------------------------------------------------------------
- * creates a new line for an element
+/*!
+ * \brief Creates a new line for an element.
  */
 LineType *
 CreateNewLineInElement (ElementType *Element,
@@ -768,8 +780,8 @@ CreateNewLineInElement (ElementType *Element,
   return line;
 }
 
-/* ---------------------------------------------------------------------------
- * creates a new pin in an element
+/*!
+ * \brief Creates a new pin in an element.
  */
 PinType *
 CreateNewPin (ElementType *Element,
@@ -837,8 +849,8 @@ CreateNewPin (ElementType *Element,
   return (pin);
 }
 
-/* ---------------------------------------------------------------------------
- * creates a new pad in an element
+/*!
+ * \brief Creates a new pad in an element.
  */
 PadType *
 CreateNewPad (ElementType *Element,
@@ -875,9 +887,10 @@ CreateNewPad (ElementType *Element,
   return (pad);
 }
 
-/* ---------------------------------------------------------------------------
- * creates a new textobject as part of an element
- * copies the values to the appropriate text object
+/*!
+ * \brief Creates a new textobject as part of an element.
+ *
+ * Copies the values to the appropriate text object.
  */
 static void
 AddTextToElement (TextType *Text, FontType *PCBFont,
@@ -897,8 +910,8 @@ AddTextToElement (TextType *Text, FontType *PCBFont,
   Text->ID = ID++;
 }
 
-/* ---------------------------------------------------------------------------
- * creates a new line in a symbol
+/*!
+ * \brief Creates a new line in a symbol.
  */
 LineType *
 CreateNewLineInSymbol (SymbolType *Symbol,
@@ -926,10 +939,12 @@ CreateNewLineInSymbol (SymbolType *Symbol,
   return (line);
 }
 
-/* ---------------------------------------------------------------------------
- * parses a file with font information and installs it into the provided PCB
- * checks directories given as colon separated list by resource fontPath
- * if the fonts filename doesn't contain a directory component
+/*!
+ * \brief Parses a file with font information and installs it into the
+ * provided PCB.
+ *
+ * Checks directories given as colon separated list by resource fontPath
+ * if the fonts filename doesn't contain a directory component.
  */
 void
 CreateDefaultFont (PCBType *pcb)
@@ -938,9 +953,11 @@ CreateDefaultFont (PCBType *pcb)
     Message (_("Can't find font-symbol-file '%s'\n"), Settings.FontFile);
 }
 
-/* ---------------------------------------------------------------------------
- * adds a new line to the rubberband list of 'Crosshair.AttachedObject'
- * if Layer == 0  it is a rat line
+/*!
+ * \brief Adds a new line to the rubberband list of 
+ * 'Crosshair.AttachedObject'.
+ *
+ * If Layer == 0  it is a rat line.
  */
 RubberbandType *
 CreateNewRubberbandEntry (LayerType *Layer,
@@ -957,8 +974,8 @@ CreateNewRubberbandEntry (LayerType *Layer,
   return (ptr);
 }
 
-/* ---------------------------------------------------------------------------
- * Add a new net to the netlist menu
+/*!
+ * \brief Add a new net to the netlist menu.
  */
 LibraryMenuType *
 CreateNewNet (LibraryType *lib, char *name, char *style)
@@ -977,8 +994,8 @@ CreateNewNet (LibraryType *lib, char *name, char *style)
   return (menu);
 }
 
-/* ---------------------------------------------------------------------------
- * Add a connection to the net
+/*!
+ * \brief Add a connection to the net.
  */
 LibraryEntryType *
 CreateNewConnection (LibraryMenuType *net, char *conn)
@@ -989,8 +1006,8 @@ CreateNewConnection (LibraryMenuType *net, char *conn)
   return (entry);
 }
 
-/* ---------------------------------------------------------------------------
- * Add an attribute to a list.
+/*!
+ * \brief Add an attribute to a list.
  */
 AttributeType *
 CreateNewAttribute (AttributeListType *list, char *name, char *value)
