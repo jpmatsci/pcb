@@ -318,10 +318,11 @@ djmin (int x, int y)
   return x < y ? x : y;
 }
 
-/* 
- * Find distance between 2 points.  We use floating point math here
- * because we can fairly easily overflow a 32 bit integer here.  In
- * fact it only takes 0.46" to do so.
+/*!
+ * \brief Find distance between 2 points.
+ *
+ * We use floating point math here because we can fairly easily overflow
+ * a 32 bit integer here.  In fact it only takes 0.46" to do so.
  */
 static int
 dist (int x1, int y1, int x2, int y2)
@@ -1107,7 +1108,9 @@ canonicalize_line (line_s * l)
   return 0;
 }
 
-/* Make sure all vias are at line end points */
+/*!
+ * \brief Make sure all vias are at line end points.
+ */
 static int
 canonicalize_lines ()
 {
@@ -1632,11 +1635,13 @@ orthopull_1 (corner_s * c, int fdir, int rdir, int any_sel)
   return max * pull;
 }
 
+/*!
+ * \brief Look for straight runs which could be moved to reduce total
+ * trace length.
+ */
 static int
 orthopull ()
 {
-  /* Look for straight runs which could be moved to reduce total trace
-     length.  */
   int any_sel = any_line_selected ();
   corner_s *c;
   int rv = 0;
@@ -1670,10 +1675,12 @@ orthopull ()
   return rv;
 }
 
+/*!
+ * \brief Look for "U" shaped traces we can shorten (or eliminate).
+ */
 static int
 debumpify ()
 {
-  /* Look for "U" shaped traces we can shorten (or eliminate) */
   int rv = 0;
   int any_selected = any_line_selected ();
   line_s *l, *l1, *l2;
@@ -1829,10 +1836,12 @@ simple_corner (corner_s * c)
   return 1;
 }
 
+/*!
+ * \brief Look for sequences of simple corners we can reduce.
+ */
 static int
 unjaggy_once ()
 {
-  /* Look for sequences of simple corners we can reduce. */
   int rv = 0;
   corner_s *c, *c0, *c1, *cc;
   int l, w, sel = any_line_selected ();
@@ -1942,11 +1951,13 @@ unjaggy ()
   return r;
 }
 
+/*!
+ * \brief Look for vias with all lines leaving the same way, try to
+ * nudge via to eliminate one or more of them.
+ */
 static int
 vianudge ()
 {
-  /* Look for vias with all lines leaving the same way, try to nudge
-     via to eliminate one or more of them. */
   int rv = 0;
   corner_s *c, *c2, *c3;
   line_s *l;
@@ -2061,12 +2072,14 @@ vianudge ()
   return rv;
 }
 
+/*!
+ * \brief Look for traces that can be moved to the other side of the
+ * board, to reduce the number of vias needed.  For now, we look for
+ * simple lines, not multi-segmented lines.
+ */
 static int
 viatrim ()
 {
-  /* Look for traces that can be moved to the other side of the board,
-     to reduce the number of vias needed.  For now, we look for simple
-     lines, not multi-segmented lines.  */
   line_s *l, *l2;
   int i, rv = 0, vrm = 0;
   int any_sel = any_line_selected ();
@@ -2541,6 +2554,13 @@ connect_corners (corner_s * c1, corner_s * c2)
     }
 }
 
+/*!
+ * \brief Look for pins that have no connections.
+ *
+ * See if there's a corner close by that should be connected to it.
+ * This usually happens when the MUCS router needs to route to an
+ * off-grid pin.
+ */
 static void
 pinsnap ()
 {
@@ -2555,9 +2575,6 @@ pinsnap ()
   int close = 0;
   corner_s *c2;
 
-  /* Look for pins that have no connections.  See if there's a corner
-     close by that should be connected to it.  This usually happens
-     when the MUCS router needs to route to an off-grid pin.  */
   while (again)
     {
       again = 0;
