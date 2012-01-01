@@ -49,6 +49,10 @@ int SaveBufferElements (char *);
 void PreLoadElementPCB (void);
 void PostLoadElementPCB (void);
 void sort_netlist (void);
+void WritePCBInfoHeader (FILE *);
+void WritePCBDataHeader (FILE *);
+void WritePCBFontData (FILE *);
+int WriteBuffer (FILE * FP);
 
 /* 
  * Whenever the pcb file format is modified, this version number
