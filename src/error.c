@@ -78,8 +78,8 @@ extern char *sys_errlist[];	/* array of error messages */
 #endif
 
 
-/* ---------------------------------------------------------------------------
- * output of message in a dialog window or log window
+/*!
+ * \brief Output of message in a dialog window or log window.
  */
 void
 Message (const char *Format, ...)
@@ -91,8 +91,8 @@ Message (const char *Format, ...)
 }
 
 
-/* ---------------------------------------------------------------------------
- * print standard 'open error'
+/*!
+ * \brief Print standard 'open error'.
  */
 void
 OpenErrorMessage (char *Filename)
@@ -111,8 +111,8 @@ OpenErrorMessage (char *Filename)
   free (utf8);
 }
 
-/* ---------------------------------------------------------------------------
- * print standard 'popen error'
+/*!
+ * \brief Print standard 'popen error'.
  */
 void
 PopenErrorMessage (char *Filename)
@@ -131,8 +131,8 @@ PopenErrorMessage (char *Filename)
   free (utf8);
 }
 
-/* ---------------------------------------------------------------------------
- * print standard 'opendir'
+/*!
+ * \brief Print standard 'opendir'.
  */
 void
 OpendirErrorMessage (char *DirName)
@@ -151,8 +151,8 @@ OpendirErrorMessage (char *DirName)
   free (utf8);
 }
 
-/* ---------------------------------------------------------------------------
- * print standard 'chdir error'
+/*!
+ * \brief Print standard 'chdir error'.
  */
 void
 ChdirErrorMessage (char *DirName)
@@ -171,8 +171,8 @@ ChdirErrorMessage (char *DirName)
   free (utf8);
 }
 
-/* ---------------------------------------------------------------------------
- * output of fatal error message
+/*!
+ * \brief Output of fatal error message.
  */
 void
 MyFatal (char *Format, ...)
@@ -190,8 +190,8 @@ MyFatal (char *Format, ...)
   exit (1);
 }
 
-/* ---------------------------------------------------------------------------
- * catches signals which abort the program
+/*!
+ * \brief Catches signals which abort the program.
  */
 void
 CatchSignal (int Signal)
