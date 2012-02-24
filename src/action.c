@@ -6948,11 +6948,12 @@ delete_attr (AttributeListType *list, AttributeType *attr)
 }
 
 /* ---------------------------------------------------------------- */
-static const char elementlist_syntax[] = "ElementList(Start|Done|Need,<refdes>,<footprint>,<value>)";
+static const char elementlist_syntax[] = "ElementList(Start|Done)\n"
+                                         "ElementList(Need,<refdes>,<footprint>,<value>[,ForceUpdate])";
 
 static const char elementlist_help[] = "Adds the given element if it doesn't already exist.";
 
-/* %start-doc actions elementlist
+/* %start-doc actions ElementList
 
 @table @code
 
@@ -6966,6 +6967,10 @@ Searches the board for an element with a matching refdes.
 If found, the value and footprint are updated.
 
 If not found, a new element is created with the given footprint and value.
+
+@item ForceUpdate
+If set, updates the value and footprint even if neither have changed.  This
+can be useful to pull in minor footprint updates.
 
 @item Done
 Compares the list of elements needed since the most recent
@@ -6992,7 +6997,7 @@ static int
 ActionElementList (int argc, char **argv, Coord x, Coord y)
 {
   ElementType *e = NULL;
-  char *refdes, *value, *footprint, *old;
+  char *refdes, *value, *footprint, *forceupdate=NULL, *old;
   char *args[3];
   char *function = argv[0];
 
@@ -7037,7 +7042,7 @@ ActionElementList (int argc, char **argv, Coord x, Coord y)
   if (strcasecmp (function, "need") != 0)
     AFAIL (elementlist);
 
-  if (argc != 4)
+  if (argc < 4 || argc > 5)
     AFAIL (elementlist);
 
   argc --;
@@ -7046,6 +7051,7 @@ ActionElementList (int argc, char **argv, Coord x, Coord y)
   refdes = ARG(0);
   footprint = ARG(1);
   value = ARG(2);
+  forceupdate = ARG(3);
 
   args[0] = footprint;
   args[1] = refdes;
@@ -7055,6 +7061,7 @@ ActionElementList (int argc, char **argv, Coord x, Coord y)
   printf("  ... footprint = %s\n", footprint);
   printf("  ... refdes = %s\n", refdes);
   printf("  ... value = %s\n", value);
+  printf("  ... forceupdate = %s\n", forceupdate);
 #endif
 
   e = find_element_by_refdes (refdes);
@@ -7101,11 +7108,15 @@ ActionElementList (int argc, char **argv, Coord x, Coord y)
 	SetChangedFlag (true);
     }
 
-  else if (e && strcmp (DESCRIPTION_NAME(e), footprint) != 0)
+  else if (e && ((strcmp (DESCRIPTION_NAME(e), footprint) != 0)
+                 || (forceupdate && (strcasecmp (forceupdate, "forceupdate") == 0))))
     {
 #ifdef DEBUG
       printf("  ... Footprint on board, but different from footprint loaded.\n");
 #endif
+      if (forceupdate && (strcasecmp (forceupdate, "forceupdate") == 0)) {
+          Message ("Force-updated %s %s %s\n", refdes, value, footprint);
+      }
       int er, pr, i;
       Coord mx, my;
       ElementType *pe;
