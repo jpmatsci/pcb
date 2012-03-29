@@ -1,4 +1,6 @@
 ## -*- makefile -*-
+## $Id$
+##
 
 SUBDIRS=	icons
 
@@ -13,7 +15,7 @@ noinst_LIBRARIES = @HIDLIBS@
 EXTRA_LIBRARIES = \
 	libgtk.a liblesstif.a libbatch.a \
 	liblpr.a libgerber.a libbom.a libpng.a libps.a libnelma.a \
-	libgcode.a
+	libgcode.a libvrml.a
 
 pcblib_DATA= \
 	default_font \
@@ -233,6 +235,7 @@ EXTRA_DIST= \
 	$(srcdir)/hid/png/hid.conf \
 	$(srcdir)/hid/nelma/hid.conf \
 	$(srcdir)/hid/ps/hid.conf \
+	$(srcdir)/hid/vrml/hid.conf \
 	gpcb-menu.res.in \
 	pcb-menu.res.in \
 	pcbtest.sh.in \
@@ -384,6 +387,12 @@ hid/batch/batch_lists.h : ${LIBBATCH_SRCS} Makefile
 libgerber_a_SOURCES = \
 	hid/hidint.h \
 	hid/gerber/gerber.c
+
+libvrml_a_SOURCES = \
+	hid/hidint.h \
+	hid/vrml/vrml.h \
+	hid/vrml/vrml.c \
+	hid/vrml/vrmlcomp.c
 
 libbom_a_SOURCES = \
 	hid/hidint.h \
