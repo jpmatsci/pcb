@@ -3270,6 +3270,20 @@ LookupConnection (Coord X, Coord Y, bool AndDraw, Coord Range, int which_flag,
     gui->beep ();
   FreeConnectionLookupMemory ();
 }
+// JM
+void
+LookupConnectionByPin (int type, void *ptr1)
+ {
+    User = 0;
+    TheFlag = FOUNDFLAG;
+    InitConnectionLookup ();
+    ListStart (type, NULL, ptr1, NULL);
+
+    DoIt (true, false);
+
+    FreeConnectionLookupMemory ();
+ }
+ // END JM
 
 /* ---------------------------------------------------------------------------
  * find connections for rats nesting
