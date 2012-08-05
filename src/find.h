@@ -70,5 +70,9 @@ bool lineClear (LineType *, Cardinal);
 bool IsLineInPolygon (LineType *, PolygonType *);
 bool IsArcInPolygon (ArcType *, PolygonType *);
 bool IsPadInPolygon (PadType *, PolygonType *);
+//JM
+void LookupConnectionByPin (int , void *);
+//END JM
+ 
 
 #endif

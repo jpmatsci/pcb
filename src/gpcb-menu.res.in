@@ -72,6 +72,7 @@ MainMenu =
      {" unused pins" Save(AllUnusedPins)}
    }
    {"Export..." Export()}
+   {"IPC-D-356 Netlist" IPCD356()}
    -
    {"Calibrate Printer..." PrintCalibrate()}
    {"Print..." Print()}
