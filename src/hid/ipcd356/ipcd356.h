@@ -43,7 +43,7 @@ typedef struct
 void IPCD356_WriteNet (FILE *, char *);
 void IPCD356_WriteHeader (FILE *);
 void IPCD356_End (FILE *);
-int IPCD356_Netlist (int, char **, int, int);
+int IPCD356_Netlist (void);
 int IPCD356_WriteAliases (FILE *, IPCD356_AliasListPtr);
 void ResetVisitPinsViasAndPads (void);
 void CheckNetLength (char *, IPCD356_AliasListPtr);
@@ -51,3 +51,4 @@ IPCD356_AliasListPtr CreateAliasList (void);
 IPCD356_AliasListPtr AddAliasToList (IPCD356_AliasListPtr aliaslist);
 int IPCD356_SanityCheck(void);
 
+/* EOF */

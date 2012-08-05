@@ -14,7 +14,7 @@ noinst_LIBRARIES = @HIDLIBS@
 EXTRA_LIBRARIES = \
 	libgtk.a liblesstif.a libbatch.a \
 	liblpr.a libgerber.a libbom.a libpng.a libps.a libnelma.a \
-	libgcode.a
+	libgcode.a libipcd356.a
 
 pcblib_DATA= \
 	default_font \
@@ -157,8 +157,7 @@ PCB_SRCS = \
 	hid/common/draw_helpers.h \
 	hid/common/hid_resource.c \
 	hid/common/hid_resource.h \
-	hid/hidint.h \
-	ipc-d-356.c 
+	hid/hidint.h
 
 EXTRA_pcb_SOURCES = ${DBUS_SRCS} ${GL_SRCS} toporouter.c toporouter.h
 DBUS_SRCS= \
@@ -190,6 +189,7 @@ BUILT_SOURCES = \
 	hid/batch/batch_lists.h \
 	hid/png/png_lists.h \
 	hid/gcode/gcode_lists.h \
+	hid/ipcd356/ipcd356_lists.h \
 	hid/nelma/nelma_lists.h \
 	hid/ps/ps_lists.h \
 	parse_y.h \
@@ -230,6 +230,7 @@ EXTRA_DIST= \
 	$(srcdir)/hid/gtk/gui-icons-mode-buttons.data \
 	$(srcdir)/hid/gtk/hid.conf \
 	$(srcdir)/hid/gtk/pcb.rc \
+	$(srcdir)/hid/ipcd356/hid.conf \
 	$(srcdir)/hid/lesstif/hid.conf \
 	$(srcdir)/hid/lpr/hid.conf \
 	$(srcdir)/hid/png/hid.conf \
@@ -391,6 +392,10 @@ libbom_a_SOURCES = \
 	hid/hidint.h \
 	hid/bom/bom.c
 
+LIBIPCD356__a_SRCS = \
+	hid/hidint.h \
+	hid/ipcd356/ipcd356.c
+
 libps_a_CPPFLAGS = -I./hid/ps
 LIBPS_SRCS = \
 	dolists.h \
@@ -464,6 +469,7 @@ DISTCLEANFILES= pcbtest.sh gpcb-menu.h pcb-menu.h \
 	hid/batch/batch_lists.h \
 	hid/common/hidlist.h \
 	hid/gtk/gtk_lists.h \
+	hid/ipcd356/ipcd356_lists.h \
 	hid/lesstif/lesstif_lists.h \
 	hid/png/png_lists.h \
 	hid/gcode/gcode_lists.h \

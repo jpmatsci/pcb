@@ -19,7 +19,6 @@
 #include "hid/common/hidnogui.h"
 #include "hid/common/draw_helpers.h"
 #include "pcb-printf.h"
-#include "ipc-d-356.h"
 
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
@@ -2032,7 +2031,6 @@ HID_Action ghid_main_action_list[] = {
   {"Cursor", 0, CursorAction, cursor_help, cursor_syntax},
   {"DoWindows", 0, DoWindows, dowindows_help, dowindows_syntax},
   {"Export", 0, Export},
-  {"IPCD356", 0, IPCD356_Netlist},
   {"GetXY", "", GetXY, getxy_help, getxy_syntax},
   {"ImportGUI", 0, ImportGUI, importgui_help, importgui_syntax},
   {"LayerGroupsChanged", 0, LayerGroupsChanged},
