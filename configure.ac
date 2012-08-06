@@ -710,7 +710,7 @@ for e in $HIDLIST; do
     case $e in
       lesstif )
 	AC_PATH_XTRA
-	CPPFLAGS="$CFLAGS $X_CFLAGS"
+	CPPFLAGS="$CPPFLAGS $CFLAGS $X_CFLAGS"
 	AC_CHECK_LIB(X11, XOpenDisplay, , , $X_LIBS)
 	AC_CHECK_LIB(ICE, main, , , $X_LIBS)
 	AC_CHECK_LIB(SM, main, , , $X_LIBS)
