@@ -1438,8 +1438,6 @@ ghid_build_pcb_top_window (void)
 
   ghid_interface_input_signals_connect ();
 
-  g_signal_connect (G_OBJECT (gport->drawing_area), "scroll_event",
-		    G_CALLBACK (ghid_port_window_mouse_scroll_cb), port);
   g_signal_connect (G_OBJECT (gport->drawing_area), "enter_notify_event",
 		    G_CALLBACK (ghid_port_window_enter_cb), port);
   g_signal_connect (G_OBJECT (gport->drawing_area), "leave_notify_event",
@@ -1472,7 +1470,7 @@ ghid_build_pcb_top_window (void)
      |  by new signal handlers or the command_combo_box entry.
    */
 static gulong button_press_handler, button_release_handler,
-  key_press_handler, key_release_handler;
+  key_press_handler, key_release_handler, scroll_handler;
 
 void
 ghid_interface_input_signals_connect (void)
@@ -1492,6 +1490,10 @@ ghid_interface_input_signals_connect (void)
   key_release_handler =
     g_signal_connect (G_OBJECT (gport->drawing_area), "key_release_event",
 		      G_CALLBACK (ghid_port_key_release_cb), NULL);
+
+  scroll_handler =
+    g_signal_connect (G_OBJECT (gport->drawing_area), "scroll_event",
+		      G_CALLBACK (ghid_port_window_mouse_scroll_cb), NULL);
 }
 
 void
@@ -1509,8 +1511,12 @@ ghid_interface_input_signals_disconnect (void)
   if (key_release_handler)
     g_signal_handler_disconnect (gport->drawing_area, key_release_handler);
 
+  if (scroll_handler)
+    g_signal_handler_disconnect (gport->drawing_area, scroll_handler);
+
   button_press_handler = button_release_handler = 0;
   key_press_handler = key_release_handler = 0;
+  scroll_handler = 0;
 
 }
 
