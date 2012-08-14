@@ -1428,6 +1428,8 @@ SwapSides (int argc, char **argv, Coord x, Coord y)
                              new_solder_vis, new_solder_vis);
     }
 
+  layer_process ( NULL, NULL, NULL, LAYER_BUTTON_SILK );
+  hid_action ("LayersChanged");
   return 0;
 }
 
