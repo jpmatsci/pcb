@@ -93,9 +93,14 @@
 #include "remove.h"
 #include "set.h"
 #include "strflags.h"
+#include "vector.h"
 
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
+#endif
+
+#ifdef HAVE_FNMATCH
+#include <fnmatch.h>
 #endif
 
 #if !defined(HAS_ATEXIT) && !defined(HAS_ON_EXIT)
@@ -121,7 +126,7 @@ static int WritePCB (FILE *);
 static int WritePCBFile (char *);
 static int WritePipe (char *, bool);
 static int ParseLibraryTree (void);
-static int LoadNewlibFootprintsFromDir(char *path, char *toppath);
+static int LoadNewlibFootprintsFromDir(char *path, char *toppath, bool rdparent);
 static char *pcb_basename (char *p);
 
 /* ---------------------------------------------------------------------------
@@ -1147,6 +1152,302 @@ RemoveTMPData (void)
 #endif
 
 /* ---------------------------------------------------------------------------
+ * Provide for pcbignore file operations.
+ * Used by ParseLibraryTree() and LoadNewlibFootprintsFromDir() below.
+ *
+ * N.b.:  If HAVE_FNMATCH is not defined, this does not actually read pcbignore
+ * files.  In that case it performs some hard-coded internal fakery that mimics
+ * the old behavior.
+ */
+
+/* Return true if given entry name matches any pattern in the given ignore list. */
+static bool
+ignore_list_match (vector_t * ignores, const char *entname)
+{
+  bool match = false;
+
+  int i;
+  char *pattern;
+
+  /* Loop over patterns in the ignore list... */
+  for (i = 0; i < vector_size (ignores); i++)
+    {
+      pattern = vector_element (ignores, i);
+#ifdef HAVE_FNMATCH
+      /* Check pattern for match using fnmatch(). */
+      if (fnmatch (pattern, entname, FNM_NOESCAPE | FNM_PERIOD) == 0)
+	{
+#ifdef DEBUG
+	  printf ("ignore_list_match()/fnmatch() matched \"%s\"\n", entname);
+#endif
+	  match = true;
+	  break;
+	}
+#else
+      /* Check pattern for match by direct comparison.
+       * Patterns beginning with '.' are assumed to be extensions to match.
+       */
+      if (pattern[0] == '.')
+	{
+	  size_t entlen = strlen (entname);
+	  size_t patlen = strlen (pattern);
+	  if ((entlen > patlen) && (NSTRCMP (entname + (entlen - patlen), pattern) == 0))
+	    {
+#ifdef DEBUG
+	      printf ("ignore_list_match()/extn: matched \"%s\"\n", entname);
+#endif
+	      match = true;
+	      break;
+	    }
+	}
+      else if (NSTRCMP (entname, pattern) == 0)
+	{
+#ifdef DEBUG
+	  printf ("ignore_list_match()/name: matched \"%s\"\n", entname);
+#endif
+	  match = true;
+	  break;
+	}
+#endif
+    }
+
+  /* Return found-match flag. */
+  return match;
+}
+
+/* Destroy the ignore list pointer to by the given pointer, freeing all allocations. */
+static void
+ignore_list_destroy (vector_t **ignores_ptr)
+{
+  if (*ignores_ptr)
+    {
+      /* Loop over all items in list, freeing allocation.. */
+      while (!vector_is_empty (*ignores_ptr))
+	{
+	  char *pattern = vector_remove_last (*ignores_ptr);
+	  free (pattern);
+	}
+      /* Finally, free the list itself. */
+      vector_destroy (ignores_ptr);
+    }
+}
+
+/* Remove the given pattern from the given ignore list, freeing allocation.
+ * Removes all patterns that match identically.
+ */
+static void
+ignore_list_remove (vector_t * ignores, const char *toremove)
+{
+  int i;
+  char *pattern;
+
+  /* Loop over patterns in the ignore list... */
+  for (i = 0; i < vector_size (ignores); i++)
+    {
+      /* If pattern in ignore list matches pattern to remove.. */
+      pattern = vector_element (ignores, i);
+      if (NSTRCMP (toremove, pattern) == 0)
+	{
+	  /* Remove it from the list, free its allocation. */
+	  pattern = vector_remove (ignores, i);
+	  free (pattern);
+	  /* And decrement index so that the new pattern at the index of the removed one is checked. */
+	  i--;
+	}
+    }
+}
+
+/* Helper function for ignore_list_create().  Reads a pcbignore file. */
+#ifdef HAVE_FNMATCH
+static void
+ignore_list_read_pcbignore (const char *ignpath, vector_t **ignores_ptr, bool fordirs)
+{
+  FILE *fp = NULL;
+  char inputline[1024 + 1];
+  char *ptr;
+  char *start;
+  bool remove;
+  bool subdir;
+
+  /* Open the given pcbignore file. */
+  fp = fopen (ignpath, "r");
+  if (fp)
+    {
+#ifdef DEBUG
+      printf ("ignore_list_read_pcbignore() file found: \"%s\"\n", ignpath);
+#endif
+      /* Read each line of the file. */
+      while (fgets (inputline, sizeof (inputline), fp))
+	{
+	  ptr = strchr (inputline, '\n');
+	  if (ptr)
+	    {
+	      /* Remember where line starts. */
+	      start = inputline;
+	      /* Check for special meanings (must be in first column). */
+	      remove = false;
+	      subdir = false;
+	      if (inputline[0] == '#')
+		{
+		  /* Found '#' in 1st column, so just do nothing and skip line. */
+		  continue;
+		}
+	      if (inputline[0] == '!')
+		{
+		  /* Found '!' in 1st column: set the "remove" flag and skip the '!'. */
+		  remove = true;
+		  start++;
+		}
+	      if (inputline[0] == '/')
+		{
+		  /* Found '/' in 1st column: set the "subdir" flag and skip the '/'. */
+		  subdir = true;
+		  start++;
+		}
+	      /* Trim whitespace. */
+	      for (; (ptr > start) && (*(ptr - 1) == '\t' || *(ptr - 1) == ' '); ptr--) ;
+	      *ptr = '\0';
+	      for (ptr = start; *ptr && (*ptr == ' ' || *ptr == '\t'); ptr++) ;
+	      /* Handle the line. */
+	      if (remove)
+		{
+		  /* A remove line. */
+		  if (ptr[0])
+		    {
+		      /* With pattern, so remove that pattern from ignore list. */
+		      ignore_list_remove (*ignores_ptr, ptr);
+		    }
+		  else
+		    {
+		      /* No pattern, so clear ignore list. */
+		      ignore_list_destroy (ignores_ptr);
+		      *ignores_ptr = vector_create ();
+		    }
+		}
+	      else if (subdir)
+		{
+		  /* A subdir line, so append to a dir ignore list. */
+		  if (fordirs && ptr[0])
+		    {
+		      vector_append (*ignores_ptr, strdup (ptr));
+		    }
+		}
+	      else
+		{
+		  /* Any other line, append to a file ignore list. */
+		  if (!fordirs && ptr[0])
+		    {
+		      vector_append (*ignores_ptr, strdup (ptr));
+		    }
+		}
+	    }
+	}
+      /* Close file. */
+      fclose (fp);
+    }
+}
+#endif
+
+/* Create and return the ignore list for the given directory.
+ * (Returns either the list of files to ignore, or the list of directories to ignore.)
+ *
+ * Pre-populates the ignore list with the default list.  Then, if a ~/.pcb/pcbignore file
+ * is found, reads the file and augments the ignore list per its contents.  Then, if
+ * a .pcbignore file is found in the given directory's parent directory, reads the file
+ * and augments the ignore list per its contents.  Finally, if a .pcbignore file is found
+ * in the given directory, reads the file and augments the ignore list per its contents.
+ */
+static vector_t *
+ignore_list_create (const char *subdir, bool fordirs, bool rdparent)
+{
+  vector_t *ignores;
+
+#ifdef HAVE_FNMATCH
+  const char *pcbign_user = ".pcb" PCB_DIR_SEPARATOR_S "pcbignore";
+  const char *pcbign_local = ".pcbignore";
+  size_t len;
+  char *ignpath = NULL;
+#endif
+
+#ifdef DEBUG
+  printf ("ignore_list_create() %s, %s-parent - \"%s\"\n",
+	  fordirs ? "DIRS" : "FILS", rdparent ? "DO" : "NO", subdir);
+#endif
+
+#ifdef HAVE_FNMATCH
+  /* Create ignore list; populate with defaults (similar to old behavior). */
+  ignores = vector_create ();
+  if (fordirs)
+    {
+      vector_append (ignores, strdup ("CVS"));
+    }
+  else
+    {
+      vector_append (ignores, strdup ("Makefile"));
+      vector_append (ignores, strdup ("Makefile.*"));
+      vector_append (ignores, strdup ("*.png"));
+      vector_append (ignores, strdup ("*.html"));
+      vector_append (ignores, strdup ("*.pcb"));
+    }
+
+  /* First, read a pcbignore file in the user's ~/.pcb directory (if it exists). */
+  len = strlen (homedir) + strlen (PCB_DIR_SEPARATOR_S) + strlen (pcbign_user) + 1;
+  ignpath = (char *)calloc (1, len);
+  sprintf (ignpath, "%s%s%s", homedir, PCB_DIR_SEPARATOR_S, pcbign_user);
+  ignore_list_read_pcbignore (ignpath, &ignores, fordirs);
+  free (ignpath);
+  /* Second, read a .pcbignore file in the given directory's parent directory (if it exists). */
+  if (rdparent)
+    {
+      len = strlen (subdir) +
+	strlen (PCB_DIR_SEPARATOR_S ".." PCB_DIR_SEPARATOR_S) + strlen (pcbign_local) + 1;
+      ignpath = (char *)calloc (1, len);
+      sprintf (ignpath, "%s%s%s", subdir,
+	       PCB_DIR_SEPARATOR_S ".." PCB_DIR_SEPARATOR_S, pcbign_local);
+      ignore_list_read_pcbignore (ignpath, &ignores, fordirs);
+      free (ignpath);
+    }
+  /* Third, read a .pcbignore file in the given directory (if it exists). */
+  len = strlen (subdir) + strlen (PCB_DIR_SEPARATOR_S) + strlen (pcbign_local) + 1;
+  ignpath = (char *)calloc (1, len);
+  sprintf (ignpath, "%s%s%s", subdir, PCB_DIR_SEPARATOR_S, pcbign_local);
+  ignore_list_read_pcbignore (ignpath, &ignores, fordirs);
+  free (ignpath);
+#else
+  /* Create ignore list; populate with items that describe the old behavior. */
+  ignores = vector_create ();
+  if (fordirs)
+    {
+      vector_append (ignores, strdup ("CVS"));
+    }
+  else
+    {
+      vector_append (ignores, strdup ("Makefile"));
+      vector_append (ignores, strdup ("Makefile.am"));
+      vector_append (ignores, strdup ("Makefile.in"));
+      vector_append (ignores, strdup (".png"));
+      vector_append (ignores, strdup (".html"));
+      vector_append (ignores, strdup (".pcb"));
+    }
+#endif
+
+#ifdef DEBUG
+  printf ("ignore_list_create() list...\n");
+  {
+    int i;
+    for (i = 0; i < vector_size (ignores); i++)
+      {
+	char * pattern = vector_element (ignores, i);
+	printf ("  \"%s\"\n", pattern);
+      }
+  }
+#endif
+
+  /* Return the ignore list created above. */
+  return ignores;
+}
+
+/* ---------------------------------------------------------------------------
  * Parse the directory tree where newlib footprints are found
  */
 
@@ -1165,16 +1466,16 @@ pcb_basename (char *p)
  * library menu structure named entry.
  */
 static int
-LoadNewlibFootprintsFromDir(char *libpath, char *toppath)
+LoadNewlibFootprintsFromDir(char *libpath, char *toppath, bool rdparent)
 {
   char olddir[MAXPATHLEN + 1];    /* The directory we start out in (cwd) */
   char subdir[MAXPATHLEN + 1];    /* The directory holding footprints to load */
   DIR *subdirobj;                 /* Interable object holding all subdir entries */
   struct dirent *subdirentry;     /* Individual subdir entry */
+  vector_t *ignores = NULL;       /* List of ignore patterns */
   struct stat buffer;             /* Buffer used in stat */
   LibraryMenuType *menu = NULL; /* Pointer to PCB's library menu structure */
   LibraryEntryType *entry;      /* Pointer to individual menu entry */
-  size_t l;
   size_t len;
   int n_footprints = 0;           /* Running count of footprints found in this subdir */
 
@@ -1216,6 +1517,9 @@ LoadNewlibFootprintsFromDir(char *libpath, char *toppath)
       return 0;
     }
 
+  /* Determine the list of files to ignore. */
+  ignores = ignore_list_create (subdir, false, rdparent);
+
   /* Get pointer to memory holding menu */
   menu = GetLibraryMenuMemory (&Library);
   /* Populate menuname and path vars */
@@ -1231,21 +1535,13 @@ LoadNewlibFootprintsFromDir(char *libpath, char *toppath)
 /*    printf("...  Examining file %s ... \n", subdirentry->d_name); */
 #endif
 
-    /* Ignore non-footprint files found in this directory
-     * We're skipping .png and .html because those
-     * may exist in a library tree to provide an html browsable
-     * index of the library.
+    /* Ignore entries beginning with "." and
+     * anything on the file ignore list.
      */
-    l = strlen (subdirentry->d_name);
-    if (!stat (subdirentry->d_name, &buffer) && S_ISREG (buffer.st_mode)
-      && subdirentry->d_name[0] != '.'
-      && NSTRCMP (subdirentry->d_name, "CVS") != 0
-      && NSTRCMP (subdirentry->d_name, "Makefile") != 0
-      && NSTRCMP (subdirentry->d_name, "Makefile.am") != 0
-      && NSTRCMP (subdirentry->d_name, "Makefile.in") != 0
-      && (l < 4 || NSTRCMP(subdirentry->d_name + (l - 4), ".png") != 0) 
-      && (l < 5 || NSTRCMP(subdirentry->d_name + (l - 5), ".html") != 0)
-      && (l < 4 || NSTRCMP(subdirentry->d_name + (l - 4), ".pcb") != 0) )
+    if (!stat (subdirentry->d_name, &buffer)
+	&& S_ISREG (buffer.st_mode)
+	&& subdirentry->d_name[0] != '.'
+	&& !(ignore_list_match (ignores, subdirentry->d_name)) )
       {
 #ifdef DEBUG
 /*	printf("...  Found a footprint %s ... \n", subdirentry->d_name); */
@@ -1274,6 +1570,8 @@ LoadNewlibFootprintsFromDir(char *libpath, char *toppath)
       }
   }
   /* Done.  Clean up, cd back into old dir, and return */
+  if (ignores)
+    ignore_list_destroy (&ignores);
   closedir (subdirobj);
   if (chdir (olddir))
     ChdirErrorMessage (olddir);
@@ -1297,6 +1595,7 @@ ParseLibraryTree (void)
   char *p;                         /* Helper string used in iteration */
   DIR *dirobj;                     /* Iterable directory object */
   struct dirent *direntry = NULL;  /* Object holding individual directory entries */
+  vector_t *ignores = NULL;        /* List of ignore patterns */
   struct stat buffer;              /* buffer used in stat */
   int n_footprints = 0;            /* Running count of footprints found */
 
@@ -1354,7 +1653,7 @@ ParseLibraryTree (void)
 #endif
 
       /* Next read in any footprints in the top level dir */
-      n_footprints += LoadNewlibFootprintsFromDir("(local)", toppath);
+      n_footprints += LoadNewlibFootprintsFromDir("(local)", toppath, false);
 
       /* Then open this dir so we can loop over its contents. */
       if ((dirobj = opendir (toppath)) == NULL)
@@ -1362,6 +1661,9 @@ ParseLibraryTree (void)
 	  OpendirErrorMessage (toppath);
 	  continue;
 	}
+
+      /* Determine the list of directories to ignore. */
+      ignores = ignore_list_create (toppath, true, false);
 
       /* Now loop over files in this directory looking for subdirs.
        * For each direntry which is a valid subdirectory,
@@ -1372,17 +1674,17 @@ ParseLibraryTree (void)
 #ifdef DEBUG
 	  printf("In ParseLibraryTree loop examining 2nd level direntry %s ... \n", direntry->d_name);
 #endif
-	  /* Find subdirectories.  Ignore entries beginning with "." and CVS
-	   * directories.
+	  /* Find subdirectories.  Ignore entries beginning with "." and
+	   * anything on the directory ignore list.
 	   */
 	  if (!stat (direntry->d_name, &buffer)
 	      && S_ISDIR (buffer.st_mode) 
 	      && direntry->d_name[0] != '.'
-	      && NSTRCMP (direntry->d_name, "CVS") != 0)
+	      && !(ignore_list_match (ignores, direntry->d_name)) )
 	    {
 	      /* Found a valid subdirectory.  Try to load footprints from it.
 	       */
-	      n_footprints += LoadNewlibFootprintsFromDir(direntry->d_name, toppath);
+	      n_footprints += LoadNewlibFootprintsFromDir(direntry->d_name, toppath, true);
 	    }
 	}
       closedir (dirobj);
@@ -1396,6 +1698,8 @@ ParseLibraryTree (void)
   printf("Leaving ParseLibraryTree, found %d footprints.\n", n_footprints);
 #endif
 
+  if (ignores)
+    ignore_list_destroy (&ignores);
   free (libpaths);
   return n_footprints;
 }
