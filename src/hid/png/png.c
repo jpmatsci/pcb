@@ -861,8 +861,22 @@ png_do_export (HID_Attr_Val * options)
     {
       x_shift = 0;
       y_shift = 0;
-      h = PCB->MaxHeight;
-      w = PCB->MaxWidth;
+      if (PCB->MaxHeight > PCB->ExtentMaxX - PCB->ExtentMinX)
+        {
+          h = PCB->MaxHeight;
+        }
+      else
+        {
+          h = PCB->ExtentMaxX - PCB->ExtentMinX;
+        }
+      if (PCB->MaxWidth > PCB->ExtentMaxY - PCB->ExtentMinY)
+        {
+          w = PCB->MaxWidth;
+        }
+      else
+        {
+          w = PCB->ExtentMaxY - PCB->ExtentMinY;
+        }
     }
 
   /*
