@@ -2411,10 +2411,9 @@ ChangePCBSize (Coord Width, Coord Height)
   hid_action ("PCBChanged");
 }
 
-/* ---------------------------------------------------------------------------
- * finds the maximum size of a layout
- * according to the outline layer,
- * if present.
+/*!
+ * \brief Finds the maximum size of a layout according to the outline
+ * layer, if present.
  */
 void
 UpdateExtents (void)
@@ -2471,9 +2470,10 @@ UpdateExtents (void)
     }
 }
 
-/* ---------------------------------------------------------------------------
- * changes the mask size of a pad
- * returns TRUE if changed
+/*!
+ * \brief Changes the mask size of a pad.
+ *
+ * Returns TRUE if changed.
  */
 static void *
 ChangePadMaskSize (ElementType *Element, PadType *Pad)
