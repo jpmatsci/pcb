@@ -4270,6 +4270,7 @@ ActionMinMaskGap (int argc, char **argv, Coord x, Coord y)
   char *units = ARG (2);
   bool absolute;
   Coord value;
+  Coord thickness;
   int flags;
 
   if (!function)
@@ -4291,10 +4292,15 @@ ActionMinMaskGap (int argc, char **argv, Coord x, Coord y)
     {
       if (!TEST_FLAGS (flags, pin))
 	continue;
-      if (pin->Mask < pin->Thickness + value)
-	{
+      if (TEST_FLAG(HOLEFLAG, pin))
+	thickness = pin->DrillingHole;
+      else
+	thickness = pin->Thickness;
+
+      if (pin->Mask < thickness + value)
+        {
 	  ChangeObjectMaskSize (PIN_TYPE, element, pin, 0,
-				pin->Thickness + value, 1);
+				thickness + value, 1);
 	  RestoreUndoSerialNumber ();
 	}
     }
