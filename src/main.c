@@ -1,3 +1,7 @@
+/*!
+ * Main program, initializes some stuff and handles user input.
+ */
+
 /*
  *                            COPYRIGHT
  *
@@ -24,9 +28,6 @@
  *
  */
 
-
-/* main program, initializes some stuff and handles user input
- */
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -84,8 +85,8 @@ extern void stroke_init (void);
 #endif
 
 
-/* ----------------------------------------------------------------------
- * initialize signal and error handlers
+/*!
+ * Initialize signal and error handlers.
  */
 static void
 InitHandler (void)
@@ -1610,10 +1611,9 @@ REGISTER_ATTRIBUTES (main_attribute_list)
   Settings.increments = get_increments_struct (Settings.grid_unit->family);
 }
 
-/* ---------------------------------------------------------------------- 
+/*!
  * Print help or version messages.
  */
-
 static void
 print_version ()
 {
@@ -1846,21 +1846,21 @@ char *program_directory = 0;
 
 #include "dolists.h"
 
+/*!
+ * Init application:\n
+ * - make program name available for error handlers
+ * - evaluate special options
+ * - initialize toplevel shell and resources
+ * - create an empty PCB with default symbols
+ * - initialize all other widgets
+ * - update screen and get size of drawing area
+ * - evaluate command-line arguments
+ * - register 'call on exit()' function
+ */
 int
 main (int argc, char *argv[])
 {
   int i;
-
-  /* init application:
-   * - make program name available for error handlers
-   * - evaluate special options
-   * - initialize toplevel shell and resources
-   * - create an empty PCB with default symbols
-   * - initialize all other widgets
-   * - update screen and get size of drawing area
-   * - evaluate command-line arguments
-   * - register 'call on exit()' function
-   */
 
 #include "core_lists.h"
   setbuf (stdout, 0);
