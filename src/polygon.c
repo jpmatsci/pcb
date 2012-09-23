@@ -25,48 +25,51 @@
  */
 
 
-/*
-
-Here's a brief tour of the data and life of a polygon, courtesy of Ben
-Jackson:
-
-A PCB PolygonType contains an array of points outlining the polygon.
-This is what is manipulated by the UI and stored in the saved PCB.
-
-A PolygonType also contains a POLYAREA called 'Clipped' which is
-computed dynamically by InitClip every time a board is loaded.  The
-point array is coverted to a POLYAREA by original_poly and then holes
-are cut in it by clearPoly.  After that it is maintained dynamically
-as parts are added, moved or removed (this is why sometimes bugs can
-be fixed by just re-loading the board).
-
-A POLYAREA consists of a linked list of PLINE structures.  The head of
-that list is POLYAREA.contours.  The first contour is an outline of a
-filled region.  All of the subsequent PLINEs are holes cut out of that
-first contour.  POLYAREAs are in a doubly-linked list and each member
-of the list is an independent (non-overlapping) area with its own
-outline and holes.  The function biggest() finds the largest POLYAREA
-so that PolygonType.Clipped points to that shape.  The rest of the
-polygon still exists, it's just ignored when turning the polygon into
-copper.
-
-The first POLYAREA in PolygonType.Clipped is what is used for the vast
-majority of Polygon related tests.  The basic logic for an
-intersection is "is the target shape inside POLYAREA.contours and NOT
-fully enclosed in any of POLYAREA.contours.next... (the holes)".
-
-The polygon dicer (NoHolesPolygonDicer and r_NoHolesPolygonDicer)
-emits a series of "simple" PLINE shapes.  That is, the PLINE isn't
-linked to any other "holes" oulines).  That's the meaning of the first
-test in r_NoHolesPolygonDicer.  It is testing to see if the PLINE
-contour (the first, making it a solid outline) has a valid next
-pointer (which would point to one or more holes).  The dicer works by
-recursively chopping the polygon in half through the first hole it
-sees (which is guaranteed to eliminate at least that one hole).  The
-dicer output is used for HIDs which cannot render things with holes
-(which would require erasure).
-
-*/
+/*!
+ * Here's a brief tour of the data and life of a polygon, courtesy of
+ * Ben Jackson:\n
+ * \n
+ * A PCB PolygonType contains an array of points outlining the polygon.\n
+ * This is what is manipulated by the UI and stored in the saved PCB.\n
+ * \n
+ * A PolygonType also contains a POLYAREA called 'Clipped' which is
+ * computed dynamically by InitClip every time a board is loaded.\n
+ * The point array is coverted to a POLYAREA by original_poly and then
+ * holes are cut in it by clearPoly.\n
+ * After that it is maintained dynamically as parts are added, moved or
+ * removed (this is why sometimes bugs can be fixed by just re-loading
+ * the board).\n
+ * \n
+ * A POLYAREA consists of a linked list of PLINE structures.\n
+ * The head of that list is POLYAREA.contours.\n
+ * The first contour is an outline of a filled region.\n
+ * All of the subsequent PLINEs are holes cut out of that first contour.\n
+ * POLYAREAs are in a doubly-linked list and each member of the list is
+ * an independent (non-overlapping) area with its own outline and holes.\n
+ * The function biggest() finds the largest POLYAREA so that
+ * PolygonType.Clipped points to that shape.\n
+ * The rest of the polygon still exists, it's just ignored when turning
+ * the polygon into copper.\n
+ * \n
+ * The first POLYAREA in PolygonType.Clipped is what is used for the
+ * vast majority of Polygon related tests.\n
+ * The basic logic for an intersection is "is the target shape inside
+ * POLYAREA.contours and NOT fully enclosed in any of
+ * POLYAREA.contours.next... (the holes)".\n
+ * \n
+ * The polygon dicer (NoHolesPolygonDicer and r_NoHolesPolygonDicer)
+ * emits a series of "simple" PLINE shapes.\n
+ * That is, the PLINE isn't linked to any other "holes" oulines).\n
+ * That's the meaning of the first test in r_NoHolesPolygonDicer.\n
+ * It is testing to see if the PLINE contour (the first, making it a
+ * solid outline) has a valid next pointer (which would point to one or
+ * more holes).\n
+ * The dicer works by recursively chopping the polygon in half through
+ * the first hole it sees (which is guaranteed to eliminate at least
+ * that one hole).\n
+ * The dicer output is used for HIDs which cannot render things with
+ * holes (which would require erasure).\n
+ */
 
 /* special polygon editing routines
  */
@@ -129,7 +132,9 @@ polygon_point_idx (PolygonType *polygon, PointType *point)
   return ((char *)point - (char *)polygon->Points) / sizeof (PointType);
 }
 
-/* Find contour number: 0 for outer, 1 for first hole etc.. */
+/*!
+ * \brief Find contour number: 0 for outer, 1 for first hole etc..
+ */
 Cardinal
 polygon_point_contour (PolygonType *polygon, Cardinal point)
 {
@@ -386,12 +391,15 @@ OctagonPoly (Coord x, Coord y, Coord radius)
   return ContourToPoly (contour);
 }
 
-/* add verticies in a fractional-circle starting from v 
- * centered at X, Y and going counter-clockwise
- * does not include the first point
- * last argument is 1 for a full circle
- * 2 for a half circle
- * or 4 for a quarter circle
+/*!
+ * \brief Add verticies in a fractional-circle starting from v,
+ * centered at X, Y and going counter-clockwise.\n
+ *
+ * Does not include the first point.\n
+ * Last argument is:\n
+ * 1 for a full circle,\n
+ * 2 for a half circle,\n
+ * or 4 for a quarter circle.
  */
 void
 frac_circle (PLINE * c, Coord X, Coord Y, Vector v, int range)
@@ -634,7 +642,9 @@ LinePoly (LineType * L, Coord thick)
   return np;
 }
 
-/* make a rounded-corner rectangle */
+/*!
+ * \brief Make a rounded-corner rectangle.
+ */
 POLYAREA *
 SquarePadPoly (PadType * pad, Coord clear)
 {
@@ -710,7 +720,9 @@ SquarePadPoly (PadType * pad, Coord clear)
   return np;
 }
 
-/* clear np1 from the polygon */
+/*!
+ * \brief Clear np1 from the polygon.
+ */
 static int
 Subtract (POLYAREA * np1, PolygonType * p, bool fnp)
 {
@@ -752,7 +764,9 @@ Subtract (POLYAREA * np1, PolygonType * p, bool fnp)
   return 1;
 }
 
-/* create a polygon of the pin clearance */
+/*!
+ * \brief Create a polygon of the pin clearance.
+ */
 POLYAREA *
 PinPoly (PinType * pin, Coord thick, Coord clear)
 {
@@ -782,7 +796,9 @@ BoxPolyBloated (BoxType *box, Coord bloat)
                    box->Y1 - bloat, box->Y2 + bloat);
 }
 
-/* remove the pin clearance from the polygon */
+/*!
+ * \brief Remove the pin clearance from the polygon.
+ */
 static int
 SubtractPin (DataType * d, PinType * pin, LayerType * l, PolygonType * p)
 {
@@ -1227,10 +1243,13 @@ InitClip (DataType *Data, LayerType *layer, PolygonType * p)
   return 1;
 }
 
-/* --------------------------------------------------------------------------
- * remove redundant polygon points. Any point that lies on the straight
- * line between the points on either side of it is redundant.
- * returns true if any points are removed
+/*!
+ * \brief Remove redundant polygon points.
+ *
+ * Any point that lies on the straight line between the points on either
+ * side of it is redundant.
+ *
+ * \return true if any points are removed.
  */
 bool
 RemoveExcessPolygonPoints (LayerType *Layer, PolygonType *Polygon)
@@ -1261,8 +1280,8 @@ RemoveExcessPolygonPoints (LayerType *Layer, PolygonType *Polygon)
   return (changed);
 }
 
-/* ---------------------------------------------------------------------------
- * returns the index of the polygon point which is the end
+/*!
+ * \brief Returns the index of the polygon point which is the end
  * point of the segment with the lowest distance to the passed
  * coordinates
  */
@@ -1316,8 +1335,8 @@ GetLowestDistancePolygonPoint (PolygonType *Polygon, Coord X, Coord Y)
   return (result);
 }
 
-/* ---------------------------------------------------------------------------
- * go back to the  previous point of the polygon
+/*!
+ * \brief Go back to the  previous point of the polygon.
  */
 void
 GoToPreviousPoint (void)
@@ -1349,8 +1368,8 @@ GoToPreviousPoint (void)
     }
 }
 
-/* ---------------------------------------------------------------------------
- * close polygon if possible
+/*!
+ * \brief Close polygon if possible.
  */
 void
 ClosePolygon (void)
@@ -1386,8 +1405,9 @@ ClosePolygon (void)
     Message (_("A polygon has to have at least 3 points\n"));
 }
 
-/* ---------------------------------------------------------------------------
- * moves the data of the attached (new) polygon to the current layer
+/*!
+ * \brief Moves the data of the attached (new) polygon to the current
+ * layer.
  */
 void
 CopyAttachedPolygonToLayer (void)
@@ -1421,9 +1441,11 @@ CopyAttachedPolygonToLayer (void)
   IncrementUndoSerialNumber ();
 }
 
-/* find polygon holes in range, then call the callback function for
- * each hole. If the callback returns non-zero, stop
- * the search.
+/*!
+ * \brief Find polygon holes in range, then call the callback function
+ * for each hole.
+ *
+ * If the callback returns non-zero, stop the search.
  */
 int
 PolygonHoles (PolygonType *polygon, const BoxType *range,
@@ -1697,8 +1719,10 @@ IsRectangleInPolygon (Coord X1, Coord Y1, Coord X2, Coord Y2, PolygonType *p)
   return isects (s, p, true);
 }
 
-/* NB: This function will free the passed POLYAREA.
- *     It must only be passed a single POLYAREA (pa->f == pa->b == pa)
+/*!
+ * \brief This function will free the passed POLYAREA.
+ *
+ * It must only be passed a single POLYAREA (pa->f == pa->b == pa).
  */
 static void
 r_NoHolesPolygonDicer (POLYAREA * pa,
@@ -1783,7 +1807,10 @@ NoHolesPolygonDicer (PolygonType *p, const BoxType * clip,
   while ((cur = next) != main_contour);
 }
 
-/* make a polygon split into multiple parts into multiple polygons */
+/*!
+ * \brief Make a polygon split into multiple parts into multiple
+ * polygons.
+ */
 bool
 MorphPolygon (LayerType *layer, PolygonType *poly)
 {
@@ -1903,8 +1930,9 @@ debug_polygon (PolygonType *p)
     }
 }
 
-/* Convert a POLYAREA (and all linked POLYAREA) to
- * raw PCB polygons on the given layer.
+/*!
+ * \brief Convert a POLYAREA (and all linked POLYAREA) to raw PCB
+ * polygons on the given layer.
  */
 void
 PolyToPolygonsOnLayer (DataType *Destination, LayerType *Layer,
