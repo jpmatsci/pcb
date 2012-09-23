@@ -1,3 +1,10 @@
+/*!
+ * \brief Functions used to change the mirror flag of an object.
+ *
+ * An undo operation is not implemented because it's easy to recover an
+ * object.
+ */
+
 /*
  *                            COPYRIGHT
  *
@@ -24,13 +31,6 @@
  *
  */
 
-
-/* functions used to change the mirror flag of an object
- *
- * an undo operation is not implemented because it's easy to
- * recover an object
- */
-
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -52,9 +52,10 @@
 #include <dmalloc.h>
 #endif
 
-/* ---------------------------------------------------------------------------
- * mirrors the coordinates of an element
- * an additional offset is passed
+/*!
+ * Mirrors the coordinates of an element.
+ *
+ * An additional offset is passed.
  */
 void
 MirrorElementCoordinates (DataType *Data, ElementType *Element,
