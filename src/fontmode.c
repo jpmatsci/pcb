@@ -50,11 +50,13 @@
 #include <dmalloc.h>
 #endif
 
-/* FIXME - we currently hardcode the grid and PCB size.  What we
-   should do in the future is scan the font for its extents, and size
-   the grid appropriately.  Also, when we convert back to a font, we
-   should search the grid for the gridlines and use them to figure out
-   where the symbols are. */
+/*!
+ * \todo FIXME - we currently hardcode the grid and PCB size.\n
+ * What we should do in the future is scan the font for its extents, and
+ * size the grid appropriately.\n
+ * Also, when we convert back to a font, we should search the grid for
+ * the gridlines and use them to figure out where the symbols are.
+ */
 
 #define CELL_SIZE	MIL_TO_COORD (100)
 #define CELL_OFFSET	MIL_TO_COORD (10)
