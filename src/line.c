@@ -48,8 +48,8 @@
 
 static double drc_lines (PointType *end, bool way);
 
-/* ---------------------------------------------------------------------------
- * Adjust the attached line to 45 degrees if necessary
+/*!
+ * Adjust the attached line to 45 degrees if necessary.
  */
 void
 AdjustAttachedLine (void)
@@ -77,16 +77,17 @@ AdjustAttachedLine (void)
   FortyFiveLine (line);
 }
 
-/* ---------------------------------------------------------------------------
- * makes the attached line fit into a 45 degree direction
+/*!
+ * Makes the attached line fit into a 45 degree direction.
  *
- * directions:
- *
+ * Directions:\n
+ * <pre>
  *           4
  *          5 3
  *         6   2
  *          7 1
  *           0
+ * </pre>
  */
 void
 FortyFiveLine (AttachedLineType *Line)
@@ -167,8 +168,8 @@ FortyFiveLine (AttachedLineType *Line)
     }
 }
 
-/* ---------------------------------------------------------------------------
- *  adjusts the insert lines to make them 45 degrees as necessary
+/*!
+ * Adjusts the insert lines to make them 45 degrees as necessary.
  */
 void
 AdjustTwoLine (bool way)
@@ -277,12 +278,13 @@ drcArc_callback (const BoxType * b, void *cl)
   return 1;
 }
 
-/* drc_lines() checks for intersectors against two lines and
+/*!
+ * drc_lines() checks for intersectors against two lines and
  * adjusts the end point until there is no intersection or
- * it winds up back at the start. If way is false it checks
- * straight start, 45 end lines, otherwise it checks 45 start,
- * straight end. 
- *
+ * it winds up back at the start.\n
+ * If way is false it checks straight start, 45 end lines, otherwise it
+ * checks 45 start, straight end.\n
+ *\n
  * It returns the straight-line length of the best answer, and
  * changes the position of the input point to the best answer.
  */
