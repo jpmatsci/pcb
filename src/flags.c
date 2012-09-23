@@ -178,7 +178,8 @@ FlagLayerActive (int n)
   return current_layer == n;
 }
 
-/* The cast to (int) is ONLY valid because we know we are
+/*!
+ * The cast to (int) is ONLY valid because we know we are
  * taking offsets on structures where the offset will fit
  * in an integer variable. It silences compile warnings on
  * 64bit machines.
