@@ -25,16 +25,21 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* we need one ID per context - short int with 64k IDs should be enough */
+/*!
+ * We need one ID per context - short int with 64k IDs should be enough.
+ */
 typedef unsigned int leaky_idx_t;
 
 
-/* This structure should be as big as void *, which should be the natural
-bit-width of the architecture. We allocate extra admin space to be as big
-as this union, to preserve alignment of pointers returned by malloc().
-NOTE: in the special corner case when leaky_idx_t is wider than void * but
-not multiple of it, the alignment will be messed up, potentially causing slower
-memory access. */
+/*!
+ * This structure should be as big as void *, which should be the
+ * natural bit-width of the architecture.\n
+ * We allocate extra admin space to be as big as this union, to preserve
+ * alignment of pointers returned by malloc().\n
+ * \note In the special corner case when leaky_idx_t is wider than
+ * void * but not multiple of it, the alignment will be messed up,
+ * potentially causing slower memory access.
+ */
 typedef union {
   leaky_idx_t idx;
   void *ptr;
