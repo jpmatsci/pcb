@@ -1,3 +1,9 @@
+/*!
+ * \brief Operations on heaps.
+ *
+ * \author Copyright (c) 2001 C. Scott Ananian.
+ */
+
 /*
  *                            COPYRIGHT
  *
@@ -25,13 +31,6 @@
  *
  */
 
-/* this file, heap.c, was written and is
- * Copyright (c) 2001 C. Scott Ananian.
- */
-
-/* operations on heaps.
- */
-
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -46,7 +45,9 @@
 #include <dmalloc.h>
 #endif
 
-/* define this for more thorough self-checking of data structures */
+/*!
+ * Define this for more thorough self-checking of data structures.
+ */
 #undef SLOW_ASSERTIONS
 
 /* ---------------------------------------------------------------------------
@@ -105,7 +106,9 @@ __heap_is_good (heap_t * heap)
 }
 #endif /* ! NDEBUG */
 
-/* create an empty heap */
+/*!
+ * Create an empty heap.
+ */
 heap_t *
 heap_create ()
 {
@@ -121,7 +124,9 @@ heap_create ()
   return heap;
 }
 
-/* destroy a heap */
+/*!
+ * Destroy a heap.
+ */
 void
 heap_destroy (heap_t ** heap)
 {
@@ -133,7 +138,9 @@ heap_destroy (heap_t ** heap)
   *heap = NULL;
 }
 
-/* free all elements in the heap */
+/*!
+ * Free all elements in the heap.
+ */
 void heap_free (heap_t *heap, void (*freefunc) (void *))
 {
   assert (heap);
@@ -145,7 +152,9 @@ void heap_free (heap_t *heap, void (*freefunc) (void *))
    }
 }
 
-/* -- mutation -- */
+/*!
+ * Mutation.
+ */
 static void
 __upheap (heap_t * heap, int k)
 {
@@ -184,7 +193,8 @@ heap_insert (heap_t * heap, cost_t cost, void *data)
   return;
 }
 
-/* this procedure moves down the heap, exchanging the node at position
+/*!
+ * This procedure moves down the heap, exchanging the node at position
  * k with the smaller of its two children as necessary and stopping when
  * the node at k is smaller than both children or the bottom is reached.
  */
@@ -246,7 +256,9 @@ heap_replace (heap_t * heap, cost_t cost, void *data)
   return heap->element[0].data;
 }
 
-/* -- interrogation -- */
+/*!
+ * Interrogation.
+ */
 int
 heap_is_empty (heap_t * heap)
 {
@@ -254,7 +266,9 @@ heap_is_empty (heap_t * heap)
   return heap->size == 0;
 }
 
-/* -- size -- */
+/*!
+ * Size.
+ */
 int
 heap_size (heap_t * heap)
 {
