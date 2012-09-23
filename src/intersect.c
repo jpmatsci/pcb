@@ -1,3 +1,9 @@
+/*!
+ * \brief Rectangle intersection/union routines.
+ *
+ * \author Copyright (c) 2001 C. Scott Ananian.
+ */
+
 /*
  *                            COPYRIGHT
  *
@@ -23,13 +29,6 @@
  *  harry eaton, 6697 Buttonhole Ct, Columbia, MD 21044 USA
  *  haceaton@aplcomm.jhuapl.edu
  *
- */
-
-/* this file, intersect.c, was written and is
- * Copyright (c) 2001 C. Scott Ananian
- */
-
-/* rectangle intersection/union routines.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -81,7 +80,7 @@ typedef struct
 }
 LocationList;
 
-/* ---------------------------------------------------------------------------
+/*!
  * Create a sorted list of unique y coords from a BoxList.
  */
 static LocationList
@@ -108,8 +107,9 @@ createSortedYList (BoxListType *boxlist)
   return yCoords;
 }
 
-/* ---------------------------------------------------------------------------
- * Create an empty segment tree from the given sorted list of uniq y coords.
+/*!
+ * Create an empty segment tree from the given sorted list of unique y
+ * coords.
  */
 static SegmentTree
 createSegmentTree (Coord * yCoords, int N)
@@ -187,11 +187,11 @@ deleteSegment (SegmentTree * st, int n, Coord Y1, Coord Y2)
     st->nodes[n * 2].area + st->nodes[n * 2 + 1].area;
 }
 
-/* ---------------------------------------------------------------------------
+/*!
  * Compute the area of the intersection of the given rectangles; that is,
  * the area covered by more than one rectangle (counted twice if the area is
  * covered by three rectangles, three times if covered by four rectangles,
- * etc.).
+ * etc.).\n
  * Runs in O(N ln N) time.
  */
 double
@@ -207,9 +207,9 @@ ComputeIntersectionArea (BoxListType *boxlist)
   return area * 0.0001 - ComputeUnionArea (boxlist);
 }
 
-/* ---------------------------------------------------------------------------
- * Compute the area of the union of the given rectangles.
- * O(N ln N) time.
+/*!
+ * Compute the area of the union of the given rectangles.\n
+ * Runs in O(N ln N) time.
  */
 double
 ComputeUnionArea (BoxListType *boxlist)
