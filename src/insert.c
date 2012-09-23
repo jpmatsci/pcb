@@ -1,3 +1,7 @@
+/*!
+ * \brief Functions used to insert points into objects.
+ */
+
 /*
  *                            COPYRIGHT
  *
@@ -24,9 +28,6 @@
  *
  */
 
-
-/* functions used to insert points into objects
- */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -83,8 +84,8 @@ static ObjectFunctionType InsertFunctions = {
   InsertPointIntoRat
 };
 
-/* ---------------------------------------------------------------------------
- * inserts a point into a rat-line
+/*!
+ * Inserts a point into a rat-line.
  */
 static void *
 InsertPointIntoRat (RatType *Rat)
@@ -112,8 +113,8 @@ InsertPointIntoRat (RatType *Rat)
   return (newone);
 }
 
-/* ---------------------------------------------------------------------------
- * inserts a point into a line
+/*!
+ * Inserts a point into a line.
  */
 static void *
 InsertPointIntoLine (LayerType *Layer, LineType *Line)
@@ -154,8 +155,8 @@ InsertPointIntoLine (LayerType *Layer, LineType *Line)
   return (line);
 }
 
-/* ---------------------------------------------------------------------------
- * inserts a point into a polygon
+/*!
+ * Inserts a point into a polygon.
  */
 static void *
 InsertPointIntoPolygon (LayerType *Layer, PolygonType *Polygon)
@@ -206,8 +207,8 @@ InsertPointIntoPolygon (LayerType *Layer, PolygonType *Polygon)
   return (&Polygon->Points[InsertAt]);
 }
 
-/* ---------------------------------------------------------------------------
- * inserts point into objects
+/*!
+ * Inserts point into objects.
  */
 void *
 InsertPointIntoObject (int Type, void *Ptr1, void *Ptr2, Cardinal * Ptr3,
@@ -230,8 +231,8 @@ InsertPointIntoObject (int Type, void *Ptr1, void *Ptr2, Cardinal * Ptr3,
   return (ptr);
 }
 
-/* ---------------------------------------------------------------------------
- *  adjusts the insert point to make 45 degree lines as necessary
+/*!
+ * Adjusts the insert point to make 45 degree lines as necessary.
  */
 PointType *
 AdjustInsertPoint (void)
