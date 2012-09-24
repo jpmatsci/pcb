@@ -1,3 +1,9 @@
+/*!
+ * \file src/netlist.c
+ *
+ * \brief Generic netlist operations.
+ */
+
 /*
  *                            COPYRIGHT
  *
@@ -22,9 +28,6 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- */
-
-/* generic netlist operations
  */
 
 #ifdef HAVE_CONFIG_H
@@ -192,9 +195,11 @@ netlist_norats (LibraryMenuType * net, LibraryEntryType * pin)
   NetlistChanged (0);
 }
 
-/* The primary purpose of this action is to remove the netlist
-   completely so that a new one can be loaded, usually via a gsch2pcb
-   style script.  */
+/*!
+ * \brief The primary purpose of this action is to remove the netlist
+ * completely so that a new one can be loaded, usually via a gsch2pcb
+ * style script.
+ */
 static void
 netlist_clear (LibraryMenuType * net, LibraryEntryType * pin)
 {
@@ -242,8 +247,10 @@ netlist_style (LibraryMenuType *net, const char *style)
   net->Style = STRDUP ((char *)style);
 }
 
-/* The primary purpose of this action is to rebuild a netlist from a
-   script, in conjunction with the clear action above.  */
+/*!
+ * \brief The primary purpose of this action is to rebuild a netlist
+ * from a script, in conjunction with the clear action above.
+ */
 static int
 netlist_add (const char *netname, const char *pinname)
 {
