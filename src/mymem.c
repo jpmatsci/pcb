@@ -1,3 +1,9 @@
+/*!
+ * \file src/mymem.c
+ *
+ * \brief Memory management functions.
+ */
+
 /*
  *                            COPYRIGHT
  *
@@ -24,9 +30,6 @@
  *
  */
 
-
-/* memory management functions
- */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -63,8 +66,9 @@ g_list_free_full (GList *list, GDestroyNotify free_func)
 }
 #endif
 
-/* ---------------------------------------------------------------------------
- * get next slot for a rubberband connection, allocates memory if necessary
+/*!
+ * \brief Get next slot for a rubberband connection, allocates memory if
+ * necessary.
  */
 RubberbandType *
 GetRubberbandMemory (void)
@@ -109,8 +113,8 @@ FreePointerListMemory (PointerListType *list)
   memset (list, 0, sizeof (PointerListType));
 }
 
-/* ---------------------------------------------------------------------------
- * get next slot for a box, allocates memory if necessary
+/*!
+ * \brief Get next slot for a box, allocates memory if necessary.
  */
 BoxType *
 GetBoxMemory (BoxListType *Boxes)
@@ -130,8 +134,8 @@ GetBoxMemory (BoxListType *Boxes)
 }
 
 
-/* ---------------------------------------------------------------------------
- * get next slot for a connection, allocates memory if necessary
+/*!
+ * \brief Get next slot for a connection, allocates memory if necessary.
  */
 ConnectionType *
 GetConnectionMemory (NetType *Net)
@@ -150,8 +154,8 @@ GetConnectionMemory (NetType *Net)
   return (con + Net->ConnectionN++);
 }
 
-/* ---------------------------------------------------------------------------
- * get next slot for a subnet, allocates memory if necessary
+/*!
+ * \brief Get next slot for a subnet, allocates memory if necessary.
  */
 NetType *
 GetNetMemory (NetListType *Netlist)
@@ -169,8 +173,8 @@ GetNetMemory (NetListType *Netlist)
   return (net + Netlist->NetN++);
 }
 
-/* ---------------------------------------------------------------------------
- * get next slot for a net list, allocates memory if necessary
+/*!
+ * \brief Get next slot for a net list, allocates memory if necessary.
  */
 NetListType *
 GetNetListMemory (NetListListType *Netlistlist)
@@ -189,8 +193,8 @@ GetNetListMemory (NetListListType *Netlistlist)
     }
   return (netlist + Netlistlist->NetListN++);
 }
-/* ---------------------------------------------------------------------------
- * get next slot for a pin, allocates memory if necessary
+/*!
+ * \brief Get next slot for a pin, allocates memory if necessary.
  */
 PinType *
 GetPinMemory (ElementType *element)
@@ -210,8 +214,8 @@ FreePin (PinType *data)
   g_slice_free (PinType, data);
 }
 
-/* ---------------------------------------------------------------------------
- * get next slot for a pad, allocates memory if necessary
+/*!
+ * \brief Get next slot for a pad, allocates memory if necessary.
  */
 PadType *
 GetPadMemory (ElementType *element)
@@ -231,8 +235,8 @@ FreePad (PadType *data)
   g_slice_free (PadType, data);
 }
 
-/* ---------------------------------------------------------------------------
- * get next slot for a via, allocates memory if necessary
+/*!
+ * \brief Get next slot for a via, allocates memory if necessary.
  */
 PinType *
 GetViaMemory (DataType *data)
@@ -252,8 +256,8 @@ FreeVia (PinType *data)
   g_slice_free (PinType, data);
 }
 
-/* ---------------------------------------------------------------------------
- * get next slot for a Rat, allocates memory if necessary
+/*!
+ * \brief Get next slot for a Rat, allocates memory if necessary
  */
 RatType *
 GetRatMemory (DataType *data)
@@ -273,8 +277,8 @@ FreeRat (RatType *data)
   g_slice_free (RatType, data);
 }
 
-/* ---------------------------------------------------------------------------
- * get next slot for a line, allocates memory if necessary
+/*!
+ * \brief Get next slot for a line, allocates memory if necessary.
  */
 LineType *
 GetLineMemory (LayerType *layer)
@@ -294,8 +298,8 @@ FreeLine (LineType *data)
   g_slice_free (LineType, data);
 }
 
-/* ---------------------------------------------------------------------------
- * get next slot for an arc, allocates memory if necessary
+/*!
+ * \brief Get next slot for an arc, allocates memory if necessary.
  */
 ArcType *
 GetArcMemory (LayerType *layer)
@@ -315,8 +319,8 @@ FreeArc (ArcType *data)
   g_slice_free (ArcType, data);
 }
 
-/* ---------------------------------------------------------------------------
- * get next slot for a text object, allocates memory if necessary
+/*!
+ * \brief Get next slot for a text object, allocates memory if necessary.
  */
 TextType *
 GetTextMemory (LayerType *layer)
@@ -336,8 +340,9 @@ FreeText (TextType *data)
   g_slice_free (TextType, data);
 }
 
-/* ---------------------------------------------------------------------------
- * get next slot for a polygon object, allocates memory if necessary
+/*!
+ * \brief Get next slot for a polygon object, allocates memory if
+ * necessary.
  */
 PolygonType *
 GetPolygonMemory (LayerType *layer)
@@ -357,9 +362,9 @@ FreePolygon (PolygonType *data)
   g_slice_free (PolygonType, data);
 }
 
-/* ---------------------------------------------------------------------------
- * gets the next slot for a point in a polygon struct, allocates memory
- * if necessary
+/*!
+ * \brief Gets the next slot for a point in a polygon struct, allocates
+ * memory if necessary.
  */
 PointType *
 GetPointMemoryInPolygon (PolygonType *Polygon)
@@ -378,9 +383,9 @@ GetPointMemoryInPolygon (PolygonType *Polygon)
   return (points + Polygon->PointN++);
 }
 
-/* ---------------------------------------------------------------------------
- * gets the next slot for a point in a polygon struct, allocates memory
- * if necessary
+/*!
+ * \brief Gets the next slot for a point in a polygon struct, allocates
+ * memory if necessary.
  */
 Cardinal *
 GetHoleIndexMemoryInPolygon (PolygonType *Polygon)
@@ -399,8 +404,8 @@ GetHoleIndexMemoryInPolygon (PolygonType *Polygon)
   return (holeindex + Polygon->HoleIndexN++);
 }
 
-/* ---------------------------------------------------------------------------
- * get next slot for an element, allocates memory if necessary
+/*!
+ * \brief Get next slot for an element, allocates memory if necessary.
  */
 ElementType *
 GetElementMemory (DataType *data)
@@ -420,8 +425,9 @@ FreeElement (ElementType *data)
   g_slice_free (ElementType, data);
 }
 
-/* ---------------------------------------------------------------------------
- * get next slot for a library menu, allocates memory if necessary
+/*!
+ * \brief Get next slot for a library menu, allocates memory if
+ * necessary.
  */
 LibraryMenuType *
 GetLibraryMenuMemory (LibraryType *lib)
@@ -440,8 +446,9 @@ GetLibraryMenuMemory (LibraryType *lib)
   return (menu + lib->MenuN++);
 }
 
-/* ---------------------------------------------------------------------------
- * get next slot for a library entry, allocates memory if necessary
+/*!
+ * \brief Get next slot for a library entry, allocates memory if
+ * necessary.
  */
 LibraryEntryType *
 GetLibraryEntryMemory (LibraryMenuType *Menu)
@@ -460,8 +467,9 @@ GetLibraryEntryMemory (LibraryMenuType *Menu)
   return (entry + Menu->EntryN++);
 }
 
-/* ---------------------------------------------------------------------------
- * get next slot for a DrillElement, allocates memory if necessary
+/*!
+ * \brief Get next slot for a DrillElement, allocates memory if
+ * necessary.
  */
 ElementType **
 GetDrillElementMemory (DrillType *Drill)
@@ -483,8 +491,8 @@ GetDrillElementMemory (DrillType *Drill)
   return (element + Drill->ElementN++);
 }
 
-/* ---------------------------------------------------------------------------
- * get next slot for a DrillPoint, allocates memory if necessary
+/*!
+ * \brief Get next slot for a DrillPoint, allocates memory if necessary.
  */
 PinType **
 GetDrillPinMemory (DrillType *Drill)
@@ -504,8 +512,8 @@ GetDrillPinMemory (DrillType *Drill)
   return (pin + Drill->PinN++);
 }
 
-/* ---------------------------------------------------------------------------
- * get next slot for a Drill, allocates memory if necessary
+/*!
+ * \brief Get next slot for a Drill, allocates memory if necessary.
  */
 DrillType *
 GetDrillInfoDrillMemory (DrillInfoType *DrillInfo)
@@ -523,8 +531,8 @@ GetDrillInfoDrillMemory (DrillInfoType *DrillInfo)
   return (drill + DrillInfo->DrillN++);
 }
 
-/* ---------------------------------------------------------------------------
- * frees memory used by a polygon
+/*!
+ * \brief Frees memory used by a polygon.
  */
 void
 FreePolygonMemory (PolygonType *polygon)
@@ -542,8 +550,8 @@ FreePolygonMemory (PolygonType *polygon)
   memset (polygon, 0, sizeof (PolygonType));
 }
 
-/* ---------------------------------------------------------------------------
- * frees memory used by a box list
+/*!
+ * \brief Frees memory used by a box list.
  */
 void
 FreeBoxListMemory (BoxListType *Boxlist)
@@ -555,8 +563,8 @@ FreeBoxListMemory (BoxListType *Boxlist)
     }
 }
 
-/* ---------------------------------------------------------------------------
- * frees memory used by a net 
+/*!
+ * \brief Frees memory used by a net.
  */
 void
 FreeNetListMemory (NetListType *Netlist)
@@ -573,8 +581,8 @@ FreeNetListMemory (NetListType *Netlist)
     }
 }
 
-/* ---------------------------------------------------------------------------
- * frees memory used by a net list
+/*!
+ * \brief Frees memory used by a net list.
  */
 void
 FreeNetListListMemory (NetListListType *Netlistlist)
@@ -591,8 +599,8 @@ FreeNetListListMemory (NetListListType *Netlistlist)
     }
 }
 
-/* ---------------------------------------------------------------------------
- * frees memory used by a subnet 
+/*!
+ * \brief Frees memory used by a subnet.
  */
 void
 FreeNetMemory (NetType *Net)
@@ -603,8 +611,9 @@ FreeNetMemory (NetType *Net)
       memset (Net, 0, sizeof (NetType));
     }
 }
-/* ---------------------------------------------------------------------------
- * frees memory used by an attribute list
+
+/*!
+ * \brief Frees memory used by an attribute list.
  */
 static void
 FreeAttributeListMemory (AttributeListType *list)
@@ -621,8 +630,8 @@ FreeAttributeListMemory (AttributeListType *list)
   list->Max = 0;
 }
 
-/* ---------------------------------------------------------------------------
- * frees memory used by an element
+/*!
+ * \brief Frees memory used by an element.
  */
 void
 FreeElementMemory (ElementType *element)
@@ -657,8 +666,8 @@ FreeElementMemory (ElementType *element)
   memset (element, 0, sizeof (ElementType));
 }
 
-/* ---------------------------------------------------------------------------
- * free memory used by PCB
+/*!
+ * \brief Free memory used by PCB.
  */
 void
 FreePCBMemory (PCBType *pcb)
@@ -683,8 +692,8 @@ FreePCBMemory (PCBType *pcb)
   memset (pcb, 0, sizeof (PCBType));
 }
 
-/* ---------------------------------------------------------------------------
- * free memory used by data struct
+/*!
+ * \brief Free memory used by data struct.
  */
 void
 FreeDataMemory (DataType *data)
@@ -761,8 +770,8 @@ FreeDataMemory (DataType *data)
   memset (data, 0, sizeof (DataType));
 }
 
-/* ---------------------------------------------------------------------------
- * releases the memory that's allocated by the library
+/*!
+ * \brief Releases the memory that's allocated by the library.
  */
 void
 FreeLibraryMemory (LibraryType *lib)
@@ -785,8 +794,8 @@ FreeLibraryMemory (LibraryType *lib)
   memset (lib, 0, sizeof (LibraryType));
 }
 
-/* ---------------------------------------------------------------------------
- * reallocates memory for a dynamic length string if necessary
+/*!
+ * \brief Reallocates memory for a dynamic length string if necessary.
  */
 static void
 DSRealloc (DynamicStringType *Ptr, size_t Length)
@@ -801,8 +810,8 @@ DSRealloc (DynamicStringType *Ptr, size_t Length)
     }
 }
 
-/* ---------------------------------------------------------------------------
- * adds one character to a dynamic string
+/*!
+ * \brief Adds one character to a dynamic string.
  */
 void
 DSAddCharacter (DynamicStringType *Ptr, char Char)
@@ -814,8 +823,8 @@ DSAddCharacter (DynamicStringType *Ptr, char Char)
   Ptr->Data[position] = '\0';
 }
 
-/* ---------------------------------------------------------------------------
- * add a string to a dynamic string
+/*!
+ * \brief Add a string to a dynamic string.
  */
 void
 DSAddString (DynamicStringType *Ptr, const char *S)
@@ -829,8 +838,8 @@ DSAddString (DynamicStringType *Ptr, const char *S)
     }
 }
 
-/* ----------------------------------------------------------------------
- * clears a dynamic string
+/*!
+ * \brief Clears a dynamic string.
  */
 void
 DSClearString (DynamicStringType *Ptr)
@@ -839,10 +848,10 @@ DSClearString (DynamicStringType *Ptr)
     Ptr->Data[0] = '\0';
 }
 
-/* ---------------------------------------------------------------------------
- * strips leading and trailing blanks from the passed string and
+/*!
+ * \brief Strips leading and trailing blanks from the passed string and
  * returns a pointer to the new 'duped' one or NULL if the old one
- * holds only white space characters
+ * holds only white space characters.
  */
 char *
 StripWhiteSpaceAndDup (const char *S)
