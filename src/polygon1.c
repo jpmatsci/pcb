@@ -1,43 +1,48 @@
+/*!
+ * \file src/polygon1.c
+ *
+ * \brief Polygon clipping functions.
+ *
+ * Harry Eaton implemented the algorithm described in "A Closed Set of
+ * Algorithms for Performing Set Operations on Polygonal Regions in the
+ * Plane" which the original code did not do.\n
+ * I also modified it for integer coordinates and faster computation.\n
+ * The license for this modified copy was switched to the GPL per term
+ * (3) of the original LGPL license.\n
+ *
+ * \author Copyright (C) 2006 Harry Eaton.
+ *
+ * Based on:\n
+ * poly_Boolean: a polygon clip library.\n
+ *
+ * \author (C) 1997 Alexey Nikitin, Michael Leonov <leonov@propro.iis.nsk.su>\n
+ *
+ * (also the authors of the paper describing the actual algorithm)\n
+ *\n
+ * In turn based on:\n
+ * nclip: a polygon clip library.\n
+ *
+ * \author (C) 1993 Klamer Schutte
+ *
+ * \note All cases where original (Klamer Schutte) code is present
+ * are marked.
+ */
+
 /*
-       polygon clipping functions. harry eaton implemented the algorithm
-       described in "A Closed Set of Algorithms for Performing Set
-       Operations on Polygonal Regions in the Plane" which the original
-       code did not do. I also modified it for integer coordinates
-       and faster computation. The license for this modified copy was
-       switched to the GPL per term (3) of the original LGPL license.
-       Copyright (C) 2006 harry eaton
- 
-   based on:
-       poly_Boolean: a polygon clip library
-       Copyright (C) 1997  Alexey Nikitin, Michael Leonov
-       (also the authors of the paper describing the actual algorithm)
-       leonov@propro.iis.nsk.su
-
-   in turn based on:
-       nclip: a polygon clip library
-       Copyright (C) 1993  Klamer Schutte
- 
-       This program is free software; you can redistribute it and/or
-       modify it under the terms of the GNU General Public
-       License as published by the Free Software Foundation; either
-       version 2 of the License, or (at your option) any later version.
- 
-       This program is distributed in the hope that it will be useful,
-       but WITHOUT ANY WARRANTY; without even the implied warranty of
-       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-       General Public License for more details.
- 
-       You should have received a copy of the GNU General Public
-       License along with this program; if not, write to the Free
-       Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- 
-      polygon1.c
-      (C) 1997 Alexey Nikitin, Michael Leonov
-      (C) 1993 Klamer Schutte
-
-      all cases where original (Klamer Schutte) code is present
-      are marked
-*/
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this program; if not, write to the Free
+ * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
 
 #include	<assert.h>
 #include	<stdlib.h>
@@ -162,20 +167,21 @@ poly_dump (POLYAREA * p)
 }
 #endif
 
-/***************************************************************/
 /* routines for processing intersections */
 
-/*
-node_add
- (C) 1993 Klamer Schutte
- (C) 1997 Alexey Nikitin, Michael Leonov
- (C) 2006 harry eaton
-
- returns a bit field in new_point that indicates where the
- point was.
- 1 means a new node was created and inserted
- 4 means the intersection was not on the dest point
-*/
+/*!
+ * \brief node_add.
+ *
+ * \author (C) 1993 Klamer Schutte.
+ *
+ * \author (C) 1997 Alexey Nikitin, Michael Leonov.
+ *
+ * \author (C) 2006 Harry Eaton.
+ *
+ * Returns a bit field in new_point that indicates where the point was.\n
+ * 1 means a new node was created and inserted,\n
+ * 4 means the intersection was not on the dest point.
+ */
 static VNODE *
 node_add_single (VNODE * dest, Vector po)
 {
@@ -197,10 +203,11 @@ node_add_single (VNODE * dest, Vector po)
 #define ISECT_NO_MEMORY (-2)
 
 
-/*
-new_descriptor
-  (C) 2006 harry eaton
-*/
+/*!
+ * \brief new_descriptor.
+ *
+ * \author (C) 2006 Harry Eaton.
+ */
 static CVCList *
 new_descriptor (VNODE * a, char poly, char side)
 {
@@ -260,16 +267,17 @@ new_descriptor (VNODE * a, char poly, char side)
   return l;
 }
 
-/*
-insert_descriptor
-  (C) 2006 harry eaton
-
-   argument a is a cross-vertex node.
-   argument poly is the polygon it comes from ('A' or 'B')
-   argument side is the side this descriptor goes on ('P' for previous
-   'N' for next.
-   argument start is the head of the list of cvclists
-*/
+/*!
+ * \brief insert_descriptor.
+ *
+ * \author (C) 2006 Harry Eaton.
+ *
+ * \param a is a cross-vertex node.\n
+ * \param poly is the polygon it comes from ('A' or 'B').\n
+ * \param side is the side this descriptor goes on ('P' for previous 'N'
+ * for next).\n
+ * \param start is the head of the list of cvclists.
+ */
 static CVCList *
 insert_descriptor (VNODE * a, char poly, char side, CVCList * start)
 {
@@ -345,13 +353,16 @@ insert_descriptor (VNODE * a, char poly, char side, CVCList * start)
   return newone;
 }
 
-/*
-node_add_point
- (C) 1993 Klamer Schutte
- (C) 1997 Alexey Nikitin, Michael Leonov
-
- return 1 if new node in b, 2 if new node in a and 3 if new node in both
-*/
+/*!
+ * \brief node_add_point.
+ *
+ * \author (C) 1993 Klamer Schutte.
+ *
+ * \author (C) 1997 Alexey Nikitin, Michael Leonov.
+ *
+ * \return 1 if new node in b, 2 if new node in a and 3 if new node in
+ * both.
+ */
 
 static VNODE *
 node_add_single_point (VNODE * a, Vector p)
@@ -371,10 +382,11 @@ node_add_single_point (VNODE * a, Vector p)
   return new_node;
 }				/* node_add_point */
 
-/*
-node_label
- (C) 2006 harry eaton
-*/
+/*!
+ * \brief node_label.
+ *
+ * \author (C) 2006 Harry Eaton.
+ */
 static unsigned int
 node_label (VNODE * pn)
 {
@@ -449,10 +461,11 @@ node_label (VNODE * pn)
   return region;
 }				/* node_label */
 
-/*
- add_descriptors
- (C) 2006 harry eaton
-*/
+/*!
+ * \brief add_descriptors.
+ *
+ * \author (C) 2006 Harry Eaton.
+ */
 static CVCList *
 add_descriptors (PLINE * pl, char poly, CVCList * list)
 {
@@ -525,11 +538,13 @@ typedef struct contour_info
 } contour_info;
 
 
-/*
- * adjust_tree()
- * (C) 2006 harry eaton
+/*!
+ * \brief adjust_tree().
+ *
+ * \author (C) 2006 Harry Eaton.
+ *
  * This replaces the segment in the tree with the two new segments after
- * a vertex has been added
+ * a vertex has been added.
  */
 static int
 adjust_tree (rtree_t * tree, struct seg *s)
@@ -562,9 +577,11 @@ adjust_tree (rtree_t * tree, struct seg *s)
   return 0;
 }
 
-/*
- * seg_in_region()
- * (C) 2006, harry eaton
+/*!
+ * \brief seg_in_region().
+ *
+ * \author (C) 2006, Harry Eaton.
+ *
  * This prunes the search for boxes that don't intersect the segment.
  */
 static int
@@ -584,7 +601,9 @@ seg_in_region (const BoxType * b, void *cl)
   return 1;			/* might intersect */
 }
 
-/* Prepend a deferred node-insersion task to a list */
+/*!
+ * \brief Prepend a deferred node-insersion task to a list.
+ */
 static insert_node_task *
 prepend_insert_node_task (insert_node_task *list, seg *seg, VNODE *new_node)
 {
@@ -595,16 +614,22 @@ prepend_insert_node_task (insert_node_task *list, seg *seg, VNODE *new_node)
   return task;
 }
 
-/*
- * seg_in_seg()
- * (C) 2006 harry eaton
- * This routine checks if the segment in the tree intersect the search segment.
- * If it does, the plines are marked as intersected and the point is marked for
- * the cvclist. If the point is not already a vertex, a new vertex is inserted
- * and the search for intersections starts over at the beginning.
- * That is potentially a significant time penalty, but it does solve the snap rounding
- * problem. There are efficient algorithms for finding intersections with snap
- * rounding, but I don't have time to implement them right now.
+/*!
+ * \brief seg_in_seg().
+ *
+ * \author (C) 2006 Harry Eaton.
+ *
+ * This routine checks if the segment in the tree intersect the search
+ * segment.\n
+ * If it does, the plines are marked as intersected and the point is
+ * marked for the cvclist.\n
+ * If the point is not already a vertex, a new vertex is inserted and
+ * the search for intersections starts over at the beginning.\n
+ * That is potentially a significant time penalty, but it does solve the
+ * snap rounding problem.\n
+ *
+ * \todo There are efficient algorithms for finding intersections with
+ * snap rounding, but I don't have time to implement them right now.
  */
 static int
 seg_in_seg (const BoxType * b, void *cl)
@@ -718,24 +743,11 @@ get_seg (const BoxType * b, void *cl)
   return 0;
 }
 
-/*
- * intersect() (and helpers)
- * (C) 2006, harry eaton
- * This uses an rtree to find A-B intersections. Whenever a new vertex is
- * added, the search for intersections is re-started because the rounding
- * could alter the topology otherwise. 
- * This should use a faster algorithm for snap rounding intersection finding.
- * The best algorthim is probably found in:
+/*!
+ * \brief contour_bounds_touch() (helper function of intersect_impl()).
  *
- * "Improved output-sensitive snap rounding," John Hershberger, Proceedings
- * of the 22nd annual symposium on Computational geomerty, 2006, pp 357-366.
- * http://doi.acm.org/10.1145/1137856.1137909
- *
- * Algorithms described by de Berg, or Goodrich or Halperin, or Hobby would
- * probably work as well.
- *
+ * \author (C) 2006, Harry Eaton.
  */
-
 static int
 contour_bounds_touch (const BoxType * b, void *cl)
 {
@@ -817,6 +829,11 @@ contour_bounds_touch (const BoxType * b, void *cl)
   return 0;
 }
 
+/*!
+ * \brief intersect_impl() (helper function of intersect()).
+ *
+ * \author (C) 2006, Harry Eaton.
+ */
 static int
 intersect_impl (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
 {
@@ -895,6 +912,26 @@ intersect_impl (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
   return need_restart;
 }
 
+/*!
+ * \brief intersect() (and helpers).
+ *
+ * \author (C) 2006, Harry Eaton.
+ *
+ * This uses an rtree to find A-B intersections.\n
+ * Whenever a new vertex is added, the search for intersections is
+ * re-started because the rounding could alter the topology otherwise.\n
+ * This should use a faster algorithm for snap rounding intersection
+ * finding.\n
+ * The best algorthim is probably found in:\n
+ * \n
+ * "Improved output-sensitive snap rounding," John Hershberger,
+ * Proceedings of the 22nd annual symposium on Computational geometry,
+ * 2006, pp 357-366.\n
+ * http://doi.acm.org/10.1145/1137856.1137909.\n
+ * \n
+ * Algorithms described by de Berg, or Goodrich or Halperin, or Hobby
+ * would probably work as well.
+ */
 static int
 intersect (jmp_buf * jb, POLYAREA * b, POLYAREA * a, int add)
 {
@@ -958,7 +995,6 @@ cntrbox_inside (PLINE * c1, PLINE * c2)
 	  (c1->xmax <= c2->xmax) && (c1->ymax <= c2->ymax));
 }
 
-/*****************************************************************/
 /* Routines for making labels */
 
 static int
@@ -972,8 +1008,11 @@ count_contours_i_am_inside (const BoxType * b, void *cl)
   return 0;
 }
 
-/* cntr_in_M_POLYAREA
-returns poly is inside outfst ? TRUE : FALSE */
+/*!
+ * \brief cntr_in_M_POLYAREA.
+ *
+ * \return poly is inside outfst ? TRUE : FALSE.
+ */
 static int
 cntr_in_M_POLYAREA (PLINE * poly, POLYAREA * outfst, BOOLp test)
 {
@@ -1064,13 +1103,15 @@ print_labels (PLINE * a)
 #endif
 #endif
 
-/*
-label_contour
- (C) 2006 harry eaton
- (C) 1993 Klamer Schutte
- (C) 1997 Alexey Nikitin, Michael Leonov
-*/
-
+/*!
+ * \brief label_contour.
+ *
+ * \author (C) 2006 Harry Eaton.
+ *
+ * \author (C) 1993 Klamer Schutte.
+ *
+ * \author (C) 1997 Alexey Nikitin, Michael Leonov.
+ */
 static BOOLp
 label_contour (PLINE * a)
 {
@@ -1159,9 +1200,9 @@ M_POLYAREA_label (POLYAREA * afst, POLYAREA * b, BOOLp touch)
   return FALSE;
 }
 
-/****************************************************************/
 
 /* routines for temporary storing resulting contours */
+
 static void
 InsCntr (jmp_buf * e, PLINE * c, POLYAREA ** dst)
 {
@@ -1443,7 +1484,6 @@ InsertHoles (jmp_buf * e, POLYAREA * dest, PLINE ** src)
 }				/* InsertHoles */
 
 
-/****************************************************************/
 /* routines for collecting result */
 
 typedef enum
@@ -1548,11 +1588,13 @@ SubJ_Rule (char p, VNODE * v, DIRECTION * cdir)
   return FALSE;
 }
 
-/* return the edge that comes next.
- * if the direction is BACKW, then we return the next vertex
- * so that prev vertex has the flags for the edge
+/*!
+ * \brief Return the edge that comes next.
  *
- * returns true if an edge is found, false otherwise
+ * If the direction is BACKW, then we return the next vertex so that
+ * prev vertex has the flags for the edge.
+ *
+ * \return true if an edge is found, false otherwise.
  */
 static int
 jump (VNODE ** cur, DIRECTION * cdir, J_Rule rule)
@@ -2253,7 +2295,9 @@ M_POLYAREA_Collect (jmp_buf * e, POLYAREA * afst, POLYAREA ** contours,
   while ((a = a->f) != afst);
 }
 
-/* determine if two polygons touch or overlap */
+/*!
+ * \brief Determine if two polygons touch or overlap.
+ */
 BOOLp
 Touching (POLYAREA * a, POLYAREA * b)
 {
@@ -2406,8 +2450,11 @@ clear_marks (POLYAREA * p)
   while ((n = n->f) != p);
 }
 
-/* compute the intersection and subtraction (divides "a" into two pieces)
- * and frees the input polys. This assumes that bi is a single simple polygon.
+/*!
+ * \brief Compute the intersection and subtraction (divides "a" into two
+ * pieces) and frees the input polys.
+ *
+ * This assumes that bi is a single simple polygon.
  */
 int
 poly_AndSubtract_free (POLYAREA * ai, POLYAREA * bi,
@@ -2743,7 +2790,6 @@ poly_CopyContour (PLINE ** dst, PLINE * src)
   return TRUE;
 }
 
-/**********************************************************************/
 /* polygon routines */
 
 BOOLp
@@ -2947,8 +2993,12 @@ dot (Vector A, Vector B)
   return (double)A[0] * (double)B[0] + (double)A[1] * (double)B[1];
 }
 
-/* Compute whether point is inside a triangle formed by 3 other pints */
-/* Algorithm from http://www.blackpawn.com/texts/pointinpoly/default.html */
+/*!
+ * \brief Compute whether point is inside a triangle formed by 3 other
+ * points.
+ *
+ * Algorithm from http://www.blackpawn.com/texts/pointinpoly/default.html
+ */
 static int
 point_in_triangle (Vector A, Vector B, Vector C, Vector P)
 {
@@ -2979,9 +3029,12 @@ point_in_triangle (Vector A, Vector B, Vector C, Vector P)
 }
 
 
-/* Returns the dot product of Vector A->B, and a vector
- * orthogonal to Vector C->D. The result is not normalisd, so will be
- * weighted by the magnitude of the C->D vector.
+/*!
+ * \brief Returns the dot product of Vector A->B, and a vector
+ * orthogonal to Vector C->D.
+ *
+ * The result is not normalisd, so will be weighted by the magnitude of
+ * the C->D vector.
  */
 static double
 dot_orthogonal_to_direction (Vector A, Vector B, Vector C, Vector D)
@@ -2996,22 +3049,26 @@ dot_orthogonal_to_direction (Vector A, Vector B, Vector C, Vector D)
   return dot (l1, l3);
 }
 
-/* Algorithm from http://www.exaflop.org/docs/cgafaq/cga2.html
+/*!
+ * \brief Algorithm from http://www.exaflop.org/docs/cgafaq/cga2.html
  *
- * "Given a simple polygon, find some point inside it. Here is a method based
- * on the proof that there exists an internal diagonal, in [O'Rourke, 13-14].
- * The idea is that the midpoint of a diagonal is interior to the polygon.
- *
- * 1.  Identify a convex vertex v; let its adjacent vertices be a and b.
- * 2.  For each other vertex q do:
- * 2a. If q is inside avb, compute distance to v (orthogonal to ab).
- * 2b. Save point q if distance is a new min.
- * 3.  If no point is inside, return midpoint of ab, or centroid of avb.
- * 4.  Else if some point inside, qv is internal: return its midpoint."
- *
- * [O'Rourke]: Computational Geometry in C (2nd Ed.)
- *             Joseph O'Rourke, Cambridge University Press 1998,
- *             ISBN 0-521-64010-5 Pbk, ISBN 0-521-64976-5 Hbk
+ * Given a simple polygon, find some point inside it.\n
+ * Here is a method based on the proof that there exists an internal
+ * diagonal, in [O'Rourke, 13-14].\n
+ * The idea is that the midpoint of a diagonal is interior to the
+ * polygon.\n
+ * \n
+ * 1.  Identify a convex vertex v; let its adjacent vertices be a and b.\n
+ * 2.  For each other vertex q do:\n
+ * 2a. If q is inside avb, compute distance to v (orthogonal to ab).\n
+ * 2b. Save point q if distance is a new min.\n
+ * 3.  If no point is inside, return midpoint of ab, or centroid of avb.\n
+ * 4.  Else if some point inside, qv is internal: return its midpoint.\n
+ * \n
+ * [O'Rourke]:\n
+ * Computational Geometry in C (2nd Ed.)\n
+ * Joseph O'Rourke, Cambridge University Press 1998,\n
+ * ISBN 0-521-64010-5 Pbk, ISBN 0-521-64976-5 Hbk\n
  */
 static void
 poly_ComputeInteriorPoint (PLINE *poly, Vector v)
@@ -3070,11 +3127,14 @@ poly_ComputeInteriorPoint (PLINE *poly, Vector v)
 }
 
 
-/* NB: This function assumes the caller _knows_ the contours do not
- *     intersect. If the contours intersect, the result is undefined.
- *     It will return the correct result if the two contours share
- *     common points beteween their contours. (Identical contours
- *     are treated as being inside each other).
+/*!
+ * \brief This function assumes the caller _knows_ the contours do not
+ * intersect.
+ *
+ * If the contours intersect, the result is undefined.\n
+ * It will return the correct result if the two contours share common
+ * points beteween their contours.\n
+ * (Identical contours are treated as being inside each other).
  */
 int
 poly_ContourInContour (PLINE * poly, PLINE * inner)
@@ -3167,7 +3227,9 @@ inside_sector (VNODE * pn, Vector p2)
     return FALSE;
 }				/* inside_sector */
 
-/* returns TRUE if bad contour */
+/*!
+ * \return TRUE if bad contour.
+ */
 BOOLp
 poly_ChkContour (PLINE * a)
 {
@@ -3302,9 +3364,7 @@ poly_Valid (POLYAREA * p)
 
 Vector vect_zero = { (long) 0, (long) 0 };
 
-/*********************************************************************/
-/*             L o n g   V e c t o r   S t u f f                     */
-/*********************************************************************/
+/* Long Vector Stuff. */
 
 void
 vect_init (Vector v, double x, double y)
@@ -3358,7 +3418,9 @@ vect_dist2 (Vector v1, Vector v2)
   return (dx * dx + dy * dy);	/* why sqrt */
 }
 
-/* value has sign of angle between vectors */
+/*!
+ * value has sign of angle between vectors.
+ */
 double
 vect_det2 (Vector v1, Vector v2)
 {
@@ -3381,12 +3443,13 @@ vect_m_dist (Vector v1, Vector v2)
   return -dd;
 }				/* vect_m_dist */
 
-/*
-vect_inters2
- (C) 1993 Klamer Schutte
- (C) 1997 Michael Leonov, Alexey Nikitin
-*/
-
+/*!
+ * \brief vect_inters2.
+ *
+ * \author (C) 1993 Klamer Schutte.
+ *
+ * \author (C) 1997 Michael Leonov, Alexey Nikitin.
+ */
 int
 vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
 	      Vector S1, Vector S2)
@@ -3528,20 +3591,25 @@ vect_inters2 (Vector p1, Vector p2, Vector q1, Vector q2,
     }
 }				/* vect_inters2 */
 
-/* how about expanding polygons so that edges can be arcs rather than
- * lines. Consider using the third coordinate to store the radius of the
- * arc. The arc would pass through the vertex points. Positive radius
- * would indicate the arc bows left (center on right of P1-P2 path)
- * negative radius would put the center on the other side. 0 radius
- * would mean the edge is a line instead of arc
+/*!
+ * \note How about expanding polygons so that edges can be arcs rather
+ * than lines.\n
+ * Consider using the third coordinate to store the radius of the arc.\n
+ * The arc would pass through the vertex points.\n
+ * Positive radius would indicate the arc bows left (center on right of
+ * P1-P2 path).\n
+ * Negative radius would put the center on the other side.\n
+ * 0 radius would mean the edge is a line instead of arc.\n
  * The intersections of the two circles centered at the vertex points
- * would determine the two possible arc centers. If P2.x > P1.x then
- * the center with smaller Y is selected for positive r. If P2.y > P1.y
- * then the center with greate X is selected for positive r.
- *
- * the vec_inters2() routine would then need to handle line-line
- * line-arc and arc-arc intersections.
- *
- * perhaps reverse tracing the arc would require look-ahead to check
- * for arcs
+ * would determine the two possible arc centers.\n
+ * If P2.x > P1.x then the center with smaller Y is selected for
+ * positive r.\n
+ * If P2.y > P1.y then the center with greate X is selected for positive
+ * r.\n
+ * \n
+ * The vec_inters2() routine would then need to handle line-line
+ * line-arc and arc-arc intersections.\n
+ * \n
+ * Perhaps reverse tracing the arc would require look-ahead to check
+ * for arcs.
  */
