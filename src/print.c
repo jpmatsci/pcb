@@ -1,3 +1,9 @@
+/*!
+ * \file src/print.c
+ *
+ * \brief printing routines.
+ */
+
 /*
  *                            COPYRIGHT
  *
@@ -31,8 +37,6 @@
  */
 
 
-/* printing routines
- */
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -63,10 +67,6 @@
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
-
-/* ---------------------------------------------------------------------------
- * prints a FAB drawing.
- */
 
 #define TEXT_SIZE	MIL_TO_COORD(150)
 #define TEXT_LINE	MIL_TO_COORD(150)
@@ -119,7 +119,11 @@ text_at (hidGC gc, int x, int y, int align, char *fmt, ...)
               t.Y + SCALE_TEXT (font->MaxHeight, t.Scale) + MIL_TO_COORD(10));
 }
 
-/* Y, +, X, circle, square */
+/*!
+ * \brief Drill symbols.
+ *
+ * Y, +, X, circle, square.
+ */
 static void
 drill_sym (hidGC gc, int idx, int x, int y)
 {
@@ -215,6 +219,9 @@ PrintFab_overhang (void)
   return (ds + 2) * TEXT_LINE;
 }
 
+/*!
+ * \brief Prints a FAB drawing.
+ */
 void
 PrintFab (hidGC gc)
 {
