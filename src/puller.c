@@ -1,3 +1,25 @@
+/*!
+ * \file src/puller.c
+ *
+ * \brief
+ *
+ * FIXME: Things that need to be fixed before this is "perfect".\n
+ * Add to this list as we find things.\n
+ *
+ * \todo Respect the outline layer.
+ *
+ * \todo Don't consider points that are perpendicular to our start_arc.\n
+ * I.e. when we have busses going around corners, we have a *lot* of
+ * arcs and endpoints that are all in the same direction and all equally
+ * "good", but rounding the arc angles to integers causes all sorts of
+ * tiny differences that result in bumps, reversals, and other messes.
+ *
+ * \todo Store the X,Y values in our shadow struct so we don't fill up
+ * the undo buffer with all our line reversals.
+ *
+ * \todo At least check the other layers in our layer group.
+ */
+
 /*
  *                            COPYRIGHT
  *
@@ -24,25 +46,6 @@
  *  dj@delorie.com
  *
  */
-
-/* FIXME: Things that need to be fixed before this is "perfect".
-   Add to this list as we find things.
-
-   - respect the outline layer.
-
-   - don't consider points that are perpendicular to our start_arc.
-     I.e. when we have busses going around corners, we have a *lot* of
-     arcs and endpoints that are all in the same direction and all
-     equally "good", but rounding the arc angles to integers causes
-     all sorts of tiny differences that result in bumps, reversals,
-     and other messes.
-
-   - Store the X,Y values in our shadow struct so we don't fill up the
-     undo buffer with all our line reversals.
-
-   - at least check the other layers in our layer group.
-
-*/
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -76,7 +79,9 @@
 #define TRACE0 0
 #define TRACE1 0
 
-/* sine of one degree */
+/*!
+ * \brief Sine of one degree.
+ */
 #define SIN1D	0.0174524064372835
 
 static jmp_buf abort_buf;
@@ -142,7 +147,11 @@ arc_endpoint_is (ArcType *a, int angle, int x, int y)
   return arc_dist < a->Thickness / 2;
 }
 
-/* Cross c->u and c->v, return the magnitute */
+/*!
+ * \brief Cross c->u and c->v.
+ *
+ * \return the magnitute.
+ */
 static double
 cross2d (int cx, int cy, int ux, int uy, int vx, int vy)
 {
@@ -153,7 +162,11 @@ cross2d (int cx, int cy, int ux, int uy, int vx, int vy)
   return (double)ux * vy - (double)uy * vx;
 }
 
-/* Likewise, for dot product. */
+/*!
+ * \brief Likewise, for dot product.
+ *
+ * \return .
+ */
 static double
 dot2d (int cx, int cy, int ux, int uy, int vx, int vy)
 {
@@ -165,7 +178,13 @@ dot2d (int cx, int cy, int ux, int uy, int vx, int vy)
 }
 
 #if 0
-/* angle of c->v, relative to c->u, in radians.  Range is -pi..pi */
+/*!
+ * \brief Angle of c->v, relative to c->u, in radians.
+ *
+ * Range is \f$ \left{ -\pi..\pi \right} \f$.
+ *
+ * \return .
+ */
 static double
 angle2d (int cx, int cy, int ux, int uy, int vx, int vy)
 {
@@ -198,28 +217,59 @@ same_sign (double a, double b)
   return (a * b >= 0);
 }
 
+/*!
+ * \brief Convert radians to degrees.
+ *
+ * \param r angle in radians.
+ *
+ * \return angle in degrees.
+ */
 static double
 r2d (double r)
 {
   return 180.0 * r / M_PI;
 }
 
+/*!
+ * \brief Convert degrees to radians.
+ *
+ * \param d angle in degrees.
+ *
+ * \return angle in radians.
+ */
 static double
 d2r (double d)
 {
   return M_PI * d / 180.0;
 }
 
-/* | a b |
-   | c d | */
+/*!
+ * \brief Calculate the determinant.
+ *
+\f[
+\left |
+\matrix{
+a b \cr
+c d
+}
+\right | = a d - b c
+\f]
+ *
+ * \return Determinant.
+ */
 static double
 det (double a, double b, double c, double d)
 {
   return a * d - b * c;
 }
 
-/* The lines are x1y1-x2y2 and x3y3-x4y4.  Returns true if they
-   intersect.  */
+/*!
+ * \brief .
+ *
+ * The lines are \f$ x_1y_1 - x_2y_2 \f$ and \f$ x_3y_3 - x_4y_4 \f$.
+ *
+ * \return true if they intersect.
+ */
 static int
 intersection_of_lines (int x1, int y1, int x2, int y2,
 		       int x3, int y3, int x4, int y4,
@@ -238,8 +288,15 @@ intersection_of_lines (int x1, int y1, int x2, int y2,
   return 1;
 }
 
-/* Same, for line segments.  Returns true if they intersect.  For this
-   function, xr and yr may be NULL if you don't need the values.  */
+/*!
+ * \brief .
+ *
+ * Same, for line segments.\n
+ * For this function, \f$ x_r \f$ and \f$ y_r \f$ may be NULL if you
+ * don't need the values.
+ *
+ * \return true if they intersect.
+ */
 static int
 intersection_of_linesegs (int x1, int y1, int x2, int y2,
 			  int x3, int y3, int x4, int y4,
@@ -266,7 +323,11 @@ intersection_of_linesegs (int x1, int y1, int x2, int y2,
   return 1;
 }
 
-/* distance between a line and a point */
+/*!
+ * \brief Distance between a line and a point.
+ *
+ * \return .
+ */
 static double
 dist_lp (int x1, int y1, int x2, int y2, int px, int py)
 {
@@ -281,7 +342,11 @@ dist_lp (int x1, int y1, int x2, int y2, int px, int py)
   return rv;
 }
 
-/* distance between a line segment and a point */
+/*!
+ * \brief Distance between a line segment and a point.
+ *
+ * \return .
+ */
 static double
 dist_lsp (int x1, int y1, int x2, int y2, int px, int py)
 {
@@ -296,11 +361,7 @@ dist_lsp (int x1, int y1, int x2, int y2, int px, int py)
   return d;
 }
 
-/*****************************************************************************/
-/*                                                                           */
-/*                       Single Point Puller                                 */
-/*                                                                           */
-/*****************************************************************************/
+/* Single Point Puller */
 
 static int
 line_callback (const BoxType * b, void *cl)
@@ -531,11 +592,7 @@ Puller (int argc, char **argv, Coord Ux, Coord Uy)
   return 1;
 }
 
-/*****************************************************************************/
-/*                                                                           */
-/*                          Global Puller                                    */
-/*                                                                           */
-/*****************************************************************************/
+/* Global Puller */
 
 static const char globalpuller_syntax[] =
 "GlobalPuller()";
@@ -596,18 +653,20 @@ status ()
   fprintf(stderr, "%6d loops, %d pulled   \r", nloops, npulled);
 }
 
-/* Extra data we need to temporarily attach to all lines and arcs.  */
+/*!
+ * \brief Extra data we need to temporarily attach to all lines and arcs.
+ */
 typedef struct End {
-  /* These point to "multi_next" if there are more than one.  */
   struct Extra *next;
+    /*!< These point to "multi_next" if there are more than one. */
   void *pin;
   unsigned char in_pin:1;
   unsigned char at_pin:1;
   unsigned char is_pad:1;
-  unsigned char pending:1; /* set if this may be moved later */
-  int x, y; /* arc endpoint */
-  /* If not NULL, points to End with pending==1 we're blocked on. */
+  unsigned char pending:1; /*!< Set if this may be moved later. */
+  int x, y; /*!< Arc endpoint. */
   struct End *waiting_for;
+    /*!< If not NULL, points to End with pending==1 we're blocked on. */
 } End;
 
 typedef struct Extra {
@@ -843,8 +902,10 @@ find_pair_pinline_callback (const BoxType * b, void *cl)
     return 0;
 
   /* See if the line passes through this pin.  */
-  /* FIXME: this assumes round pads, but it's good enough for square
-     ones for now.  */
+  /*!
+   * \todo FIXME: this assumes round pads, but it's good enough for
+   * square ones for now.
+   */
   if (dist_lsp (line->Point1.X, line->Point1.Y,
 		line->Point2.X, line->Point2.Y,
 		pin->X, pin->Y) <= pin->Thickness/2)
@@ -967,8 +1028,10 @@ find_pair_padline_callback (const BoxType * b, void *cl)
      mark it anyway.  */
 
   t = (pad->Thickness + 1)/2;
-  /* FIXME: this is for round pads.  Good enough for now, but add
-     square pad support later.  */
+  /*!
+   * \todo FIXME: this is for round pads.\n
+   * Good enough for now, but add square pad support later.
+   */
   intersect = intersection_of_linesegs (pad->Point1.X, pad->Point1.Y,
 					 pad->Point2.X, pad->Point2.Y,
 					 line->Point1.X, line->Point1.Y,
@@ -984,7 +1047,9 @@ find_pair_padline_callback (const BoxType * b, void *cl)
   if (intersect || p1_d < t || p2_d < t)
     {
       /* It does.  */
-      /* FIXME: we should split the line.  */
+      /*!
+       * \todo FIXME: we should split the line.
+       */
 #if TRACE1
       pcb_printf("splitting line %#mD-%#mD because it passes through pad %#mD-%#mD r %#mS\n",
 	     line->Point1.X, line->Point1.Y,
@@ -1584,6 +1649,19 @@ gp_point_force (int x, int y, int t, End *e, int esa, int eda, int force, const 
 
   return 1;
 }
+
+/*!
+ * \brief .
+ *
+ * There are two regions we care about.\n
+ * For points inside our triangle, we check the crosses against
+ * start_line and end_line to make sure the point is "inside" the
+ * triangle.\n
+ * For points on the other side of the s-e line of the triangle, we
+ * check the dots to make sure it's between our endpoints.
+ *
+ * \return .
+ */
 static int
 gp_point_2 (int x, int y, int t, End *e, int esa, int eda, const char *func)
 {
@@ -1596,12 +1674,6 @@ gp_point_2 (int x, int y, int t, End *e, int esa, int eda, const char *func)
 #if TRACE1
   pcb_printf("\033[34mgp_point %#mD %#mS via %s\033[0m\n", x, y, t, func);
 #endif
-
-  /* There are two regions we care about.  For points inside our
-     triangle, we check the crosses against start_line and end_line to
-     make sure the point is "inside" the triangle.  For points on the
-     other side of the s-e line of the triangle, we check the dots to
-     make sure it's between our endpoints.  */
 
   /* See what side of the s-e line we're on */
   sc = cross2d (start_line->Point1.X, start_line->Point1.Y,
@@ -1727,7 +1799,9 @@ static int
 gp_text_cb (const BoxType *b, void *cb)
 {
   const TextType *t = (TextType *) b;
-  /* FIXME: drop in the actual text-line endpoints later. */
+  /*!
+   * \todo FIXME: drop in the actual text-line endpoints later.
+   */
   gp_point (t->BoundingBox.X1, t->BoundingBox.Y1, 0, 0);
   gp_point (t->BoundingBox.X1, t->BoundingBox.Y2, 0, 0);
   gp_point (t->BoundingBox.X2, t->BoundingBox.Y2, 0, 0);
@@ -1754,8 +1828,10 @@ gp_pin_cb (const BoxType *b, void *cb)
   if (p == start_pinpad || p == end_pinpad)
     return 0;
 
-  /* FIXME: we lump octagonal pins in with square; safe, but not
-     optimal.  */
+  /*!
+   * \todo FIXME: we lump octagonal pins in with square; safe, but not
+   * optimal.
+   */
   if (TEST_FLAG (SQUAREFLAG, p) || TEST_FLAG (OCTAGONFLAG, p))
     {
       gp_point (p->X - t2, p->Y - t2, 0, 0);
@@ -1790,8 +1866,10 @@ gp_pad_cb (const BoxType *b, void *cb)
 	return 0;
     }
 
-  /* FIXME: we lump octagonal pads in with square; safe, but not
-     optimal.  I don't think we even support octagonal pads.  */
+  /*!
+   * \todo FIXME: we lump octagonal pads in with square; safe, but not
+   * optimal.  I don't think we even support octagonal pads.
+   */
   if (TEST_FLAG (SQUAREFLAG, p) || TEST_FLAG (OCTAGONFLAG, p))
     {
       if (p->Point1.X == p->Point2.X)
@@ -1979,18 +2057,26 @@ mark_arc_for_deletion (ArcType *a)
 #endif
 }
 
-/* Given a starting line, which may be attached to an arc, and which
-   intersects with an ending line, which also may be attached to an
-   arc, maybe pull them.  We assume start_line is attached to the arc
-   via Point1, and attached to the end line via Point2.  Likewise, we
-   make end_line attach to the start_line via Point1 and the arc via
-   Point 2.  We also make the arcs attach on the Delta end, not the
-   Start end.  Here's a picture:
-
+/*!
+ * \brief .
+ *
+ * Given a starting line, which may be attached to an arc, and which
+ * intersects with an ending line, which also may be attached to an
+ * arc, maybe pull them.\n
+ * We assume start_line is attached to the arc via Point1, and attached
+ * to the end line via Point2.\n
+ * Likewise, we make end_line attach to the start_line via Point1 and
+ * the arc via Point 2.\n
+ * We also make the arcs attach on the Delta end, not the Start end.\n
+ * Here's a picture:\n
+<pre>
      S            S+D  P1            P2   P1          P2  S+D          S
    *--- start_arc ---*--- start_line ---*--- end_line ---*--- end_arc ---*
      S             E   S              E   S            E   E           S
-*/
+</pre>
+ *
+ * \return . 
+ */
 
 static void
 maybe_pull_1 (LineType *line)
@@ -2461,7 +2547,11 @@ maybe_pull_1 (LineType *line)
   maybe_pull_1 (new_line);
 }
 
-/* Given a line with a end_next, attempt to pull both ends.  */
+/*!
+ * \brief Given a line with a end_next, attempt to pull both ends.
+ *
+ * \return .
+ */
 static void
 maybe_pull (LineType *line, Extra *e)
 {
@@ -2669,11 +2759,7 @@ GlobalPuller(int argc, char **argv, Coord x, Coord y)
   return 0;
 }
 
-/*****************************************************************************/
-/*                                                                           */
-/*                             Actions                                       */
-/*                                                                           */
-/*****************************************************************************/
+/* Actions */
 
 HID_Action puller_action_list[] = {
   {"Puller", "Click on a line-arc intersection or line segment", Puller,
