@@ -1,3 +1,9 @@
+/*!
+ * \file src/rats.c
+ *
+ * \brief Rats nest routines.
+ */
+
 /*
  *                            COPYRIGHT
  *
@@ -30,8 +36,6 @@
  * support for netlist window 10/24/98
  */
 
-/* rats nest routines
- */
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -78,12 +82,14 @@ static void TransferNet (NetListType *, NetType *, NetType *);
 static bool badnet = false;
 static Cardinal SLayer, CLayer;	/* layer group holding solder/component side */
 
-/* ---------------------------------------------------------------------------
- * parse a connection description from a string
- * puts the element name in the string and the pin number in
- * the number.  If a valid connection is found, it returns the
- * number of characters processed from the string, otherwise
- * it returns 0
+/*!
+ * \brief Parse a connection description from a string.
+ *
+ * Puts the element name in the string and the pin number in
+ * the number.
+ *
+ * \return If a valid connection is found, it returns the number of
+ * characters processed from the string, otherwise it returns 0.
  */
 static bool
 ParseConnection (char *InString, char *ElementName, char *PinNum)
@@ -111,8 +117,10 @@ ParseConnection (char *InString, char *ElementName, char *PinNum)
     }
 }
 
-/* ---------------------------------------------------------------------------
- * Find a particular pad from an element name and pin number
+/*!
+ * \brief Find a particular pad from an element name and pin number.
+ *
+ * \return .
  */
 static bool
 FindPad (char *ElementName, char *PinNum, ConnectionType * conn, bool Same)
@@ -170,9 +178,10 @@ FindPad (char *ElementName, char *PinNum, ConnectionType * conn, bool Same)
   return false;
 }
 
-/*--------------------------------------------------------------------------
- * parse a netlist menu entry and locate the corresponding pad
- * returns true if found, and fills in Connection information
+/*!
+ * \brief Parse a netlist menu entry and locate the corresponding pad.
+ *
+ * \return true if found, and fills in Connection information.
  */
 bool
 SeekPad (LibraryEntryType * entry, ConnectionType * conn, bool Same)
@@ -208,10 +217,11 @@ SeekPad (LibraryEntryType * entry, ConnectionType * conn, bool Same)
   return (false);
 }
 
-/* ---------------------------------------------------------------------------
- * Read the library-netlist build a true Netlist structure
+/*!
+ * \brief Read the library-netlist build a true Netlist structure.
+ *
+ * \return .
  */
-
 NetListType *
 ProcNetlist (LibraryType *net_menu)
 {
@@ -327,9 +337,11 @@ ProcNetlist (LibraryType *net_menu)
   return (Wantlist);
 }
 
-/*
- * copy all connections from one net into another
- * and then remove the first net from its netlist
+/*!
+ * \brief Copy all connections from one net into another and then remove
+ * the first net from its netlist.
+ *
+ * \return .
  */
 static void
 TransferNet (NetListType *Netl, NetType *SourceNet, NetType *DestNet)
@@ -441,11 +453,15 @@ CheckShorts (LibraryMenuType *theNet)
 }
 
 
-/* ---------------------------------------------------------------------------
- * Determine existing interconnections of the net and gather into sub-nets
+/*!
+ * \brief Determine existing interconnections of the net and gather into
+ * sub-nets.
  *
- * initially the netlist has each connection in its own individual net
- * afterwards there can be many fewer nets with multiple connections each
+ * Initially the netlist has each connection in its own individual net.
+ * Afterwards there can be many fewer nets with multiple connections
+ * each.
+ *
+ * \return .
  */
 static bool
 GatherSubnets (NetListType *Netl, bool NoWarn, bool AndRats)
@@ -541,16 +557,37 @@ GatherSubnets (NetListType *Netl, bool NoWarn, bool AndRats)
   return (Warned);
 }
 
-/* ---------------------------------------------------------------------------
- * Draw a rat net (tree) having the shortest lines
- * this also frees the subnet memory as they are consumed
+/*!
+ * \brief Draw a rat net (tree) having the shortest lines, this also
+ * frees the subnet memory as they are consumed.
  *
  * Note that the Netl we are passed is NOT the main netlist - it's the
- * connectivity for ONE net.  It represents the CURRENT connectivity
- * state for the net, with each Netl->Net[N] representing one
- * copper-connected subset of the net.
+ * connectivity for ONE net.\n
+ * It represents the CURRENT connectivity state for the net, with each
+ * Netl->Net[N] representing one copper-connected subset of the net.\n
+ * \n
+ * Everything inside the NetList Netl should be connected together.\n
+ * Each Net in Netl is a group of Connections which are already
+ * connected together somehow, either by real wires or by rats we've
+ * already drawn.\n
+ * Each Connection is a vertex within that blob of connected items.\n
+ * This loop finds the closest vertex pairs between each blob and draws
+ * rats that merge the blobs until there's just one big blob.\n
+ * \n
+ * Just to clarify, with some examples:\n
+ * \n
+ * Each Netl is one full net from a netlist, like from gnetlist.\n
+ * Each Netl->Net[N] is a subset of that net that's already physically
+ * connected on the pcb.\n
+ * \n
+ * So a new design with no traces yet, would have a huge list of Net[N],
+ * each with one pin in it.\n
+ * \n
+ * A fully routed design would have one Net[N] with all the pins
+ * (for that net) in it.
+ *
+ * \return .
  */
-
 static bool
 DrawShortestRats (NetListType *Netl, void (*funcp) (register ConnectionType *, register ConnectionType *, register RouteStyleType *))
 {
@@ -568,28 +605,6 @@ DrawShortestRats (NetListType *Netl, void (*funcp) (register ConnectionType *, r
    */
   if (!Netl || Netl->NetN < 1)
     return false;
-
-  /*
-   * Everything inside the NetList Netl should be connected together.
-   * Each Net in Netl is a group of Connections which are already
-   * connected together somehow, either by real wires or by rats we've
-   * already drawn.  Each Connection is a vertex within that blob of
-   * connected items.  This loop finds the closest vertex pairs between
-   * each blob and draws rats that merge the blobs until there's just
-   * one big blob.
-   *
-   * Just to clarify, with some examples:
-   *
-   * Each Netl is one full net from a netlist, like from gnetlist.
-   * Each Netl->Net[N] is a subset of that net that's already
-   * physically connected on the pcb.
-   *
-   * So a new design with no traces yet, would have a huge list of Net[N],
-   * each with one pin in it.
-   *
-   * A fully routed design would have one Net[N] with all the pins
-   * (for that net) in it.
-   */
 
   /*
    * We keep doing this do/while loop until everything's connected.
@@ -716,9 +731,14 @@ DrawShortestRats (NetListType *Netl, void (*funcp) (register ConnectionType *, r
 }
 
 
-/* ---------------------------------------------------------------------------
- *  AddAllRats puts the rats nest into the layout from the loaded netlist
- *  if SelectedOnly is true, it will only draw rats to selected pins and pads
+/*!
+ * \brief AddAllRats puts the rats nest into the layout from the loaded
+ * netlist.
+ *
+ * If SelectedOnly is true, it will only draw rats to selected pins and
+ * pads.
+ *
+ * \return .
  */
 bool
 AddAllRats (bool SelectedOnly, void (*funcp) (register ConnectionType *, register ConnectionType *, register RouteStyleType *))
@@ -811,9 +831,15 @@ AddAllRats (bool SelectedOnly, void (*funcp) (register ConnectionType *, registe
   return (false);
 }
 
-/* XXX: This is copied in large part from AddAllRats above; for
+/*!
+ * \brief .
+ *
+ * \note This is copied in large part from AddAllRats above; for
  * maintainability, AddAllRats probably wants to be tweaked to use this
- * version of the code so that we don't have duplication. */
+ * version of the code so that we don't have duplication.
+ *
+ * \return .
+ */
 NetListListType
 CollectSubnets (bool SelectedOnly)
 {
@@ -872,9 +898,11 @@ CollectSubnets (bool SelectedOnly)
   return result;
 }
 
-/*
- * Check to see if a particular name is the name of an already existing rats
- * line
+/*!
+ * \brief Check to see if a particular name is the name of an already
+ * existing rats line.
+ *
+ * \return .
  */
 static int
 rat_used (char *name)
@@ -892,9 +920,12 @@ rat_used (char *name)
   return 0;
 }
 
-  /* These next two functions moved from the original netlist.c as part of the
-     |  gui code separation for the Gtk port.
-   */
+/*!
+ * \brief This function moved from the original netlist.c as
+ * part of the gui code separation for the Gtk port.
+ *
+ * \return .
+ */
 RatType *
 AddNet (void)
 {
@@ -1004,6 +1035,12 @@ ratIt:
 }
 
 
+/*!
+ * \brief This function moved from the original netlist.c as
+ * part of the gui code separation for the Gtk port.
+ *
+ * \return .
+ */
 char *
 ConnectionName (int type, void *ptr1, void *ptr2)
 {
