@@ -1,3 +1,9 @@
+/*!
+ * \file src/report.c
+ *
+ * \brief .
+ */
+
 /*
  *                            COPYRIGHT
  *
@@ -545,9 +551,13 @@ ReportFoundPins (int argc, char **argv, Coord x, Coord y)
   return 0;
 }
 
-/* Assumes that we start with a blank connection state,
- * e.g. ResetConnections() has been run.
- * Does not add its own changes to the undo system
+/*!
+ * \brief Assumes that we start with a blank connection state, e.g.
+ * ResetConnections() has been run.
+ *
+ * Does not add its own changes to the undo system.
+ *
+ * \return \c length.
  */
 static double
 XYtoNetLength (Coord x, Coord y, int *found)
@@ -582,7 +592,9 @@ XYtoNetLength (Coord x, Coord y, int *found)
     if (TEST_FLAG (FOUNDFLAG, arc))
       {
 	double l;
-	/* FIXME: we assume width==height here */
+	/*!
+         * \todo FIXME: we assume width==height here
+         */
 	l = M_PI * 2*arc->Width * abs(arc->Delta)/360.0;
 	length += l;
 	*found = 1;
