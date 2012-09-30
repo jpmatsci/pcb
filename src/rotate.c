@@ -1,3 +1,9 @@
+/*!
+ * \file src/rotate.c
+ *
+ * \brief Functions used to rotate pins, elements ...
+ */
+
 /*
  *                            COPYRIGHT
  *
@@ -24,9 +30,6 @@
  *
  */
 
-
-/* functions used to rotate pins, elements ...
- */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -83,8 +86,10 @@ static ObjectFunctionType RotateFunctions = {
   NULL
 };
 
-/* ---------------------------------------------------------------------------
- * rotates a point in 90 degree steps
+/*!
+ * \brief Rotates a point in 90 degree steps.
+ *
+ * \return .
  */
 void
 RotatePointLowLevel (PointType *Point, Coord X, Coord Y, unsigned Number)
@@ -92,8 +97,10 @@ RotatePointLowLevel (PointType *Point, Coord X, Coord Y, unsigned Number)
   ROTATE (Point->X, Point->Y, X, Y, Number);
 }
 
-/* ---------------------------------------------------------------------------
- * rotates a line in 90 degree steps
+/*!
+ * \brief Rotates a line in 90 degree steps.
+ *
+ * \return .
  */
 void
 RotateLineLowLevel (LineType *Line, Coord X, Coord Y, unsigned Number)
@@ -125,10 +132,13 @@ RotateLineLowLevel (LineType *Line, Coord X, Coord Y, unsigned Number)
   SetLineBoundingBox (Line);
 }
 
-/* ---------------------------------------------------------------------------
- * rotates a text in 90 degree steps 
- * only the bounding box is rotated, text rotation itself
- * is done by the drawing routines
+/*!
+ * \brief Rotates a text in 90 degree steps.
+ *
+ * Only the bounding box is rotated, text rotation itself is done by the
+ * drawing routines.
+ *
+ * \return .
  */
 void
 RotateTextLowLevel (TextType *Text, Coord X, Coord Y, unsigned Number)
@@ -146,8 +156,10 @@ RotateTextLowLevel (TextType *Text, Coord X, Coord Y, unsigned Number)
   Text->Direction = ((Text->Direction + number) & 0x03);
 }
 
-/* ---------------------------------------------------------------------------
- * rotates a polygon in 90 degree steps
+/*!
+ * \brief Rotates a polygon in 90 degree steps.
+ *
+ * \return .
  */
 void
 RotatePolygonLowLevel (PolygonType *Polygon, Coord X, Coord Y, unsigned Number)
@@ -160,8 +172,10 @@ RotatePolygonLowLevel (PolygonType *Polygon, Coord X, Coord Y, unsigned Number)
   RotateBoxLowLevel (&Polygon->BoundingBox, X, Y, Number);
 }
 
-/* ---------------------------------------------------------------------------
- * rotates a text object and redraws it
+/*!
+ * \brief Rotates a text object and redraws it.
+ *
+ * \return \c text.
  */
 static void *
 RotateText (LayerType *Layer, TextType *Text)
@@ -177,8 +191,10 @@ RotateText (LayerType *Layer, TextType *Text)
   return (Text);
 }
 
-/* ---------------------------------------------------------------------------
- * rotates an arc
+/*!
+ * \brief Rotates an arc.
+ *
+ * \return .
  */
 void
 RotateArcLowLevel (ArcType *Arc, Coord X, Coord Y, unsigned Number)
@@ -201,8 +217,10 @@ RotateArcLowLevel (ArcType *Arc, Coord X, Coord Y, unsigned Number)
   ROTATE (Arc->Point2.X, Arc->Point2.Y, X, Y, Number);
 }
 
-/* ---------------------------------------------------------------------------
- * rotate an element in 90 degree steps
+/*!
+ * \brief Rotate an element in 90 degree steps.
+ *
+ * \return .
  */
 void
 RotateElementLowLevel (DataType *Data, ElementType *Element,
@@ -254,8 +272,10 @@ RotateElementLowLevel (DataType *Data, ElementType *Element,
   ClearFromPolygon (Data, ELEMENT_TYPE, Element, Element);
 }
 
-/* ---------------------------------------------------------------------------
- * rotates a line's point
+/*!
+ * \brief Rotates a line's point.
+ *
+ * \return \c Line.
  */
 static void *
 RotateLinePoint (LayerType *Layer, LineType *Line, PointType *Point)
@@ -285,8 +305,10 @@ RotateLinePoint (LayerType *Layer, LineType *Line, PointType *Point)
   return (Line);
 }
 
-/* ---------------------------------------------------------------------------
- * rotates an arc
+/*!
+ * \brief Rotates an arc.
+ *
+ * return \c Arc.
  */
 static void *
 RotateArc (LayerType *Layer, ArcType *Arc)
@@ -300,8 +322,10 @@ RotateArc (LayerType *Layer, ArcType *Arc)
   return (Arc);
 }
 
-/* ---------------------------------------------------------------------------
- * rotates an element
+/*!
+ * \brief Rotates an element.
+ *
+ * \return \c Element.
  */
 static void *
 RotateElement (ElementType *Element)
@@ -313,8 +337,10 @@ RotateElement (ElementType *Element)
   return (Element);
 }
 
-/* ----------------------------------------------------------------------
- * rotates the name of an element
+/*!
+ * \brief Rotates the name of an element.
+ *
+ * \return \c Element.
  */
 static void *
 RotateElementName (ElementType *Element)
@@ -332,8 +358,10 @@ RotateElementName (ElementType *Element)
   return (Element);
 }
 
-/* ---------------------------------------------------------------------------
- * rotates a box in 90 degree steps 
+/*!
+ * \brief Rotates a box in 90 degree steps.
+ *
+ * \return .
  */
 void
 RotateBoxLowLevel (BoxType *Box, Coord X, Coord Y, unsigned Number)
@@ -348,9 +376,13 @@ RotateBoxLowLevel (BoxType *Box, Coord X, Coord Y, unsigned Number)
   Box->Y2 = MAX (y1, y2);
 }
 
-/* ----------------------------------------------------------------------
- * rotates an objects at the cursor position as identified by its ID
- * the center of rotation is determined by the current cursor location
+/*!
+ * \brief Rotates an objects at the cursor position as identified by its
+ * ID.
+ *
+ * The center of rotation is determined by the current cursor location.
+ *
+ * \return \c ptr2.
  */
 void *
 RotateObject (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
