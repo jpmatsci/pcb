@@ -1,3 +1,9 @@
+/*!
+ * \file src/rubberband.c
+ *
+ * \brief functions used by 'rubberband moves'.
+ */
+
 /*
  *                            COPYRIGHT
  *
@@ -24,9 +30,6 @@
  *
  */
 
-
-/* functions used by 'rubberband moves'
- */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -213,10 +216,14 @@ rubber_callback (const BoxType * b, void *cl)
   return 1;
 }
 
-/* ---------------------------------------------------------------------------
- * checks all visible lines which belong to the same layergroup as the
- * passed pad. If one of the endpoints of the line lays inside the pad,
- * the line is added to the 'rubberband' list
+/*!
+ * Checks all visible lines which belong to the same layergroup as the
+ * passed pad.
+ *
+ * If one of the endpoints of the line lays inside the pad, the line is
+ * added to the 'rubberband' list.
+ *
+ * \return .
  */
 static void
 CheckPadForRubberbandConnection (PadType *Pad)
@@ -351,13 +358,15 @@ CheckLinePointForRat (LayerType *Layer, PointType *Point)
 	    &info);
 }
 
-/* ---------------------------------------------------------------------------
- * checks all visible lines. If one of the endpoints of the line lays
- * inside the pin, the line is added to the 'rubberband' list
+/*!
+ * \brief Checks all visible lines. If one of the endpoints of the line
+ * lays inside the pin, the line is added to the 'rubberband' list.
  *
- * Square pins are handled as if they were round. Speed
- * and readability is more important then the few %
- * of failures that are immediately recognized
+ * Square pins are handled as if they were round.\n
+ * Speed and readability is more important then the few % of failures
+ * that are immediately recognized.
+ *
+ * \return .
  */
 static void
 CheckPinForRubberbandConnection (PinType *Pin)
@@ -388,10 +397,14 @@ CheckPinForRubberbandConnection (PinType *Pin)
     }
 }
 
-/* ---------------------------------------------------------------------------
- * checks all visible lines which belong to the same group as the passed line.
+/*!
+ * \brief Checks all visible lines which belong to the same group as the
+ * passed line.
+ *
  * If one of the endpoints of the line lays * inside the passed line,
- * the scanned line is added to the 'rubberband' list
+ * the scanned line is added to the 'rubberband' list.
+ *
+ * \return .
  */
 static void
 CheckLinePointForRubberbandConnection (LayerType *Layer,
@@ -425,10 +438,14 @@ CheckLinePointForRubberbandConnection (LayerType *Layer,
   END_LOOP;
 }
 
-/* ---------------------------------------------------------------------------
- * checks all visible lines which belong to the same group as the passed polygon.
+/*!
+ * \brief Checks all visible lines which belong to the same group as the
+ * passed polygon.
+ *
  * If one of the endpoints of the line lays inside the passed polygon,
- * the scanned line is added to the 'rubberband' list
+ * the scanned line is added to the 'rubberband' list.
+ *
+ * \return .
  */
 static void
 CheckPolygonForRubberbandConnection (LayerType *Layer,
@@ -467,10 +484,13 @@ CheckPolygonForRubberbandConnection (LayerType *Layer,
   END_LOOP;
 }
 
-/* ---------------------------------------------------------------------------
- * lookup all lines that are connected to an object and save the
- * data to 'Crosshair.AttachedObject.Rubberband'
- * lookup is only done for visible layers
+/*!
+ * \brief Lookup all lines that are connected to an object and save the
+ * data to 'Crosshair.AttachedObject.Rubberband'.
+ *
+ * Lookup is only done for visible layers.
+ *
+ * \return .
  */
 void
 LookupRubberbandLines (int Type, void *Ptr1, void *Ptr2, void *Ptr3)
