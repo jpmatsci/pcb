@@ -1,3 +1,15 @@
+/*!
+ * \file src/rtree.c
+ *
+ * \brief Implements r-tree structures.
+ *
+ * \author Copyright (c) 2004, Harry Eaton.
+ *
+ * These should be much faster for the auto-router because the recursive
+ * search is much more efficient and that's where the auto-router spends
+ * all its time.
+ */
+
 /*
  *                            COPYRIGHT
  *
@@ -25,15 +37,6 @@
  *
  */
 
-/* this file, rtree.c, was written and is
- * Copyright (c) 2004, harry eaton
- */
-
-/* implements r-tree structures.
- * these should be much faster for the auto-router
- * because the recursive search is much more efficient
- * and that's where the auto-router spends all its time.
- */
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -72,24 +75,24 @@
 
 typedef struct
 {
-  const BoxType *bptr;          /* pointer to the box */
-  BoxType bounds;               /* copy of the box for locality of reference */
+  const BoxType *bptr;          /*!< pointer to the box */
+  BoxType bounds;               /*!< copy of the box for locality of reference */
 } Rentry;
 
 struct rtree_node
 {
-  BoxType box;                  /* bounds rectangle of this node */
-  struct rtree_node *parent;    /* parent of this node, NULL = root */
+  BoxType box;                  /*!< bounds rectangle of this node */
+  struct rtree_node *parent;    /*!< parent of this node, NULL = root */
   struct
   {
-    unsigned is_leaf:1;         /* this is a leaf node */
-    unsigned manage:31;         /* true==should free 'rect.bptr' if node is destroyed */
+    unsigned is_leaf:1;         /*!< this is a leaf node */
+    unsigned manage:31;         /*!< true==should free 'rect.bptr' if node is destroyed */
   }
   flags;
   union
   {
-    struct rtree_node *kids[M_SIZE + 1];        /* when not leaf */
-    Rentry rects[M_SIZE + 1];   /* when leaf */
+    struct rtree_node *kids[M_SIZE + 1];        /*!< when not leaf */
+    Rentry rects[M_SIZE + 1];   /*!< when leaf */
   } u;
 };
 
@@ -187,7 +190,11 @@ __r_node_is_good (struct rtree_node *node)
   return 1;
 }
 
-/* check the whole tree from this node down for consistency */
+/*!
+ * \brief Check the whole tree from this node down for consistency.
+ *
+ * \return \c 1.
+ */
 static bool
 __r_tree_is_good (struct rtree_node *node)
 {
@@ -210,7 +217,11 @@ __r_tree_is_good (struct rtree_node *node)
 #endif
 
 #ifndef NDEBUG
-/* print out the tree */
+/*!
+ * \brief Print out the tree.
+ *
+ * \return .
+ */
 void
 __r_dump_tree (struct rtree_node *node, int depth)
 {
@@ -265,8 +276,11 @@ __r_dump_tree (struct rtree_node *node, int depth)
 }
 #endif
 
-/* Sort the children or entries of a node
- * according to the largest side.
+/*!
+ * \brief Sort the children or entries of a node according to the
+ * largest side.
+ *
+ * \return \c 1.
  */
 #ifdef SORT
 static int
@@ -340,8 +354,11 @@ sort_node (struct rtree_node *node)
 #define sort_node(x)
 #endif
 
-/* set the node bounds large enough to encompass all
- * of the children's rectangles
+/*!
+ * \brief Set the node bounds large enough to encompass all of the
+ * children's rectangles.
+ *
+ * \return .
  */
 static void
 adjust_bounds (struct rtree_node *node)
@@ -378,10 +395,14 @@ adjust_bounds (struct rtree_node *node)
     }
 }
 
-/* create an r-tree from an unsorted list of boxes.
- * the r-tree will keep pointers into 
- * it, so don't free the box list until you've called r_destroy_tree.
- * if you set 'manage' to true, r_destroy_tree will free your boxlist.
+/*!
+ * \brief Create an r-tree from an unsorted list of boxes.
+ *
+ * The r-tree will keep pointers into  it, so don't free the box list
+ * until you've called r_destroy_tree.\n
+ * If you set 'manage' to true, r_destroy_tree will free your boxlist.
+ *
+ * \return \c rtree.
  */
 rtree_t *
 r_create_tree (const BoxType * boxlist[], int N, int manage)
@@ -433,7 +454,11 @@ __r_destroy_tree (struct rtree_node *node)
   free (node);
 }
 
-/* free the memory associated with an rtree. */
+/*!
+ * \brief Free the memory associated with an rtree.
+ *
+ * \return .
+ */
 void
 r_destroy_tree (rtree_t ** rtree)
 {
@@ -450,9 +475,12 @@ typedef struct
   void *closure;
 } r_arg;
 
-/* most of the auto-routing time is spent in this routine
- * so some careful thought has been given to maximizing the speed
+/*!
+ * \brief Mmost of the auto-routing time is spent in this routine.
  *
+ * So some careful thought has been given to maximizing the speed.
+ *
+ * \return \c seen.
  */
 int
 __r_search (struct rtree_node *node, const BoxType * query, r_arg * arg)
@@ -534,11 +562,15 @@ __r_search (struct rtree_node *node, const BoxType * query, r_arg * arg)
     }
 }
 
-/* Parameterized search in the rtree.
+/*!
+ * \brief Parameterized search in the rtree.
+ *
  * Returns the number of rectangles found.
- * calls found_rectangle for each intersection seen
- * and calls check_region with the current sub-region
- * to see whether deeper searching is desired
+ * calls found_rectangle for each intersection seen and calls
+ * check_region with the current sub-region to see whether deeper
+ * searching is desired.
+ *
+ * \return .
  */
 int
 r_search (rtree_t * rtree, const BoxType * query,
@@ -586,7 +618,11 @@ __r_region_is_empty_rect_in_reg (const BoxType * box, void *cl)
   longjmp (*envp, 1);           /* found one! */
 }
 
-/* return 0 if there are any rectangles in the given region. */
+/*!
+ * \brief .
+ *
+ * \return \c 0 if there are any rectangles in the given region.
+ */
 int
 r_region_is_empty (rtree_t * rtree, const BoxType * region)
 {
@@ -612,8 +648,12 @@ struct centroid
   float x, y, area;
 };
 
-/* split the node into two nodes putting clusters in each
- * use the k-means clustering algorithm
+/*!
+ * \brief Split the node into two nodes putting clusters in each.
+ *
+ * Use the k-means clustering algorithm.
+ *
+ * \return \c new_node.
  */
 struct rtree_node *
 find_clusters (struct rtree_node *node)
@@ -764,7 +804,10 @@ find_clusters (struct rtree_node *node)
   return (new_node);
 }
 
-/* split a node according to clusters
+/*!
+ * \brief Split a node according to clusters.
+ *
+ * \return .
  */
 static void
 split_node (struct rtree_node *node)
@@ -829,15 +872,18 @@ contained (struct rtree_node *node, const BoxType * query)
 }
 
 
+/*!
+ * \brief Compute the area penalty for inserting here and return.
+ *
+ * The penalty is the increase in area necessary to include the query->
+ *
+ * \return \c score.
+ */
 static inline double
 penalty (struct rtree_node *node, const BoxType * query)
 {
   double score;
 
-  /* Compute the area penalty for inserting here and return.
-   * The penalty is the increase in area necessary
-   * to include the query->
-   */
   score  = (MAX (node->box.X2, query->X2) - MIN (node->box.X1, query->X1));
   score *= (MAX (node->box.Y2, query->Y2) - MIN (node->box.Y1, query->Y1));
   score -=
