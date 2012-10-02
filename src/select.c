@@ -1,3 +1,9 @@
+/*!
+ * \file src/select.c
+ *
+ * \brief Select routines.
+ */
+
 /*
  *                            COPYRIGHT
  *
@@ -24,9 +30,6 @@
  *
  */
 
-
-/* select routines
- */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -57,9 +60,12 @@
 #include <dmalloc.h>
 #endif
 
-/* ---------------------------------------------------------------------------
- * toggles the selection of any kind of object
- * the different types are defined by search.h
+/*!
+ * \brief Toggles the selection of any kind of object.
+ *
+ * The different types are defined by search.h.
+ *
+ * \return .
  */
 bool
 SelectObject (void)
@@ -207,10 +213,12 @@ SelectObject (void)
   return (changed);
 }
 
-/* ----------------------------------------------------------------------
- * selects/unselects all visible objects within the passed box
- * Flag determines if the block is to be selected or unselected
- * returns true if the state of any object has changed
+/*!
+ * \brief Selects/unselects all visible objects within the passed box.
+ *
+ * Flag determines if the block is to be selected or unselected.
+ *
+ * \return \c true if the state of any object has changed.
  */
 bool
 SelectBlock (BoxType *Box, bool Flag)
@@ -434,8 +442,10 @@ SelectBlock (BoxType *Box, bool Flag)
   return (changed);
 }
 
-/* ----------------------------------------------------------------------
- * performs several operations on the passed object
+/*!
+ * \brief Performs several operations on the passed object.
+ *
+ * \return .
  */
 void *
 ObjectOperation (ObjectFunctionType *F,
@@ -508,11 +518,15 @@ ObjectOperation (ObjectFunctionType *F,
   return (NULL);
 }
 
-/* ----------------------------------------------------------------------
- * performs several operations on selected objects which are also visible
- * The lowlevel procedures are passed together with additional information
- * resets the selected flag if requested
- * returns true if anything has changed
+/*!
+ * \brief Performs several operations on selected objects which are also
+ * visible.
+ *
+ * The lowlevel procedures are passed together with additional
+ * information.\n
+ * Resets the selected flag if requested.
+ *
+ * \return \c true if anything has changed.
  */
 bool
 SelectedOperation (ObjectFunctionType *F, bool Reset, int type)
@@ -699,12 +713,15 @@ SelectedOperation (ObjectFunctionType *F, bool Reset, int type)
   return (changed);
 }
 
-/* ----------------------------------------------------------------------
- * selects/unselects all objects which were found during a connection scan
- * Flag determines if they are to be selected or unselected
- * returns true if the state of any object has changed
+/*!
+ * \brief Selects/unselects all objects which were found during a
+ * connection scan.
  *
- * text objects and elements cannot be selected by this routine
+ * Flag determines if they are to be selected or unselected.
+ *
+ * Text objects and elements cannot be selected by this routine.
+ *
+ * \return \c true if the state of any object has changed.
  */
 bool
 SelectConnection (bool Flag)
@@ -800,10 +817,11 @@ SelectConnection (bool Flag)
 }
 
 #if defined(HAVE_REGCOMP) || defined(HAVE_RE_COMP)
-/* ---------------------------------------------------------------------------
- * selects objects as defined by Type by name;
- * it's a case insensitive match
- * returns true if any object has been selected
+/*!
+ * \brief Selects objects as defined by Type by name; it's a case
+ * insensitive match.
+ *
+ * \return \c true if any object has been selected.
  */
 
 #if defined (HAVE_REGCOMP)
