@@ -1,3 +1,11 @@
+/*!
+ * \file src/search.c
+ *
+ * \brief Search routines.
+ *
+ * Some of the functions use dummy parameters.
+ */
+
 /*
  *                            COPYRIGHT
  *
@@ -24,10 +32,6 @@
  *
  */
 
-
-/* search routines
- * some of the functions use dummy parameters
- */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -100,7 +104,7 @@ struct ans_info
   bool BackToo;
   double area;
   jmp_buf env;
-  int locked;			/* This will be zero or LOCKFLAG */
+  int locked;			/*!< This will be zero or LOCKFLAG */
   bool found_anything;
   double nearest_sq_dist;
 };
@@ -147,9 +151,12 @@ SearchViaByLocation (int locked, PinType ** Via, PinType ** Dummy1,
   return true;
 }
 
-/* ---------------------------------------------------------------------------
- * searches a pin
- * starts with the newest element
+/*!
+ * \brief Searches a pin.
+ *
+ * Starts with the newest element.
+ *
+ * \return .
  */
 static bool
 SearchPinByLocation (int locked, ElementType ** Element, PinType ** Pin,
@@ -204,9 +211,12 @@ pad_callback (const BoxType * b, void *cl)
   return 0;
 }
 
-/* ---------------------------------------------------------------------------
- * searches a pad
- * starts with the newest element
+/*!
+ * \brief Searches a pad.
+ *
+ * Starts with the newest element.
+ *
+ * \return .
  */
 static bool
 SearchPadByLocation (int locked, ElementType ** Element, PadType ** Pad,
@@ -298,8 +308,10 @@ rat_callback (const BoxType * box, void *cl)
   return 0;
 }
 
-/* ---------------------------------------------------------------------------
- * searches rat lines if they are visible
+/*!
+ * \brief Searches rat lines if they are visible.
+ *
+ * \return .
  */
 static bool
 SearchRatLineByLocation (int locked, RatType ** Line, RatType ** Dummy1,
@@ -386,8 +398,10 @@ text_callback (const BoxType * box, void *cl)
   return 0;
 }
 
-/* ---------------------------------------------------------------------------
- * searches text on the SearchLayer
+/*!
+ * \brief Searches text on the SearchLayer.
+ *
+ * \return .
  */
 static bool
 SearchTextByLocation (int locked, LayerType ** Layer, TextType ** Text,
@@ -427,8 +441,10 @@ polygon_callback (const BoxType * box, void *cl)
 }
 
 
-/* ---------------------------------------------------------------------------
- * searches a polygon on the SearchLayer 
+/*!
+ * \brief Searches a polygon on the SearchLayer.
+ *
+ * \return .
  */
 static bool
 SearchPolygonByLocation (int locked, LayerType ** Layer,
@@ -482,8 +498,10 @@ linepoint_callback (const BoxType * b, void *cl)
   return ret_val;
 }
 
-/* ---------------------------------------------------------------------------
- * searches a line-point on all the search layer
+/*!
+ * \brief Searches a line-point on all the search layer.
+ *
+ * \return .
  */
 static bool
 SearchLinePointByLocation (int locked, LayerType ** Layer,
@@ -533,8 +551,10 @@ arcpoint_callback (const BoxType * b, void *cl)
   return ret_val;
 }
 
-/* ---------------------------------------------------------------------------
- * searches an arc-point on all the search layer
+/*!
+ * \brief Searches an arc-point on all the search layer.
+ *
+ * \return .
  */
 static bool
 SearchArcPointByLocation (int locked, LayerType **Layer,
@@ -552,9 +572,12 @@ SearchArcPointByLocation (int locked, LayerType **Layer,
     return true;
   return false;
 }
-/* ---------------------------------------------------------------------------
- * searches a polygon-point on all layers that are switched on
- * in layerstack order
+
+/*!
+ * \brief Searches a polygon-point on all layers that are switched on
+ * in layerstack order.
+ *
+ * \return .
  */
 static bool
 SearchPointByLocation (int locked, LayerType ** Layer,
@@ -614,9 +637,13 @@ name_callback (const BoxType * box, void *cl)
   return 0;
 }
 
-/* ---------------------------------------------------------------------------
- * searches the name of an element
- * the search starts with the last element and goes back to the beginning
+/*!
+ * \brief Searches the name of an element.
+ *
+ * The search starts with the last element and goes back to the
+ * beginning.
+ *
+ * \return .
  */
 static bool
 SearchElementNameByLocation (int locked, ElementType ** Element,
@@ -667,10 +694,14 @@ element_callback (const BoxType * box, void *cl)
   return 0;
 }
 
-/* ---------------------------------------------------------------------------
- * searches an element
- * the search starts with the last element and goes back to the beginning
- * if more than one element matches, the smallest one is taken
+/*!
+ * \brief Searches an element.
+ *
+ * The search starts with the last element and goes back to the
+ * beginning.\n
+ * If more than one element matches, the smallest one is taken.
+ *
+ * \return .
  */
 static bool
 SearchElementByLocation (int locked,
@@ -697,8 +728,10 @@ SearchElementByLocation (int locked,
   return false;
 }
 
-/* ---------------------------------------------------------------------------
- * checks if a point is on a pin
+/*!
+ * \brief Checks if a point is on a pin.
+ *
+ * \return .
  */
 bool
 IsPointOnPin (Coord X, Coord Y, Coord Radius, PinType *pin)
@@ -720,8 +753,10 @@ IsPointOnPin (Coord X, Coord Y, Coord Radius, PinType *pin)
   return false;
 }
 
-/* ---------------------------------------------------------------------------
- * checks if a rat-line end is on a PV
+/*!
+ * \brief Checks if a rat-line end is on a PV.
+ *
+ * \return .
  */
 bool
 IsPointOnLineEnd (Coord X, Coord Y, RatType *Line)
@@ -732,37 +767,51 @@ IsPointOnLineEnd (Coord X, Coord Y, RatType *Line)
   return (false);
 }
 
-/* ---------------------------------------------------------------------------
- * checks if a line intersects with a PV
+/*!
+ * \brief Checks if a line intersects with a PV.
  *
- * let the point be (X,Y) and the line (X1,Y1)(X2,Y2)
- * the length of the line is
+ * Let the point be \f$(X,Y)\f$ and the line \f$(X_1,Y_1)(X_2,Y_2)\f$ \n
+ * The length of the line is:\n
+ * \n
+\f[
+L = \sqrt{(X_2-X_1)^2 + (Y_2-Y_1)^2}
+\f]
+ * \n
+ * Let \f$Q\f$ be the point of perpendicular projection of \f$(X,Y)\f$
+ * onto the line.\n
+ * \n
+\f[
+Q_X = \frac{X_1 + D_1*(X_2-X_1)}{L}
+\f]
+
+ * \n
+
+\f[
+Q_Y = \frac{Y_1 + D_1*(Y_2-Y_1)}{L}
+\f]
+ * \n
+ * With (from vector geometry):\n
+ * \n
+\f[
+D_1 = \frac{(Y_1-Y)(Y_1-Y_2)+(X_1-X)(X_1-X_2)}{L}
+\f]
+ * \n
+ *   \f$D_1\f$ < 0 \f$Q\f$ is on backward extension of the line.\n
+ * \n
+ *   \f$D_1\f$ > \f$L\f$ \f$Q\f$ is on forward extension of the line.\n
+ * \n
+ *   else \f$Q\f$ is on the line.\n
+ * \n
+ * The signed distance from \f$(X,Y)\f$ to \f$Q\f$ is:\n
+ * \n
+\f[
+D_2 = \frac{(Y_2-Y_1)(X-X_1)-(X_2-X_1)(Y-Y_1)}{L}
+\f]
+ * \n
+ * Finally, \f$D_1\f$ and \f$D_2\f$ are orthogonal, so we can sum them
+ * easily by pythagorean theorem.
  *
- *   L = ((X2-X1)^2 + (Y2-Y1)^2)^0.5
- * 
- * let Q be the point of perpendicular projection of (X,Y) onto the line
- *
- *   QX = X1 + D1*(X2-X1) / L
- *   QY = Y1 + D1*(Y2-Y1) / L
- * 
- * with (from vector geometry)
- *
- *        (Y1-Y)(Y1-Y2)+(X1-X)(X1-X2)
- *   D1 = ---------------------------
- *                     L
- *
- *   D1 < 0   Q is on backward extension of the line
- *   D1 > L   Q is on forward extension of the line
- *   else     Q is on the line
- *
- * the signed distance from (X,Y) to Q is
- *
- *        (Y2-Y1)(X-X1)-(X2-X1)(Y-Y1)
- *   D2 = ----------------------------
- *                     L
- *
- * Finally, D1 and D2 are orthogonal, so we can sum them easily
- * by pythagorean theorem.
+ * \return .
  */
 bool
 IsPointOnLine (Coord X, Coord Y, Coord Radius, LineType *Line)
@@ -788,8 +837,10 @@ IsPointOnLine (Coord X, Coord Y, Coord Radius, LineType *Line)
   return sqrt (D1*D1 + D2*D2) <= Radius + Line->Thickness / 2;
 }
 
-/* ---------------------------------------------------------------------------
- * checks if a line crosses a rectangle
+/*!
+ * \brief Checks if a line crosses a rectangle.
+ *
+ * \return .
  */
 bool
 IsLineInRectangle (Coord X1, Coord Y1, Coord X2, Coord Y2, LineType *Line)
@@ -863,9 +914,14 @@ IsPointInQuadrangle(PointType p[4], PointType *l)
     }
   return false;
 }
-/* ---------------------------------------------------------------------------
- * checks if a line crosses a quadrangle: almost copied from IsLineInRectangle()
- * Note: actually this quadrangle is a slanted rectangle
+
+/*!
+ * \brief Checks if a line crosses a quadrangle: almost copied from
+ * IsLineInRectangle().
+ *
+ * \note Actually this quadrangle is a slanted rectangle.
+ *
+ * \return .
  */
 bool
 IsLineInQuadrangle (PointType p[4], LineType *Line)
@@ -905,8 +961,11 @@ IsLineInQuadrangle (PointType p[4], LineType *Line)
 
   return (false);
 }
-/* ---------------------------------------------------------------------------
- * checks if an arc crosses a square
+
+/*!
+ * \brief Checks if an arc crosses a square.
+ *
+ * \return .
  */
 bool
 IsArcInRectangle (Coord X1, Coord Y1, Coord X2, Coord Y2, ArcType *Arc)
@@ -948,9 +1007,13 @@ IsArcInRectangle (Coord X1, Coord Y1, Coord X2, Coord Y2, ArcType *Arc)
   return (false);
 }
 
-/* ---------------------------------------------------------------------------
- * Check if a circle of Radius with center at (X, Y) intersects a Pad.
+/*!
+ * \brief Check if a circle of Radius with center at (X,Y) intersects a
+ * Pad.
+ *
  * Written to enable arbitrary pad directions; for rounded pads, too.
+ *
+ * \return .
  */
 bool
 IsPointInPad (Coord X, Coord Y, Coord Radius, PadType *Pad)
@@ -1071,9 +1134,13 @@ IsPointInBox (Coord X, Coord Y, BoxType *box, Coord Radius)
   return range < Radius;
 }
 
-/* TODO: this code is BROKEN in the case of non-circular arcs,
- *       and in the case that the arc thickness is greater than
- *       the radius.
+/*!
+ * \brief .
+ *
+ * \todo This code is BROKEN in the case of non-circular arcs, and in
+ * the case that the arc thickness is greater than the radius.
+ *
+ * \return .
  */
 bool
 IsPointOnArc (Coord X, Coord Y, Coord Radius, ArcType *Arc)
@@ -1129,19 +1196,24 @@ IsPointOnArc (Coord X, Coord Y, Coord Radius, ArcType *Arc)
   return fabs (Distance (X, Y, Arc->X, Arc->Y) - Arc->Width) < Radius + Arc->Thickness / 2;
 }
 
-/* ---------------------------------------------------------------------------
- * searches for any kind of object or for a set of object types
- * the calling routine passes two pointers to allocated memory for storing
- * the results. 
- * A type value is returned too which is NO_TYPE if no objects has been found.
- * A set of object types is passed in.
- * The object is located by it's position.
+/*!
+ * \brief Searches for any kind of object or for a set of object types.
  *
- * The layout is checked in the following order:
- *   polygon-point, pin, via, line, text, elementname, polygon, element
+ * The calling routine passes two pointers to allocated memory for
+ * storing the results.\n
+ * A type value is returned too which is \c NO_TYPE if no objects has
+ * been found.\n
+ * A set of object types is passed in.\n
+ * The object is located by it's position.\n
+ * \n
+ * The layout is checked in the following order:\n
+ * polygon-point, pin, via, line, text, elementname, polygon, element\n
  *
- * Note that if Type includes LOCKED_TYPE, then the search includes
- * locked items.  Otherwise, locked items are ignored.
+ * \note That if Type includes \c LOCKED_TYPE, then the search includes
+ * locked items.\n
+ * Otherwise, locked items are ignored.\n
+ *
+ * \return .
  */
 int
 SearchObjectByLocation (unsigned Type,
@@ -1376,13 +1448,17 @@ SearchObjectByLocation (unsigned Type,
   return (NO_TYPE);
 }
 
-/* ---------------------------------------------------------------------------
- * searches for a object by it's unique ID. It doesn't matter if
- * the object is visible or not. The search is performed on a PCB, a
- * buffer or on the remove list.
- * The calling routine passes two pointers to allocated memory for storing
- * the results. 
- * A type value is returned too which is NO_TYPE if no objects has been found.
+/*!
+ * \brief Searches for a object by it's unique \c ID.
+ *
+ * It doesn't matter if the object is visible or not.\n
+ * The search is performed on a PCB, a buffer or on the remove list.\n
+ * The calling routine passes two pointers to allocated memory for
+ * storing the results. \n
+ * A type value is returned too which is \c NO_TYPE if no objects has
+ * been found.
+ *
+ * \return .
  */
 int
 SearchObjectByID (DataType *Base,
@@ -1582,9 +1658,12 @@ SearchObjectByID (DataType *Base,
   return (NO_TYPE);
 }
 
-/* ---------------------------------------------------------------------------
- * searches for an element by its board name.
- * The function returns a pointer to the element, NULL if not found
+/*!
+ * \brief Searches for an element by its board name.
+ *
+ * The function returns a pointer to the element, NULL if not found.
+ *
+ * \return .
  */
 ElementType *
 SearchElementByName (DataType *Base, char *Name)
@@ -1604,8 +1683,10 @@ SearchElementByName (DataType *Base, char *Name)
   return result;
 }
 
-/* ---------------------------------------------------------------------------
- * searches the cursor position for the type 
+/*!
+ * \brief Searches the cursor position for the type.
+ *
+ * \return .
  */
 int
 SearchScreen (Coord X, Coord Y, int Type, void **Result1,
@@ -1618,8 +1699,10 @@ SearchScreen (Coord X, Coord Y, int Type, void **Result1,
   return (ans);
 }
 
-/* ---------------------------------------------------------------------------
- * searches the cursor position for the type
+/*!
+ * \brief Searches the cursor position for the type.
+ *
+ * \return .
  */
 int
 SearchScreenGridSlop (Coord X, Coord Y, int Type, void **Result1,
