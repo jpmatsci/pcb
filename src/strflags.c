@@ -1,3 +1,9 @@
+/*!
+ * \file src/strflags.c
+ *
+ * \brief .
+ */
+
 /*
  *                            COPYRIGHT
  *
@@ -53,21 +59,24 @@
 #include <dmalloc.h>
 #endif
 
-/* Because all the macros expect it, that's why.  */
+/*!
+ * \brief Because all the macros expect it, that's why.
+ */
 typedef struct
 {
   FlagType Flags;
 } FlagHolder;
 
-/* Be careful to list more specific flags first, followed by general
- * flags, when two flags use the same bit.  For example, "onsolder" is
- * for elements only, while "auto" is for everything else.  They use
- * the same bit, but onsolder is listed first so that elements will
- * use it and not auto.
+/*!
+ * \brief Be careful to list more specific flags first, followed by
+ * general flags, when two flags use the same bit.
  *
+ * For example, "onsolder" is for elements only, while "auto" is for
+ * everything else.\n
+ * They use the same bit, but onsolder is listed first so that elements
+ * will use it and not auto.\n
  * Thermals are handled separately, as they're layer-selective.
  */
-
 typedef struct
 {
 
@@ -138,19 +147,23 @@ static FlagBitsType pcb_flagbits[] = {
 
 #undef N
 
-/*
- * This helper function maintains a small list of buffers which are
- * used by flags_to_string().  Each buffer is allocated from the heap,
- * but the caller must not free them (they get realloced when they're
- * reused, but never completely freed).
- */
-
 static struct
 {
   char *ptr;
   int len;
 } buffers[10];
+
 static int bufptr = 0;
+
+/*!
+ * \brief This helper function maintains a small list of buffers which
+ * are used by flags_to_string().
+ * Each buffer is allocated from the heap, but the caller must not free
+ * them (they get realloced when they're reused, but never completely
+ * freed).
+ *
+ * \return .
+ */
 static char *
 alloc_buf (int len)
 {
@@ -169,16 +182,19 @@ alloc_buf (int len)
 #undef B
 }
 
-/*
- * This set of routines manages a list of layer-specific flags.
- * Callers should call grow_layer_list(0) to reset the list, and
- * set_layer_list(layer,1) to set bits in the layer list.  The results
- * are stored in layers[], which has num_layers valid entries.
- */
-
 static char *layers = 0;
 static int max_layers = 0, num_layers = 0;
 
+/*!
+ * \brief This set of routines manages a list of layer-specific flags.
+ *
+ * Callers should call grow_layer_list(0) to reset the list, and
+ * set_layer_list(layer,1) to set bits in the layer list.\n
+ * The results are stored in layers[], which has num_layers valid
+ * entries.
+ *
+ * \return .
+ */
 static void
 grow_layer_list (int num)
 {
@@ -198,6 +214,16 @@ grow_layer_list (int num)
   return;
 }
 
+/*!
+ * \brief This set of routines manages a list of layer-specific flags.
+ *
+ * Callers should call grow_layer_list(0) to reset the list, and
+ * set_layer_list(layer,1) to set bits in the layer list.\n
+ * The results are stored in layers[], which has num_layers valid
+ * entries.
+ *
+ * \return .
+ */
 static inline void
 set_layer_list (int layer, int v)
 {
@@ -206,8 +232,9 @@ set_layer_list (int layer, int v)
   layers[layer] = v;
 }
 
-/*
- * These next two convert between layer lists and strings.
+/*!
+ * \brief Convert between layer lists and strings..
+ *
  * parse_layer_list() is passed a pointer to a string, and parses a
  * list of integer which reflect layers to be flagged.  It returns a
  * pointer to the first character following the list.  The syntax of
@@ -216,13 +243,8 @@ set_layer_list (int layer, int v)
  * Spaces and other punctuation are not allowed.  The results are
  * stored in layers[] defined above.
  *
- * print_layer_list() does the opposite - it uses the flags set in
- * layers[] to build a string that represents them, using the syntax
- * above.
- * 
+ * \return A pointer to the first character past the list.
  */
-
-/* Returns a pointer to the first character past the list. */
 static const char *
 parse_layer_list (const char *bp, int (*error) (const char *))
 {
@@ -275,7 +297,11 @@ parse_layer_list (const char *bp, int (*error) (const char *))
   return bp;
 }
 
-/* Number of character the value "i" requires when printed. */
+/*!
+ * \brief .
+ *
+ * \return Number of character the value "i" requires when printed.
+ */
 static int
 printed_int_length (int i, int j)
 {
@@ -291,8 +317,15 @@ printed_int_length (int i, int j)
   return rv + (j ? 1 : 0);
 }
 
-/* Returns a pointer to an internal buffer which is overwritten with
-   each new call.  */
+/*!
+ * \brief .
+ *
+ * print_layer_list() uses the flags set in layers[] to build a string
+ * that represents them, using the syntax above.
+ *
+ * \return A pointer to an internal buffer which is overwritten with
+ * each new call.
+ */
 static char *
 print_layer_list ()
 {
@@ -356,15 +389,17 @@ print_layer_list ()
   return buf;
 }
 
-/*
- * Ok, now the two entry points to this file.  The first, string_to_flags,
- * is passed a string (usually from parse_y.y) and returns a "set of flags".
- * In theory, this can be anything, but for now it's just an integer.  Later
- * it might be a structure, for example.
+/*!
+ * \brief Ok, now the two entry points to this file.
  *
+ * The first, string_to_flags, is passed a string (usually from
+ * parse_y.y) and returns a "set of flags".\n
+ * In theory, this can be anything, but for now it's just an integer.\n
+ * Later it might be a structure, for example.\n
  * Currently, there is no error handling :-P
+ *
+ * \return .
  */
-
 static int
 error_ignore (const char *msg)
 {				/* do nothing */
@@ -456,17 +491,20 @@ string_to_pcbflags (const char *flagstring,
 }
 
 
-/*
- * Given a set of flags for a given type of object, return a string
- * which reflects those flags.  The only requirement is that this
- * string be parseable by string_to_flags.
+/*!
+ * \brief Given a set of flags for a given type of object, return a
+ * string which reflects those flags.
  *
- * Note that this function knows a little about what kinds of flags
- * will be automatically set by parsing, so it won't (for example)
- * include the "via" flag for VIA_TYPEs because it knows those get
- * forcibly set when vias are parsed.
+ * The only requirement is that this string be parseable by
+ * string_to_flags.\n
+ *
+ * \note This function knows a little about what kinds of flags will be
+ * automatically set by parsing, so it won't (for example) include the
+ * "via" flag for VIA_TYPEs because it knows those get forcibly set when
+ * vias are parsed.
+ *
+ * \return .
  */
-
 static char *
 common_flags_to_string (FlagType flags,
 			int object_type,
@@ -590,13 +628,18 @@ mem_any_set (unsigned char *ptr, int bytes)
 }
 
 
-/*
- * This exists for standalone testing of this file.
+/*!
+ * \brief This exists for standalone testing of this file.
  *
- * Compile as: gcc -DHAVE_CONFIG_H -DFLAG_TEST strflags.c -o strflags.x -I..
- * and then run it.
- */
+ * Compile as:\n
 
+gcc -DHAVE_CONFIG_H -DFLAG_TEST strflags.c -o strflags.x -I..
+
+ * \n
+ * and then run it.
+ *
+ * \return .
+ */
 int
 main ()
 {
