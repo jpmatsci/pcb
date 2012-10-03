@@ -1,3 +1,11 @@
+/*!
+ * \file src/set.c
+ *
+ * \brief Routines to update widgets and global settings.
+ *
+ * Except output window and dialogs.
+ */
+
 /*
  *                            COPYRIGHT
  *
@@ -24,10 +32,6 @@
  *
  */
 
-
-/* routines to update widgets and global settings
- * (except output window and dialogs)
- */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -63,8 +67,10 @@
 static int mode_position = 0;
 static int mode_stack[MAX_MODESTACK_DEPTH];
 
-/* ---------------------------------------------------------------------------
- * sets cursor grid with respect to grid offset values
+/*!
+ * \brief Sets cursor grid with respect to grid offset values.
+ *
+ * \return .
  */
 void
 SetGrid (Coord Grid, bool align)
@@ -87,8 +93,10 @@ SetGrid (Coord Grid, bool align)
     }
 }
 
-/* ---------------------------------------------------------------------------
- * sets a new line thickness
+/*!
+ * \brief Sets a new line thickness.
+ *
+ * \return .
  */
 void
 SetLineSize (Coord Size)
@@ -101,8 +109,10 @@ SetLineSize (Coord Size)
     }
 }
 
-/* ---------------------------------------------------------------------------
- * sets a new via thickness
+/*!
+ * \brief Sets a new via thickness.
+ *
+ * \return .
  */
 void
 SetViaSize (Coord Size, bool Force)
@@ -115,8 +125,10 @@ SetViaSize (Coord Size, bool Force)
     }
 }
 
-/* ---------------------------------------------------------------------------
- * sets a new via drilling hole
+/*!
+ * \brief Sets a new via drilling hole.
+ *
+ * \return .
  */
 void
 SetViaDrillingHole (Coord Size, bool Force)
@@ -138,8 +150,10 @@ pcb_use_route_style (RouteStyleType * rst)
   Settings.Keepaway = rst->Keepaway;
 }
 
-/* ---------------------------------------------------------------------------
- * sets a keepaway width
+/*!
+ * \brief Sets a keepaway width.
+ *
+ * \return .
  */
 void
 SetKeepawayWidth (Coord Width)
@@ -150,8 +164,10 @@ SetKeepawayWidth (Coord Width)
     }
 }
 
-/* ---------------------------------------------------------------------------
- * sets a text scaling
+/*!
+ * \brief Sets a text scaling.
+ *
+ * \return .
  */
 void
 SetTextScale (int Scale)
@@ -162,8 +178,10 @@ SetTextScale (int Scale)
     }
 }
 
-/* ---------------------------------------------------------------------------
- * sets or resets changed flag and redraws status
+/*!
+ * \brief Sets or resets changed flag and redraws status.
+ *
+ * \return .
  */
 void
 SetChangedFlag (bool New)
@@ -175,8 +193,10 @@ SetChangedFlag (bool New)
     }
 }
 
-/* ---------------------------------------------------------------------------
- * sets the crosshair range to the current buffer extents 
+/*!
+ * \brief Sets the crosshair range to the current buffer extents.
+ *
+ * \return .
  */
 void
 SetCrosshairRangeToBuffer (void)
@@ -193,8 +213,10 @@ SetCrosshairRangeToBuffer (void)
     }
 }
 
-/* ---------------------------------------------------------------------------
- * sets a new buffer number
+/*!
+ * \brief Sets a new buffer number.
+ *
+ * \return .
  */
 void
 SetBufferNumber (int Number)
@@ -231,8 +253,10 @@ RestoreMode (void)
 }
 
 
-/* ---------------------------------------------------------------------------
- * set a new mode and update X cursor
+/*!
+ * \brief Set a new mode and update X cursor.
+ *
+ * \return .
  */
 void
 SetMode (int Mode)
