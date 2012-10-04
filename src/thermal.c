@@ -1,3 +1,11 @@
+/*!
+ * \file src/thermal.c
+ *
+ * \author (C) Copyright 2006, Harry Eaton.
+ *
+ * \brief Negative thermal finger polygons.
+ */
+
 /*
  *                            COPYRIGHT
  *
@@ -22,13 +30,6 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- */
-
-/* this file, thermal.c was written by and is
- * (C) Copyright 2006, harry eaton
- */
-
-/* negative thermal finger polygons
  */
 
 #ifdef HAVE_CONFIG_H
@@ -396,10 +397,12 @@ oct_therm (PinType *pin, Cardinal style)
     }
 }
 
-/* ThermPoly returns a POLYAREA having all of the clearance that when
- * subtracted from the plane create the desired thermal fingers.
+/*!
+ * \brief ThermPoly returns a POLYAREA having all of the clearance that
+ * when subtracted from the plane create the desired thermal fingers.\n
  * Usually this is 4 disjoint regions.
  *
+ * \return .
  */
 POLYAREA *
 ThermPoly (PCBType *p, PinType *pin, Cardinal laynum)
@@ -428,7 +431,7 @@ ThermPoly (PCBType *p, PinType *pin, Cardinal laynum)
         arc = CirclePoly (pin->X, pin->Y, pin->Thickness / 2);
         /* create a thin ring */
         poly_Boolean_free (pa, arc, &m, PBO_SUB);
-        /* fix me needs error checking */
+        /*! \todo fix me needs error checking */
         if (style == 2)
           {
             /* t is the theoretically required length, but we use twice that
