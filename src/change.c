@@ -1,3 +1,9 @@
+/*!
+ * \file src/change.c
+ *
+ * \brief Functions used to change object properties.
+ */
+
 /*
  *                            COPYRIGHT
  *
@@ -21,10 +27,6 @@
  *  Contact addresses for paper mail and Email:
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
- *
- */
-
-/* functions used to change object properties
  *
  */
 
