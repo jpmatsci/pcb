@@ -1,3 +1,9 @@
+/*!
+ * \file src/compat.c
+ *
+ * \brief Functions for ... .
+ */
+
 /*
  *                            COPYRIGHT
  *
