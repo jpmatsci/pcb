@@ -1,3 +1,12 @@
+/*!
+ * \file src/copy.c
+ *
+ * \brief Functions used to copy pins, elements ... .
+ *
+ * It's necessary to copy data by calling create... since the base pointer
+ * may change cause of dynamic memory allocation.
+ */
+
 /*
  *                            COPYRIGHT
  *
@@ -22,11 +31,6 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- */
-
-/* functions used to copy pins, elements ...
- * it's necessary to copy data by calling create... since the base pointer
- * may change cause of dynamic memory allocation
  */
 
 #ifdef HAVE_CONFIG_H
