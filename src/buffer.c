@@ -1,3 +1,9 @@
+/*!
+ * \file src/buffer.c
+ *
+ * \brief Functions used by paste- and move/copy buffer.
+ */
+
 /*
  *                            COPYRIGHT
  *
@@ -22,9 +28,6 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- */
-
-/* functions used by paste- and move/copy buffer
  */
 
 #ifdef HAVE_CONFIG_H
