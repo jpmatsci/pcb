@@ -1,3 +1,9 @@
+/*!
+ * \file src/clip.c
+ *
+ * \brief Functions for inserting points into objects.
+ */
+
 /*
  *                            COPYRIGHT
  *
@@ -47,8 +53,9 @@
  * \brief Clip the line to the clipBox.
  *
  * Clip X,Y to the given bounding box, plus a margin.
- * Return true if something is left to be drawn, false if the whole
- * thing is clipped.
+ *
+ * \return \c true if something is left to be drawn,
+ * \c false if the whole thing is clipped.
  */
 bool
 ClipLine (double minx, double miny, double maxx, double maxy,
