@@ -1,3 +1,22 @@
+/*!
+ * \file src/undo.c
+ *
+ * \brief Functions used to undo operations.
+ *
+ * There are two lists which hold:\n
+ * - information about a command.\n
+ * - data of removed objects.
+ *
+ * Both lists are organized as first-in-last-out which means that the
+ * undo list can always use the last entry of the remove list.\n
+ * A serial number is incremented whenever an operation is completed.\n
+ * An operation itself may consist of several basic instructions.\n
+ * E.g.: removing all selected objects is one operation with exactly one
+ * serial number even if the remove function is called several times.\n
+ *
+ * \note A lock flag ensures that no infinite loops occur.
+ */
+
 /*
  *                            COPYRIGHT
  *
@@ -22,22 +41,6 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- */
-
-/* functions used to undo operations
- *
- * Description:
- * There are two lists which hold
- *   - information about a command
- *   - data of removed objects
- * Both lists are organized as first-in-last-out which means that the undo
- * list can always use the last entry of the remove list.
- * A serial number is incremented whenever an operation is completed.
- * An operation itself may consist of several basic instructions.
- * E.g.: removing all selected objects is one operation with exactly one
- * serial number even if the remove function is called several times.
- *
- * a lock flag ensures that no infinite loops occur
  */
 
 #ifdef HAVE_CONFIG_H
@@ -78,60 +81,88 @@ static bool added_undo_between_increment_and_restore = false;
 /* ---------------------------------------------------------------------------
  * some local data types
  */
-typedef struct			/* information about a change command */
+
+/*!
+ * \brief Information about a change command.
+ */
+typedef struct
 {
   char *Name;
 } ChangeNameType;
 
-typedef struct			/* information about a move command */
+/*!
+ * \brief Information about a move command.
+ */
+typedef struct
 {
-  Coord DX, DY;		/* movement vector */
+  Coord DX, DY; /*!< movement vector. */
 } MoveType;
 
-typedef struct			/* information about removed polygon points */
+/*!
+ * \brief Information about removed polygon points.
+ */
+typedef struct
 {
-  Coord X, Y;			/* data */
+  Coord X, Y; /*!< data. */
   int ID;
-  Cardinal Index;		/* index in a polygons array of points */
-  bool last_in_contour;		/* Whether the point was the last in its contour */
+  Cardinal Index; /*!< index in a polygons array of points. */
+  bool last_in_contour; /*!< whether the point was the last in its contour. */
 } RemovedPointType;
 
-typedef struct			/* information about rotation */
+/*!
+ * \brief Information about rotation.
+ */
+typedef struct
 {
-  Coord CenterX, CenterY;	/* center of rotation */
-  Cardinal Steps;		/* number of steps */
+  Coord CenterX, CenterY; /*!< center of rotation. */
+  Cardinal Steps; /*!< number of steps. */
 } RotateType;
 
-typedef struct			/* information about moves between layers */
+/*!
+ * \brief Information about moves between layers.
+ */
+typedef struct
 {
-  Cardinal OriginalLayer;	/* the index of the original layer */
+  Cardinal OriginalLayer; /*!< the index of the original layer. */
 } MoveToLayerType;
 
-typedef struct			/* information about layer changes */
+/*!
+ * \brief Iinformation about layer changes.
+ */
+typedef struct
 {
   int old_index;
   int new_index;
 } LayerChangeType;
 
-typedef struct			/* information about poly clear/restore */
+/*!
+ * \brief Information about poly clear/restore.
+ */
+typedef struct
 {
-  bool Clear;		/* true was clear, false was restore */
+  bool Clear; /*!< true was clear, false was restore. */
   LayerType *Layer;
 } ClearPolyType;
 
-typedef struct			/* information about netlist lib changes */
+/*!
+ * \brief Information about netlist lib changes.
+ */
+typedef struct
 {
   LibraryType *old;
   LibraryType *lib;
 } NetlistChangeType;
 
-typedef struct			/* holds information about an operation */
+/*!
+ * \brief Holds information about an operation.
+ */
+typedef struct
 {
-  int Serial,			/* serial number of operation */
-    Type,			/* type of operation */
-    Kind,			/* type of object with given ID */
-    ID;				/* object ID */
-  union				/* some additional information */
+  int Serial, /*!< serial number of operation. */
+    Type, /*!< type of operation. */
+    Kind, /*!< type of object with given ID. */
+    ID; /*!< object ID */
+  union /*!< some additional information. */
   {
     ChangeNameType ChangeName;
     MoveType Move;
@@ -151,13 +182,13 @@ typedef struct			/* holds information about an operation */
 /* ---------------------------------------------------------------------------
  * some local variables
  */
-static DataType *RemoveList = NULL;	/* list of removed objects */
-static UndoListType *UndoList = NULL;	/* list of operations */
-static int Serial = 1,		/* serial number */
+static DataType *RemoveList = NULL; /*!< list of removed objects. */
+static UndoListType *UndoList = NULL; /*!< list of operations. */
+static int Serial = 1, /*!< serial number. */
   SavedSerial;
-static size_t UndoN, RedoN,	/* number of entries */
+static size_t UndoN, RedoN, /*!< number of entries. */
   UndoMax;
-static bool Locked = false;	/* do not add entries if */
+static bool Locked = false; /*!< do not add entries if. */
 static bool andDraw = true;
 										/* flag is set; prevents from */
 										/* infinite loops */
@@ -187,8 +218,10 @@ static bool UndoChangeMaskSize (UndoListType *);
 static bool UndoClearPoly (UndoListType *);
 static int PerformUndo (UndoListType *);
 
-/* ---------------------------------------------------------------------------
- * adds a command plus some data to the undo list
+/*!
+ * \brief Adds a command plus some data to the undo list.
+ *
+ * \return .
  */
 static UndoListType *
 GetUndoSlot (int CommandType, int ID, int Kind)
@@ -256,8 +289,10 @@ GetUndoSlot (int CommandType, int ID, int Kind)
   return (ptr);
 }
 
-/* ---------------------------------------------------------------------------
- * redraws the recovered object
+/*!
+ * \brief Redraws the recovered object.
+ *
+ * \return .
  */
 static void
 DrawRecoveredObject (int Type, void *Ptr1, void *Ptr2, void *Ptr3)
@@ -273,9 +308,10 @@ DrawRecoveredObject (int Type, void *Ptr1, void *Ptr2, void *Ptr3)
     DrawObject (Type, Ptr1, Ptr2);
 }
 
-/* ---------------------------------------------------------------------------
- * recovers an object from a 'rotate' operation
- * returns true if anything has been recovered
+/*!
+ * \brief Recovers an object from a 'rotate' operation.
+ *
+ * \return \c true if anything has been recovered.
  */
 static bool
 UndoRotate (UndoListType *Entry)
@@ -297,9 +333,10 @@ UndoRotate (UndoListType *Entry)
   return (false);
 }
 
-/* ---------------------------------------------------------------------------
- * recovers an object from a clear/restore poly operation
- * returns true if anything has been recovered
+/*!
+ * \brief Recovers an object from a clear/restore poly operation.
+ *
+ * \return \c true if anything has been recovered.
  */
 static bool
 UndoClearPoly (UndoListType *Entry)
@@ -321,9 +358,10 @@ UndoClearPoly (UndoListType *Entry)
   return false;
 }
 
-/* ---------------------------------------------------------------------------
- * recovers an object from a 'change name' operation
- * returns true if anything has been recovered
+/*!
+ * \brief Recovers an object from a 'change name' operation.
+ *
+ * \return \c true if anything has been recovered.
  */
 static bool
 UndoChangeName (UndoListType *Entry)
@@ -344,8 +382,10 @@ UndoChangeName (UndoListType *Entry)
   return (false);
 }
 
-/* ---------------------------------------------------------------------------
- * recovers an object from a 2ndSize change operation
+/*!
+ * \brief Recovers an object from a 2ndSize change operation.
+ *
+ * \return .
  */
 static bool
 UndoChange2ndSize (UndoListType *Entry)
@@ -370,8 +410,10 @@ UndoChange2ndSize (UndoListType *Entry)
   return (false);
 }
 
-/* ---------------------------------------------------------------------------
- * recovers an object from a ChangeAngles change operation
+/*!
+ * \brief Recovers an object from a ChangeAngles change operation.
+ *
+ * \return .
  */
 static bool
 UndoChangeAngles (UndoListType *Entry)
@@ -404,8 +446,10 @@ UndoChangeAngles (UndoListType *Entry)
   return (false);
 }
 
-/* ---------------------------------------------------------------------------
- * recovers an object from a clearance size change operation
+/*!
+ * \brief Recovers an object from a clearance size change operation.
+ *
+ * \return .
  */
 static bool
 UndoChangeClearSize (UndoListType *Entry)
@@ -433,8 +477,10 @@ UndoChangeClearSize (UndoListType *Entry)
   return (false);
 }
 
-/* ---------------------------------------------------------------------------
- * recovers an object from a mask size change operation
+/*!
+ * \brief Recovers an object from a mask size change operation.
+ *
+ * \return .
  */
 static bool
 UndoChangeMaskSize (UndoListType *Entry)
@@ -466,8 +512,10 @@ UndoChangeMaskSize (UndoListType *Entry)
 }
 
 
-/* ---------------------------------------------------------------------------
- * recovers an object from a Size change operation
+/*!
+ * \brief Recovers an object from a Size change operation.
+ *
+ * \return .
  */
 static bool
 UndoChangeSize (UndoListType *Entry)
@@ -497,8 +545,10 @@ UndoChangeSize (UndoListType *Entry)
   return (false);
 }
 
-/* ---------------------------------------------------------------------------
- * recovers an object from a FLAG change operation
+/*!
+ * \brief Recovers an object from a FLAG change operation.
+ *
+ * \return .
  */
 static bool
 UndoFlag (UndoListType *Entry)
@@ -543,9 +593,10 @@ UndoFlag (UndoListType *Entry)
   return (false);
 }
 
-/* ---------------------------------------------------------------------------
- * recovers an object from a mirror operation
- * returns true if anything has been recovered
+/*!
+ * \brief Recovers an object from a mirror operation.
+ *
+ * \return \c true if anything has been recovered.
  */
 static bool
 UndoMirror (UndoListType *Entry)
@@ -570,9 +621,10 @@ UndoMirror (UndoListType *Entry)
   return (false);
 }
 
-/* ---------------------------------------------------------------------------
- * recovers an object from a 'copy' or 'create' operation
- * returns true if anything has been recovered
+/*!
+ * \brief Recovers an object from a 'copy' or 'create' operation.
+ *
+ * \return \c true if anything has been recovered.
  */
 static bool
 UndoCopyOrCreate (UndoListType *Entry)
@@ -597,9 +649,10 @@ UndoCopyOrCreate (UndoListType *Entry)
   return (false);
 }
 
-/* ---------------------------------------------------------------------------
- * recovers an object from a 'move' operation
- * returns true if anything has been recovered
+/*!
+ * \brief Recovers an object from a 'move' operation.
+ *
+ * \return \c true if anything has been recovered.
  */
 static bool
 UndoMove (UndoListType *Entry)
@@ -621,9 +674,10 @@ UndoMove (UndoListType *Entry)
   return (false);
 }
 
-/* ----------------------------------------------------------------------
- * recovers an object from a 'remove' operation
- * returns true if anything has been recovered
+/*!
+ * \brief Recovers an object from a 'remove' operation.
+ *
+ * \return \c true if anything has been recovered.
  */
 static bool
 UndoRemove (UndoListType *Entry)
@@ -646,9 +700,10 @@ UndoRemove (UndoListType *Entry)
   return (false);
 }
 
-/* ----------------------------------------------------------------------
- * recovers an object from a 'move to another layer' operation
- * returns true if anything has been recovered
+/*!
+ * \brief Recovers an object from a 'move to another layer' operation.
+ *
+ * \return \c true if anything has been recovered.
  */
 static bool
 UndoMoveToLayer (UndoListType *Entry)
@@ -671,9 +726,10 @@ UndoMoveToLayer (UndoListType *Entry)
   return (false);
 }
 
-/* ---------------------------------------------------------------------------
- * recovers a removed polygon point
- * returns true on success
+/*!
+ * \brief Recovers a removed polygon point.
+ *
+ * \return \c true on success.
  */
 static bool
 UndoRemovePoint (UndoListType *Entry)
@@ -716,9 +772,10 @@ UndoRemovePoint (UndoListType *Entry)
     }
 }
 
-/* ---------------------------------------------------------------------------
- * recovers an inserted polygon point
- * returns true on success
+/*!
+ * \brief Recovers an inserted polygon point.
+ *
+ * \return \c true on success.
  */
 static bool
 UndoInsertPoint (UndoListType *Entry)
@@ -813,9 +870,10 @@ UndoSwapCopiedObject (UndoListType *Entry)
   return (true);
 }
 
-/* ---------------------------------------------------------------------------
- * recovers an removed polygon point
- * returns true on success
+/*!
+ * \brief Recovers an removed polygon point.
+ *
+ * \return \c true on success.
  */
 static bool
 UndoRemoveContour (UndoListType *Entry)
@@ -824,9 +882,10 @@ UndoRemoveContour (UndoListType *Entry)
   return UndoSwapCopiedObject (Entry);
 }
 
-/* ---------------------------------------------------------------------------
- * recovers an inserted polygon point
- * returns true on success
+/*!
+ * \brief Recovers an inserted polygon point.
+ *
+ * \return \c true on success.
  */
 static bool
 UndoInsertContour (UndoListType *Entry)
@@ -835,9 +894,10 @@ UndoInsertContour (UndoListType *Entry)
   return UndoSwapCopiedObject (Entry);
 }
 
-/* ---------------------------------------------------------------------------
- * undo a layer change
- * returns true on success
+/*!
+ * \brief Undo a layer change.
+ *
+ * \return \c true on success.
  */
 static bool
 UndoLayerChange (UndoListType *Entry)
@@ -855,9 +915,10 @@ UndoLayerChange (UndoListType *Entry)
     return true;
 }
 
-/* ---------------------------------------------------------------------------
- * undo a netlist change
- * returns true on success
+/*!
+ * \brief Undo a netlist change.
+ *
+ * \return \c true on success.
  */
 static bool
 UndoNetlistChange (UndoListType *Entry)
@@ -914,10 +975,10 @@ UndoNetlistChange (UndoListType *Entry)
   return true;
 }
 
-/* ---------------------------------------------------------------------------
- * undo of any 'hard to recover' operation
+/*!
+ * \brief Undo of any 'hard to recover' operation.
  *
- * returns the bitfield for the types of operations that were undone
+ * \return The bitfield for the types of operations that were undone.
  */
 int
 Undo (bool draw)
@@ -1100,10 +1161,10 @@ PerformUndo (UndoListType *ptr)
   return 0;
 }
 
-/* ---------------------------------------------------------------------------
- * redo of any 'hard to recover' operation
+/*!
+ * \brief Redo of any 'hard to recover' operation.
  *
- * returns the number of operations redone
+ * \return The number of operations redone.
  */
 int
 Redo (bool draw)
@@ -1164,8 +1225,10 @@ Redo (bool draw)
   return Types;
 }
 
-/* ---------------------------------------------------------------------------
- * restores the serial number of the undo list
+/*!
+ * \brief Restores the serial number of the undo list.
+ *
+ * \return .
  */
 void
 RestoreUndoSerialNumber (void)
@@ -1177,8 +1240,10 @@ RestoreUndoSerialNumber (void)
   Serial = SavedSerial;
 }
 
-/* ---------------------------------------------------------------------------
- * saves the serial number of the undo list
+/*!
+ * \brief Saves the serial number of the undo list.
+ *
+ * \return .
  */
 void
 SaveUndoSerialNumber (void)
@@ -1189,10 +1254,13 @@ SaveUndoSerialNumber (void)
   SavedSerial = Serial;
 }
 
-/* ---------------------------------------------------------------------------
- * increments the serial number of the undo list
- * it's not done automatically because some operations perform more
- * than one request with the same serial #
+/*!
+ * \brief Increments the serial number of the undo list.
+ *
+ * It's not done automatically because some operations perform more
+ * than one request with the same serial #.
+ *
+ * \return .
  */
 void
 IncrementUndoSerialNumber (void)
@@ -1208,8 +1276,10 @@ IncrementUndoSerialNumber (void)
     }
 }
 
-/* ---------------------------------------------------------------------------
- * releases memory of the undo- and remove list
+/*!
+ * \brief Releases memory of the undo- and remove list.
+ *
+ * \return .
  */
 void
 ClearUndoList (bool Force)
@@ -1242,8 +1312,10 @@ ClearUndoList (bool Force)
   Serial = 1;
 }
 
-/* ---------------------------------------------------------------------------
- * adds an object to the list of clearpoly objects
+/*!
+ * \brief Adds an object to the list of clearpoly objects.
+ *
+ * \return .
  */
 void
 AddObjectToClearPolyUndoList (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
@@ -1259,8 +1331,10 @@ AddObjectToClearPolyUndoList (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
     }
 }
 
-/* ---------------------------------------------------------------------------
- * adds an object to the list of mirrored objects
+/*!
+ * \brief Adds an object to the list of mirrored objects.
+ *
+ * \return .
  */
 void
 AddObjectToMirrorUndoList (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
@@ -1275,8 +1349,10 @@ AddObjectToMirrorUndoList (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
     }
 }
 
-/* ---------------------------------------------------------------------------
- * adds an object to the list of rotated objects
+/*!
+ * \brief Adds an object to the list of rotated objects.
+ *
+ * \return .
  */
 void
 AddObjectToRotateUndoList (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
@@ -1294,9 +1370,11 @@ AddObjectToRotateUndoList (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
     }
 }
 
-/* ---------------------------------------------------------------------------
- * adds an object to the list of removed objects and removes it from
- * the current PCB
+/*!
+ * \brief Adds an object to the list of removed objects and removes it
+ * from the current PCB.
+ *
+ * \return .
  */
 void
 MoveObjectToRemoveUndoList (int Type, void *Ptr1, void *Ptr2, void *Ptr3)
@@ -1311,8 +1389,10 @@ MoveObjectToRemoveUndoList (int Type, void *Ptr1, void *Ptr2, void *Ptr3)
   MoveObjectToBuffer (RemoveList, PCB->Data, Type, Ptr1, Ptr2, Ptr3);
 }
 
-/* ---------------------------------------------------------------------------
- * adds an object to the list of removed polygon/... points
+/*!
+ * \brief Adds an object to the list of removed polygon/... points.
+ *
+ * \return .
  */
 void
 AddObjectToRemovePointUndoList (int Type,
@@ -1356,8 +1436,10 @@ AddObjectToRemovePointUndoList (int Type,
     }
 }
 
-/* ---------------------------------------------------------------------------
- * adds an object to the list of inserted polygon/... points
+/*!
+ * \brief Adds an object to the list of inserted polygon/... points.
+ *
+ * \return .
  */
 void
 AddObjectToInsertPointUndoList (int Type, void *Ptr1, void *Ptr2, void *Ptr3)
@@ -1383,9 +1465,12 @@ CopyObjectToUndoList (int undo_type, int Type, void *Ptr1, void *Ptr2, void *Ptr
   undo->Data.CopyID = copy->ID;
 }
 
-/* ---------------------------------------------------------------------------
- * adds an object to the list of removed contours
- * (Actually just takes a copy of the whole polygon to restore)
+/*!
+ * \brief Adds an object to the list of removed contours.
+ *
+ * Actually just takes a copy of the whole polygon to restore.
+ *
+ * \return .
  */
 void
 AddObjectToRemoveContourUndoList (int Type,
@@ -1394,9 +1479,12 @@ AddObjectToRemoveContourUndoList (int Type,
   CopyObjectToUndoList (UNDO_REMOVE_CONTOUR, Type, Layer, Polygon, NULL);
 }
 
-/* ---------------------------------------------------------------------------
- * adds an object to the list of insert contours
- * (Actually just takes a copy of the whole polygon to restore)
+/*!
+ * \brief Adds an object to the list of insert contours.
+ *
+ * Actually just takes a copy of the whole polygon to restore.
+ *
+ * \return .
  */
 void
 AddObjectToInsertContourUndoList (int Type,
@@ -1405,8 +1493,10 @@ AddObjectToInsertContourUndoList (int Type,
   CopyObjectToUndoList (UNDO_INSERT_CONTOUR, Type, Layer, Polygon, NULL);
 }
 
-/* ---------------------------------------------------------------------------
- * adds an object to the list of moved objects
+/*!
+ * \brief Adds an object to the list of moved objects.
+ *
+ * \return .
  */
 void
 AddObjectToMoveUndoList (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
@@ -1422,8 +1512,10 @@ AddObjectToMoveUndoList (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
     }
 }
 
-/* ---------------------------------------------------------------------------
- * adds an object to the list of objects with changed names
+/*!
+ * \brief Adds an object to the list of objects with changed names.
+ *
+ * \return .
  */
 void
 AddObjectToChangeNameUndoList (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
@@ -1438,8 +1530,10 @@ AddObjectToChangeNameUndoList (int Type, void *Ptr1, void *Ptr2, void *Ptr3,
     }
 }
 
-/* ---------------------------------------------------------------------------
- * adds an object to the list of objects moved to another layer
+/*!
+ * \brief Adds an object to the list of objects moved to another layer.
+ *
+ * \return .
  */
 void
 AddObjectToMoveToLayerUndoList (int Type, void *Ptr1, void *Ptr2, void *Ptr3)
@@ -1454,8 +1548,10 @@ AddObjectToMoveToLayerUndoList (int Type, void *Ptr1, void *Ptr2, void *Ptr3)
     }
 }
 
-/* ---------------------------------------------------------------------------
- * adds an object to the list of created objects
+/*!
+ * \brief Adds an object to the list of created objects.
+ *
+ * \return .
  */
 void
 AddObjectToCreateUndoList (int Type, void *Ptr1, void *Ptr2, void *Ptr3)
@@ -1465,8 +1561,10 @@ AddObjectToCreateUndoList (int Type, void *Ptr1, void *Ptr2, void *Ptr3)
   ClearFromPolygon (PCB->Data, Type, Ptr1, Ptr2);
 }
 
-/* ---------------------------------------------------------------------------
- * adds an object to the list of objects with flags changed
+/*!
+ * \brief Adds an object to the list of objects with flags changed.
+ *
+ * \return .
  */
 void
 AddObjectToFlagUndoList (int Type, void *Ptr1, void *Ptr2, void *Ptr3)
@@ -1480,8 +1578,10 @@ AddObjectToFlagUndoList (int Type, void *Ptr1, void *Ptr2, void *Ptr3)
     }
 }
 
-/* ---------------------------------------------------------------------------
- * adds an object to the list of objects with Size changes
+/*!
+ * \brief Adds an object to the list of objects with Size changes.
+ *
+ * \return .
  */
 void
 AddObjectToSizeUndoList (int Type, void *ptr1, void *ptr2, void *ptr3)
@@ -1516,8 +1616,10 @@ AddObjectToSizeUndoList (int Type, void *ptr1, void *ptr2, void *ptr3)
     }
 }
 
-/* ---------------------------------------------------------------------------
- * adds an object to the list of objects with Size changes
+/*!
+ * \brief Adds an object to the list of objects with Size changes.
+ *
+ * \return .
  */
 void
 AddObjectToClearSizeUndoList (int Type, void *ptr1, void *ptr2, void *ptr3)
@@ -1546,8 +1648,10 @@ AddObjectToClearSizeUndoList (int Type, void *ptr1, void *ptr2, void *ptr3)
     }
 }
 
-/* ---------------------------------------------------------------------------
- * adds an object to the list of objects with Size changes
+/*!
+ * \brief Adds an object to the list of objects with Size changes.
+ *
+ * \return .
  */
 void
 AddObjectToMaskSizeUndoList (int Type, void *ptr1, void *ptr2, void *ptr3)
@@ -1570,8 +1674,10 @@ AddObjectToMaskSizeUndoList (int Type, void *ptr1, void *ptr2, void *ptr3)
     }
 }
 
-/* ---------------------------------------------------------------------------
- * adds an object to the list of objects with 2ndSize changes
+/*!
+ * \brief Adds an object to the list of objects with 2ndSize changes.
+ *
+ * \return .
  */
 void
 AddObjectTo2ndSizeUndoList (int Type, void *ptr1, void *ptr2, void *ptr3)
@@ -1586,9 +1692,13 @@ AddObjectTo2ndSizeUndoList (int Type, void *ptr1, void *ptr2, void *ptr3)
     }
 }
 
-/* ---------------------------------------------------------------------------
- * adds an object to the list of changed angles.  Note that you must
- * call this before changing the angles, passing the new start/delta.
+/*!
+ * \brief Adds an object to the list of changed angles.
+ *
+ * \note You must call this before changing the angles, passing the new
+ * start/delta.
+ *
+ * \return .
  */
 void
 AddObjectToChangeAnglesUndoList (int Type, void *Ptr1, void *Ptr2, void *Ptr3)
@@ -1604,8 +1714,10 @@ AddObjectToChangeAnglesUndoList (int Type, void *Ptr1, void *Ptr2, void *Ptr3)
     }
 }
 
-/* ---------------------------------------------------------------------------
- * adds a layer change (new, delete, move) to the undo list.
+/*!
+ * \brief Adds a layer change (new, delete, move) to the undo list.
+ *
+ * \return .
  */
 void
 AddLayerChangeToUndoList (int old_index, int new_index)
@@ -1620,8 +1732,10 @@ AddLayerChangeToUndoList (int old_index, int new_index)
     }
 }
 
-/* ---------------------------------------------------------------------------
- * adds a netlist change to the undo list
+/*!
+ * \brief Adds a netlist change to the undo list.
+ *
+ * \return .
  */
 void
 AddNetlistLibToUndoList (LibraryType *lib)
@@ -1712,8 +1826,10 @@ AddNetlistLibToUndoList (LibraryType *lib)
     }
 }
 
-/* ---------------------------------------------------------------------------
- * set lock flag
+/*!
+ * \brief Set the lock flag.
+ *
+ * \return .
  */
 void
 LockUndo (void)
@@ -1721,8 +1837,10 @@ LockUndo (void)
   Locked = true;
 }
 
-/* ---------------------------------------------------------------------------
- * reset lock flag
+/*!
+ * \brief Reset the lock flag.
+ *
+ * \return .
  */
 void
 UnlockUndo (void)
@@ -1730,8 +1848,10 @@ UnlockUndo (void)
   Locked = false;
 }
 
-/* ---------------------------------------------------------------------------
- * return undo lock state
+/*!
+ * \brief .
+ *
+ * \return Undo lock state.
  */
 bool
 Undoing (void)
