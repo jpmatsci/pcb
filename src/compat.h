@@ -1,3 +1,9 @@
+/*!
+ * \file src/compat.h
+ *
+ * \brief Prototypes for ... .
+ */
+
 /*
  *                            COPYRIGHT
  *
