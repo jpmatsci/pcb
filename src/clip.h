@@ -1,3 +1,9 @@
+/*!
+ * \file src/clip.h
+ *
+ * \brief Prototypes for inserting points into objects.
+ */
+
 /*
  *                            COPYRIGHT
  *
@@ -23,9 +29,6 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- */
-
-/* prototypes for inserting points into objects
  */
 
 #ifndef	PCB_CLIP_H
