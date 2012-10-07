@@ -1,3 +1,9 @@
+/*!
+ * \file src/copy.h
+ *
+ * \brief Prototypes for copy routines.
+ */
+
 /*
  *                            COPYRIGHT
  *
@@ -22,9 +28,6 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- */
-
-/* prototypes for copy routines
  */
 
 #ifndef	PCB_COPY_H
