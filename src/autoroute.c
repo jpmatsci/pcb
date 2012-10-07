@@ -1,3 +1,32 @@
+/*!
+ * \file src/autoroute.c
+ *
+ * \author Copyright (c) 2001 C. Scott Ananian.
+ *
+ * \author Copyright (c) 2006 Harry Eaton.
+ *
+ * \author Copyright (c) 2009 Harry Eaton.
+ *
+ * \brief Functions used to autoroute nets.
+ *
+ * This file implements a rectangle-expansion router, based on
+ * "A Method for Gridless Routing of Printed Circuit Boards" by
+ * A. C. Finch, K. J. Mackenzie, G. J. Balsdon, and G. Symonds in the
+ * 1985 Proceedings of the 22nd ACM/IEEE Design Automation Conference.\n
+ * This reference is available from the ACM Digital Library at
+ * http://www.acm.org/dl for those with institutional or personal
+ * access to it.\n
+ * It's also available from your local engineering library.\n
+ * \n
+ * The code is much closer to what is described in the paper now,
+ * in that expansion areas can grow from corners and in all directions
+ * at once.\n
+ * Previously, these were emulated with discrete boxes moving in the
+ * cardinal directions.\n
+ * With the new method, there are fewer but larger expansion boxes that
+ * one might do a better job of routing in.
+ */
+
 /*
  *                            COPYRIGHT
  *
@@ -24,31 +53,7 @@
  *  haceaton@aplcomm.jhuapl.edu
  *
  */
-/* this file, autoroute.c, was written and is
- * Copyright (c) 2001 C. Scott Ananian
- * Copyright (c) 2006 harry eaton
- * Copyright (c) 2009 harry eaton
- */
-/* functions used to autoroute nets.
- */
-/*
- *-------------------------------------------------------------------
- * This file implements a rectangle-expansion router, based on
- * "A Method for Gridless Routing of Printed Circuit Boards" by
- * A. C. Finch, K. J. Mackenzie, G. J. Balsdon, and G. Symonds in the
- * 1985 Proceedings of the 22nd ACM/IEEE Design Automation Conference.
- * This reference is available from the ACM Digital Library at
- * http://www.acm.org/dl for those with institutional or personal
- * access to it.  It's also available from your local engineering
- * library.
- *
- * The code is much closer to what is described in the paper now,
- * in that expansion areas can grow from corners and in all directions
- * at once. Previously, these were emulated with discrete boxes moving
- * in the cardinal directions. With the new method, there are fewer but
- * larger expansion boxes that one might do a better job of routing in.
- *--------------------------------------------------------------------
- */
+
 #define NET_HEAP 1
 #ifdef HAVE_CONFIG_H
 #include "config.h"
