@@ -1,3 +1,9 @@
+/*!
+ * \file src/command.h
+ *
+ * \brief Prototypes for command execution.
+ */
+
 /*
  *                            COPYRIGHT
  *
@@ -22,9 +28,6 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- */
-
-/* prototypes for command execution
  */
 
 #ifndef	PCB_COMMAND_H
