@@ -1,3 +1,9 @@
+/*!
+ * \file src/command.c
+ *
+ * \brief Executes commands from user.
+ */
+
 /*
  *                            COPYRIGHT
  *
@@ -22,9 +28,6 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- */
-
-/* executes commands from user
  */
 
 #ifdef HAVE_CONFIG_H
