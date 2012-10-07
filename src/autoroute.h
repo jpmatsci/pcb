@@ -1,3 +1,11 @@
+/*!
+ * \file src/autoroute.h
+ *
+ * \author Copyright (c) 2001 C. Scott Ananian.
+ *
+ * \brief Prototypes for autoroute routines.
+ */
+
 /*
  *                            COPYRIGHT
  *
@@ -23,13 +31,6 @@
  *  harry eaton, 6697 Buttonhole Ct, Columbia, MD 21044 USA
  *  haceaton@aplcomm.jhuapl.edu
  *
- */
-
-/* this file, autoroute.h, was written and is
- * Copyright (c) 2001 C. Scott Ananian.
- */
-
-/* prototypes for autoroute routines
  */
 
 #ifndef PCB_AUTOROUTE_H
