@@ -1,3 +1,9 @@
+/*!
+ * \file src/change.h
+ *
+ * \brief Prototypes to change object properties.
+ */
+
 /*
  *                            COPYRIGHT
  *
@@ -22,9 +28,6 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- */
-
-/* prototypes to change object properties
  */
 
 #ifndef	PCB_CHANGE_H
