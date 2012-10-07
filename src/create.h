@@ -1,3 +1,9 @@
+/*!
+ * \file src/create.h
+ *
+ * \brief Prototypes for create routines.
+ */
+
 /*
  *                            COPYRIGHT
  *
@@ -22,9 +28,6 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- */
-
-/* prototypes for create routines
  */
 
 #ifndef	PCB_CREATE_H
