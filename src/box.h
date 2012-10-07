@@ -1,3 +1,11 @@
+/*!
+ * \file src/box.h
+ *
+ * \author Copyright (c) 2001 C. Scott Ananian.
+ *
+ * \brief Random box-related utilities.
+ */
+
 /*
  *                            COPYRIGHT
  *
@@ -23,13 +31,6 @@
  *  harry eaton, 6697 Buttonhole Ct, Columbia, MD 21044 USA
  *  haceaton@aplcomm.jhuapl.edu
  *
- */
-
-/* this file, box.h, was written and is
- * Copyright (c) 2001 C. Scott Ananian.
- */
-
-/* random box-related utilities.
  */
 
 #ifndef PCB_BOX_H
