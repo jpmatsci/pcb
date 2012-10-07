@@ -1,3 +1,41 @@
+/*!
+ * \file src/toporouter.c
+ *
+ * \brief Topological Autorouter for PCB.
+ *
+ * \warning This is *EXPERIMENTAL* code.
+ *
+ * As the code is experimental, the algorithms and code are likely to
+ * change.\n
+ * Which means it isn't documented or optimized.\n
+ * If you would like to learn about Topological Autorouters, the
+ * following papers are good starting points:\n
+ * \n
+ * This file implements a topological autorouter, and uses techniques
+ * from the following publications:\n
+ * \n
+ * <ul>
+ * <li>
+ * Dayan, T. and Dai, W.W.M., "Layer Assignment for a Rubber Band
+ * Router" Tech Report UCSC-CRL-92-50, Univ. of California, Santa Cruz,
+ * 1992.
+ * <li>
+ * Dai, W.W.M and Dayan, T. and Staepelaere, D., "Topological Routing in
+ * SURF: Generating a Rubber-Band Sketch" Proc. 28th ACM/IEEE Design
+ * Automation Conference, 1991, pp. 39-44.
+ * <li>
+ * David Staepelaere, Jeffrey Jue, Tal Dayan, Wayne Wei-Ming Dai, "SURF:
+ * Rubber-Band Routing System for Multichip Modules," IEEE Design and
+ * Test of Computers ,vol. 10, no. 4,  pp. 18-26, October/December, 1993.
+ * <li>
+ * Dayan, T., "Rubber-band based topological router" PhD Thesis, Univ.
+ * of California, Santa Cruz, 1997.
+ * <li>
+ * David Staepelaere, "Geometric transformations for a rubber-band sketch"
+ * Master's thesis, Univ. of California, Santa Cruz, September 1992.
+ * </ul>
+ */
+
 /*
  *                            COPYRIGHT
  *
@@ -22,36 +60,6 @@
  *
  *  Contact addresses for email:
  *  Anthony Blake, tonyb33@gmail.com
- *
- *
- *
- *                 This is *EXPERIMENTAL* code.
- *
- *  As the code is experimental, the algorithms and code
- *  are likely to change. Which means it isn't documented
- *  or optimized. If you would like to learn about Topological
- *  Autorouters, the following papers are good starting points:
- *
- * This file implements a topological autorouter, and uses techniques from the
- * following publications:
- *
- * Dayan, T. and Dai, W.W.M., "Layer Assignment for a Rubber Band Router" Tech
- * Report UCSC-CRL-92-50, Univ. of California, Santa Cruz, 1992.
- *
- * Dai, W.W.M and Dayan, T. and Staepelaere, D., "Topological Routing in SURF:
- * Generating a Rubber-Band Sketch" Proc. 28th ACM/IEEE Design Automation
- * Conference, 1991, pp. 39-44.
- *
- * David Staepelaere, Jeffrey Jue, Tal Dayan, Wayne Wei-Ming Dai, "SURF:
- * Rubber-Band Routing System for Multichip Modules," IEEE Design and Test of
- * Computers ,vol. 10, no. 4,  pp. 18-26, October/December, 1993.
- *
- * Dayan, T., "Rubber-band based topological router" PhD Thesis, Univ. of
- * California, Santa Cruz, 1997.
- *
- * David Staepelaere, "Geometric transformations for a rubber-band sketch"
- * Master's thesis, Univ. of California, Santa Cruz, September 1992.
- *
  */
 
 
@@ -704,7 +712,12 @@ vertex_net_keepaway(toporouter_vertex_t *v)
   return cluster_keepaway(box->cluster);
 }
 
-/* fills in x and y with coordinates of point from a towards b of distance d */
+/*!
+ * \brief Fills in \f$ x \f$ and \f$ y \f$ with coordinates of point
+ * from \f$ a \f$ towards \f$ b \f$ of distance \f$ \f$ .
+ *
+ * \return .
+ */
 static void
 point_from_point_to_point (toporouter_vertex_t *a,
                            toporouter_vertex_t *b,
@@ -727,8 +740,11 @@ coord_wind(gdouble ax, gdouble ay, gdouble bx, gdouble by, gdouble cx, gdouble c
   return (rval > EPSILON) ? 1 : ((rval < -EPSILON) ? -1 : 0);
 }
 
-/* wind_v:
- * returns 1,0,-1 for counterclockwise, collinear or clockwise, respectively.
+/*!
+ * \brief wind_v:
+ *
+ * \return 1, 0, -1 for counterclockwise, colinear or clockwise,
+ * respectively.
  */
 int 
 point_wind(GtsPoint *a, GtsPoint *b, GtsPoint *c) 
@@ -752,7 +768,12 @@ tvertex_wind(toporouter_vertex_t  *a, toporouter_vertex_t  *b, toporouter_vertex
   return point_wind(GTS_POINT(a), GTS_POINT(b), GTS_POINT(c));
 }
 
-/* moves vertex v d units in the direction of vertex p */
+/*!
+ * \brief Moves vertex \f$  v \f$ over \f$ d \f$ units in the direction
+ * of vertex \f$ p \f$ .
+ *
+ * \return .
+ */
 static void
 coord_move_towards_coord_values (double ax, double ay,
                                  double px, double py,
@@ -765,7 +786,12 @@ coord_move_towards_coord_values (double ax, double ay,
   *y = ay + d * sin (theta);
 }
 
-/* moves vertex v d units in the direction of vertex p */
+/*!
+ * \brief Moves vertex \f$ v \f$ over \f$ d \f$ units in the direction
+ * of vertex \f$ p \f$ .
+ *
+ * \return .
+ */
 static void
 vertex_move_towards_vertex_values (GtsVertex *v,
                                    GtsVertex *p,
@@ -804,7 +830,12 @@ min_spacing(toporouter_vertex_t *v1, toporouter_vertex_t *v2)
   return ms;
 }
 
-// v1 is a vertex in the CDT, and v2 is a net... other way around?
+/*!
+ * \brief \f$ v1 \f$ is a vertex in the CDT, and \f$ v2 \f$ is a net...
+ * other way around ?
+ *
+ * \return .
+ */
 static inline gdouble
 min_vertex_net_spacing(toporouter_vertex_t *v1, toporouter_vertex_t *v2)
 {
@@ -1124,8 +1155,11 @@ toporouter_free(toporouter_t *r)
 
 }
 
-/* wind:
- * returns 1,0,-1 for counterclockwise, collinear or clockwise, respectively.
+/*!
+ * \brief wind:
+ *
+ * \return 1, 0, -1 for counterclockwise, colinear or clockwise,
+ * respectively.
  */
 int 
 wind(toporouter_spoint_t *p1, toporouter_spoint_t *p2, toporouter_spoint_t *p3) 
@@ -1154,11 +1188,12 @@ print_toporouter_vertex(toporouter_vertex_t *tv)
 }
 
 
-/**
- * vertices_on_line:
- * Given vertex a, gradient m, and radius r:
+/*!
+ * \brief vertices_on_line: given vertex \f$ a \f$, gradient \f$ m \f$,
+ * and radius \f$ r \f$.
  *
- * Return vertices on line of a & m at r from a
+ * \return Vertices on line of \f$ a \f$ & \f$ m \f$ at \f$ r \f$ from
+ * \f$ a \f$ .
  */ 
 static void
 vertices_on_line (toporouter_spoint_t *a,
@@ -1191,11 +1226,12 @@ vertices_on_line (toporouter_spoint_t *a,
   b1->y = m * b1->x + c;
 }
 
-/**
- * coords_on_line:
- * Given coordinates ax, ay, gradient m, and radius r:
+/*!
+ * \brief coords_on_line: given coordinates \f$ a_x \f$ , \f$ a_y \f$,
+ * gradient \f$ m \f$ , and radius \f$ r \f$ .
  *
- * Return coordinates on line of a & m at r from a
+ * \return Coordinates on line of \f$ a \f$ & \f$ m \f$ at \f$ r \f$
+ * from \f$ a \f$ .
  */
 static void
 coords_on_line (double ax, gdouble ay,
@@ -1227,8 +1263,10 @@ coords_on_line (double ax, gdouble ay,
   *b1y = m * *b1x + c;
 }
 
-/*
- * Returns gradient of segment given by a & b
+/*!
+ * \brief .
+ *
+ * \return Gradient of segment given by \f$ a \f$ & \f$ b \f$ .
  */
 gdouble
 vertex_gradient(toporouter_spoint_t *a, toporouter_spoint_t *b) 
@@ -1238,8 +1276,10 @@ vertex_gradient(toporouter_spoint_t *a, toporouter_spoint_t *b)
   return ((b->y - a->y) / (b->x - a->x));
 }
 
-/*
- * Returns gradient of segment given by (x0,y0) & (x1,y1)
+/*!
+ * \brief .
+ *
+ * \return Gradient of segment given by \f$(x_0,y_0)\f$ & \f$(x_1,y_1)\f$ .
  */
 static inline gdouble
 cartesian_gradient(gdouble x0, gdouble y0, gdouble x1, gdouble y1) 
@@ -1249,8 +1289,11 @@ cartesian_gradient(gdouble x0, gdouble y0, gdouble x1, gdouble y1)
   return ((y1 - y0) / (x1 - x0));
 }
 
-/*
- * Returns gradient of segment given by (x0,y0) & (x1,y1)
+/*!
+ * \brief .
+ *
+ * \return Gradient of segment given by \f$(x_0,y_0)\f$ &
+ * \f$(x_1,y_1)\f$.
  */
 static inline gdouble
 point_gradient(GtsPoint *a, GtsPoint *b) 
@@ -1268,8 +1311,10 @@ segment_gradient(GtsSegment *s)
       GTS_POINT(s->v2)->y); 
 }
 
-/*
- * Returns gradient perpendicular to m
+/*!
+ * \brief .
+ *
+ * \return Gradient perpendicular to \f$ m \f$.
  */
 gdouble
 perpendicular_gradient(gdouble m) 
@@ -1279,16 +1324,19 @@ perpendicular_gradient(gdouble m)
   return -1.0f/m;
 }
 
-/*
- * Returns the distance between two vertices in the x-y plane
+/*!
+ * \brief .
+ *
+ * \return The distance between two vertices in the x-y plane.
  */
 gdouble
 vertices_plane_distance(toporouter_spoint_t *a, toporouter_spoint_t *b) {
   return sqrt( pow(a->x - b->x, 2) + pow(a->y - b->y, 2) );
 }
 
-/*
- * Finds the point p distance r away from a on the line segment of a & b 
+/*!
+ * \brief Finds the point \f$ p \f$ distance \f$ r \f$ away from
+ * \f$ a \f$ on the line segment of \f$ a \f$ & \f$ b \f$ . 
  */
 static inline void
 vertex_outside_segment(toporouter_spoint_t *a, toporouter_spoint_t *b, gdouble r, toporouter_spoint_t *p) 
@@ -1307,9 +1355,11 @@ vertex_outside_segment(toporouter_spoint_t *a, toporouter_spoint_t *b, gdouble r
 
 }
 
-/* proper intersection:
- * AB and CD must share a point interior to both segments.
- * returns TRUE if AB properly intersects CD.
+/*!
+ * \brief Proper intersection: \f$ AB \f$ and \f$ CD \f$ must share a
+ * point interior to both segments.
+ *
+ * \return \c TRUE if \f$ AB \f$ properly intersects \f$ CD \f$.
  */
 static bool
 coord_intersect_prop (double ax, double ay,
@@ -1329,9 +1379,11 @@ coord_intersect_prop (double ax, double ay,
   return (wind_abc != wind_abd) && (wind_cda != wind_cdb);
 }
 
-/* proper intersection:
- * AB and CD must share a point interior to both segments.
- * returns TRUE if AB properly intersects CD.
+/*!
+ * \brief proper intersection: \f$ AB \f$ and \f$ CD \f$ must share a
+ * point interior to both segments.
+ *
+ * \return \c TRUE if \f$ AB \f$ properly intersects \f$ CD \f$ .
  */
 static bool
 point_intersect_prop (GtsPoint *a, GtsPoint *b, GtsPoint *c, GtsPoint *d)
@@ -1354,9 +1406,11 @@ vertex_intersect_prop(GtsVertex *a, GtsVertex *b, GtsVertex *c, GtsVertex *d)
   return point_intersect_prop(GTS_POINT(a), GTS_POINT(b), GTS_POINT(c), GTS_POINT(d));
 }
 
-/* intersection vertex:
- * AB and CD must share a point interior to both segments.
- * returns vertex at intersection of AB and CD.
+/*!
+ * \brief intersection vertex: \f$ AB \f$ and \f$ CD \f$ must share a
+ * point interior to both segments.
+ *
+ * \return vertex at intersection of \f$ AB \f$ and \f$ CD \f$ .
  */
 GtsVertex *
 vertex_intersect(GtsVertex *a, GtsVertex *b, GtsVertex *c, GtsVertex *d) 
@@ -1365,7 +1419,10 @@ vertex_intersect(GtsVertex *a, GtsVertex *b, GtsVertex *c, GtsVertex *d)
   GtsVertex *rval;
   gdouble ua_top, ua_bot, ua, rx, ry;
 
-  /* TODO: this could be done more efficiently without duplicating computation */
+  /*!
+   * \todo: this could be done more efficiently without duplicating
+   * computation.
+   */
   if(!vertex_intersect_prop(a, b, c, d)) return NULL;
 
   ua_top = ((d->p.x - c->p.x) * (a->p.y - c->p.y)) - 
@@ -1381,9 +1438,11 @@ vertex_intersect(GtsVertex *a, GtsVertex *b, GtsVertex *c, GtsVertex *d)
   return rval;
 }
 
-/* intersection vertex:
- * AB and CD must share a point interior to both segments.
- * returns vertex at intersection of AB and CD.
+/*!
+ * \brief intersection vertex: \f$ AB \f$ and \f$ CD \f$ must share a
+ * point interior to both segments.
+ *
+ * \return vertex at intersection of \f$ AB \f$ and \f$ CD \f$ .
  */
 void
 coord_intersect(gdouble ax, gdouble ay, gdouble bx, gdouble by, gdouble cx, gdouble cy, gdouble dx, gdouble dy, gdouble *rx, gdouble *ry) 
@@ -1399,8 +1458,8 @@ coord_intersect(gdouble ax, gdouble ay, gdouble bx, gdouble by, gdouble cx, gdou
 }
 
 
-/*
- * returns true if c is between a and b 
+/*!
+ * \return \c true if \f$ c \f$ is between \f$ a \f$ and \f$ b \f$ .
  */
 int
 point_between(GtsPoint *a, GtsPoint *b, GtsPoint *c) 
@@ -1437,7 +1496,9 @@ delaunay_create_from_vertices(GList *vertices, GtsSurface **surface, GtsTriangle
     i = i->next;
   }
 
-  // TODO: just work this out from the board outline
+  /*!
+   * \todo Just work this out from the board outline.
+   */
   *t = gts_triangle_enclosing (gts_triangle_class (), vertices_slist, 100000.0f);
   gts_triangle_vertices (*t, &v1, &v2, &v3);
  
@@ -1688,10 +1749,12 @@ rect_with_attachments(gdouble rad,
 
 #define VERTEX_CENTRE(x) TOPOROUTER_VERTEX( vertex_bbox(x)->point )
 
-/*
- * Read pad data from layer into toporouter_layer_t struct
+/*!
+ * \brief Read pad data from layer into toporouter_layer_t struct.
  *
- * Inserts points and constraints into GLists
+ * Inserts points and constraints into GLists.
+ *
+ * \return .
  */
 int
 read_pads(toporouter_t *r, toporouter_layer_t *l, guint layer) 
@@ -1862,10 +1925,12 @@ read_pads(toporouter_t *r, toporouter_layer_t *l, guint layer)
   return 0;
 }
 
-/*
- * Read points data (all layers) into GList
+/*!
+ * \brief Read points data (all layers) into GList.
  *
- * Inserts pin and via points
+ * Inserts pin and via points.
+ *
+ * \return .
  */
 int
 read_points(toporouter_t *r, toporouter_layer_t *l, int layer)
@@ -1962,10 +2027,12 @@ read_points(toporouter_t *r, toporouter_layer_t *l, int layer)
   return 0;
 }
 
-/*
- * Read line data from layer into toporouter_layer_t struct
+/*!
+ * \brief Read line data from layer into toporouter_layer_t struct.
  *
- * Inserts points and constraints into GLists
+ * Inserts points and constraints into GLists.
+ *
+ * \return .
  */
 int
 read_lines(toporouter_t *r, toporouter_layer_t *l, LayerType *layer, int ln) 
@@ -2105,7 +2172,9 @@ unconstrain(toporouter_layer_t *l, toporouter_constraint_t *c)
 void
 build_cdt(toporouter_t *r, toporouter_layer_t *l) 
 {
-  /* TODO: generalize into surface *cdt_create(vertices, constraints) */
+  /*!
+   * \todo Generalize into surface *cdt_create(vertices, constraints).
+   */
   GList *i;
   //GtsEdge *temp;
   //GtsVertex *v;
@@ -2958,7 +3027,11 @@ split_path(GList *path)
     GTS_POINT(GTS_SEGMENT(e)->v2)->x, GTS_POINT(GTS_SEGMENT(e)->v2)->y))
 
 
-/* sorting into ascending distance from v1 */
+/*!
+ * \brief Sorting into ascending distance from \f$ v_1 \f$ .
+ *
+ * \return .
+ */
 gint  
 routing_edge_insert(gconstpointer a, gconstpointer b, gpointer user_data)
 {
@@ -3016,7 +3089,12 @@ new_temp_toporoutervertex(gdouble x, gdouble y, toporouter_edge_t *e)
 }
 
 
-/* create vertex on edge e at radius r from v, closest to ref */
+/*!
+ * \brief Create vertex on edge \f$ e \f$ at radius \f$ r \f$ from
+ * \f$ v \f$ , closest to \f$ ref \f$ .
+ *
+ * \return .
+ */
 toporouter_vertex_t *
 new_temp_toporoutervertex_in_segment(toporouter_edge_t *e, toporouter_vertex_t *v, gdouble r, toporouter_vertex_t *ref) 
 {
@@ -3130,7 +3208,11 @@ closest_dest_vertex(toporouter_t *r, toporouter_vertex_t *v, toporouter_route_t 
 #define toporouter_edge_gradient(e) (cartesian_gradient(vx(edge_v1(e)), vy(edge_v1(e)), vx(edge_v2(e)), vy(edge_v2(e))))
 
 
-/* returns the capacity of the triangle cut through v */
+/*!
+ * \brief .
+ *
+ * \return The capacity of the triangle cut through \f$ v \f$ .
+ */
 gdouble
 triangle_interior_capacity(GtsTriangle *t, toporouter_vertex_t *v)
 {
@@ -3220,8 +3302,13 @@ edges_third_edge(GtsSegment *s1, GtsSegment *s2, toporouter_vertex_t **v1, topor
   return 0;
 }
 
-/* returns the flow from e1 to e2, and the flow from the vertex oppisate e1 to
- * e1 and the vertex oppisate e2 to e2 */
+/*!
+ * \brief .
+ *
+ * \return The flow from \f$ e1 \f$ to \f$ e2 \f$ , and the flow from
+ * the vertex oppisate \f$ e1 \f$ to \f$ e1 \f$ and the vertex oppoisate
+ * \f$ e2 \f$ to \f$ e2 \f$ .
+ */
 gdouble
 flow_from_edge_to_edge(GtsTriangle *t, toporouter_edge_t *e1, toporouter_edge_t *e2, 
     toporouter_vertex_t *common_v, toporouter_vertex_t *curpoint)
@@ -4674,7 +4761,7 @@ route(toporouter_t *r, toporouter_route_t *data, guint debug)
     candidatepoints = compute_candidate_points(r, cur_layer, curpoint, data, &destv);
 
 //#ifdef DEBUG_ROUTE    
-    /*********************
+    /*
     if(debug && !strcmp(data->dest->netlist, "  unnamed_net2")) 
     {
       unsigned int mask = ~(VERTEX_FLAG_RED | VERTEX_FLAG_GREEN | VERTEX_FLAG_BLUE); 
@@ -4710,7 +4797,7 @@ route(toporouter_t *r, toporouter_route_t *data, guint debug)
       }
     }
 //#endif    
-    *********************/
+    */
     count++;
 //    if(count > 100) exit(0);
     i = candidatepoints;
@@ -4929,7 +5016,12 @@ routing_return:
   return rval;
 }
 
-/* moves vertex v d units in the direction of vertex p */
+/*!
+ * \brief Moves vertex \f$ v \f$ \f$ d \f$ units in the direction of vertex
+ * \f$ p \f$ .
+ *
+ * \return .
+ */
 void
 vertex_move_towards_vertex (GtsVertex *v,
                             GtsVertex *p,
@@ -5050,9 +5142,11 @@ edge_min_spacing(GList *list, toporouter_edge_t *e, toporouter_vertex_t *v, guin
   return space;
 }
 
-/* line segment is 1 & 2, point is 3 
-   returns 0 if v3 is outside seg
-*/
+/*!
+ * \brief Line segment is 1 & 2, point is 3.
+ *
+ * \return 0 if v3 is outside seg.
+ */
 guint
 vertex_line_normal_intersection(gdouble x1, gdouble y1, gdouble x2, gdouble y2, gdouble x3, gdouble y3, gdouble *x, gdouble *y)
 {
@@ -5203,7 +5297,7 @@ export_pcb_drawarc(guint layer, toporouter_arc_t *a, guint thickness, guint keep
 
   wind = coord_wind(a->x0, a->y0, a->x1, a->y1, vx(a->centre), vy(a->centre));
 
-  /* NB: PCB's arcs have a funny coorindate system, with 0 degrees as the -ve X axis (left),
+  /* NB: PCB's arcs have a funny coordinate system, with 0 degrees as the -ve X axis (left),
    *     continuing clockwise, with +90 degrees being along the +ve Y axis (bottom). Because
    *     Y+ points down, our internal angles increase clockwise from the +ve X axis.
    */
@@ -5252,7 +5346,9 @@ calculate_term_to_arc(toporouter_vertex_t *v, toporouter_arc_t *arc, guint dir)
 
   if(!winddir) {
     printf("!winddir @ v %f,%f arc->centre %f,%f\n", vx(v), vy(v), vx(arc->centre), vy(arc->centre));
-    //TODO: fix hack: this shouldn't happen
+    /*!
+     * \todo Fix hack: this shouldn't happen.
+     */
     arc->x0 = vx(v);
     arc->y0 = vy(v);
     arc->x1 = vx(v);
@@ -5276,7 +5372,12 @@ calculate_term_to_arc(toporouter_vertex_t *v, toporouter_arc_t *arc, guint dir)
 
 
 
-// b1 is the projection in the direction of narc, while b2 is the perpendicular projection
+/*!
+ * \brief \f$ b1 \f$ is the projection in the direction of \f$ narc \f$
+ * , while \f$ b2 \f$ is the perpendicular projection.
+ *
+ * \return .
+ */
 void
 arc_ortho_projections(toporouter_arc_t *arc, toporouter_arc_t *narc, gdouble *b1, gdouble *b2)
 {
@@ -5789,7 +5890,11 @@ check_intersect_vertex(gdouble x0, gdouble y0, gdouble x1, gdouble y1, toporoute
   return ms - d;
 }
 
-/* returns non-zero if arc has loops */
+/*!
+ * \brief .
+ *
+ * \return Non-zero if arc has loops.
+ */
 guint
 check_arc_for_loops(gpointer t1, toporouter_arc_t *arc, gpointer t2)
 {
@@ -5921,7 +6026,11 @@ check_adj_pushing_vertex(toporouter_oproute_t *oproute, gdouble x0, gdouble y0, 
 }
 
 
-// path is t1 path
+/*!
+ * \brief Path is \f$ t1 \f$ path.
+ *
+ * \return .
+ */
 GList *
 oproute_rubberband_segment(toporouter_t *r, toporouter_oproute_t *oproute, GList *path, gpointer t1, gpointer t2, guint debug)
 {
@@ -6626,7 +6735,11 @@ delete_route(toporouter_route_t *routedata, guint destroy)
   routedata->alltemppoints = NULL;
 }
 
-/* remove route can be later reapplied */
+/*!
+ * \brief Remove route can be later reapplied.
+ *
+ * \return .
+ */
 void
 remove_route(GList *path)
 {
