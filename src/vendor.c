@@ -1,3 +1,7 @@
+/*!
+ * \file src/vendor.c
+ */
+
 /*
  *                            COPYRIGHT
  *
@@ -67,14 +71,18 @@ static void apply_vendor_map (void);
 static void process_skips (Resource *);
 static bool rematch (const char *, const char *);
 
-/* list of vendor drills and a count of them */
+/*!
+ * \brief List of vendor drills and a count of them.
+ */
 static int *vendor_drills = NULL;
 static int n_vendor_drills = 0;
 
 static int cached_drill = -1;
 static int cached_map = -1;
 
-/* lists of elements to ignore */
+/*!
+ * \brief Lists of elements to ignore.
+ */
 static char **ignore_refdes = NULL;
 static int n_refdes = 0;
 static char **ignore_value = NULL;
@@ -82,17 +90,25 @@ static int n_value = 0;
 static char **ignore_descr = NULL;
 static int n_descr = 0;
 
-/* vendor name */
+/*!
+ * \brief Vendor name.
+ */
 static char *vendor_name = NULL;
 
-/* resource file to PCB units scale factor */
+/*!
+ * \brief Resource file to PCB units scale factor.
+ */
 static double sf;
 
 
-/* enable/disable mapping */
+/*!
+ * \brief Enable/disable mapping.
+ */
 static bool vendorMapEnable = false;
 
-/* type of drill mapping */
+/*!
+ * \brief Type of drill mapping.
+ */
 #define CLOSEST 1
 #define ROUND_UP 0
 static int rounding_method = ROUND_UP;
@@ -611,7 +627,11 @@ apply_vendor_map (void)
   vendorMapEnable = state;
 }
 
-/* for a given drill size, find the closest vendor drill size */
+/*!
+ * \brief For a given drill size, find the closest vendor drill size.
+ *
+ * \return .
+ */
 int
 vendorDrillMap (int in)
 {
@@ -683,7 +703,11 @@ vendorDrillMap (int in)
 
 }
 
-/* add a drill size to the vendor drill list */
+/*!
+ * \brief Add a drill size to the vendor drill list.
+ *
+ * \return .
+ */
 static void
 add_to_drills (char *sval)
 {
@@ -732,7 +756,11 @@ add_to_drills (char *sval)
     }
 }
 
-/* deal with the "skip" subresource */
+/*!
+ * \brief Deal with the "skip" subresource.
+ *
+ * \return .
+ */
 static void
 process_skips (Resource * res)
 {
