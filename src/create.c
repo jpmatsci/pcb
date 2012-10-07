@@ -1,3 +1,9 @@
+/*!
+ * \file src/create.c
+ *
+ * \brief Functions used to create vias, pins ... .
+ */
+
 /*
  *                            COPYRIGHT
  *
@@ -22,9 +28,6 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- */
-
-/* functions used to create vias, pins ...
  */
 
 #ifdef HAVE_CONFIG_H
