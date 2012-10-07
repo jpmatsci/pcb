@@ -1,3 +1,9 @@
+/*!
+ * \file src/const.h
+ *
+ * \brief Global source constants.
+ */
+
 /*
  *                            COPYRIGHT
  *
@@ -22,9 +28,6 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- */
-
-/* global source constants
  */
 
 #ifndef	PCB_CONST_H
