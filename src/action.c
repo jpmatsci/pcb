@@ -1,3 +1,9 @@
+/*!
+ * \file src/action.c
+ *
+ * \brief Action routines for output window.
+ */
+
 /*
  *                            COPYRIGHT
  *
@@ -23,9 +29,6 @@
  *  Harry Eaton, 6697 Buttonhole Ct, Columbia, MD 21044, USA
  *  haceaton@aplcomm.jhuapl.edu
  *
- */
-
-/* action routines for output window
  */
 
 #ifdef HAVE_CONFIG_H
