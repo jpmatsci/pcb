@@ -1,3 +1,11 @@
+/*!
+ * \file src/vector.c
+ *
+ * \author Copyright (c) 2001 C. Scott Ananian.
+ *
+ * \brief Operations on vectors.
+ */
+
 /*
  *                            COPYRIGHT
  *
@@ -23,13 +31,6 @@
  *  harry eaton, 6697 Buttonhole Ct, Columbia, MD 21044 USA
  *  haceaton@aplcomm.jhuapl.edu
  *
- */
-
-/* this file, vector.c, was written and is
- * Copyright (c) 2001 C. Scott Ananian.
- */
-
-/* operations on vectors.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -81,7 +82,11 @@ __vector_is_good (vector_t * vector)
 }
 #endif /* !NDEBUG */
 
-/* create an empty vector */
+/*!
+ * \brief Create an empty vector.
+ *
+ * \return .
+ */
 vector_t *
 vector_create ()
 {
@@ -93,7 +98,11 @@ vector_create ()
   return vector;
 }
 
-/* destroy a vector */
+/*!
+ * \brief Destroy a vector.
+ *
+ * \return .
+ */
 void
 vector_destroy (vector_t ** vector)
 {
@@ -128,7 +137,11 @@ vector_element (vector_t * vector, int N)
   return vector->element[N];
 }
 
-/* return the first element of the vector. */
+/*!
+ * \brief .
+ *
+ * \return The first element of the vector.
+ */
 vector_element_t
 vector_element_first (vector_t * vector)
 {
@@ -137,7 +150,11 @@ vector_element_first (vector_t * vector)
   return vector_element (vector, 0);
 }
 
-/* return the last element of the vector. */
+/*!
+ * \brief .
+ *
+ * \return The last element of the vector.
+ */
 vector_element_t
 vector_element_last (vector_t * vector)
 {
@@ -147,7 +164,11 @@ vector_element_last (vector_t * vector)
 }
 
 /* -- mutation -- */
-/* add data to end of vector */
+/*!
+ * \brief Add data to end of vector.
+ *
+ * \return .
+ */
 void
 vector_append (vector_t * vector, vector_element_t data)
 {
@@ -172,7 +193,11 @@ vector_insert (vector_t * vector, int N, vector_element_t data)
   vector_insert_many (vector, N, &data, 1);
 }
 
-/* add data at specified position of vector */
+/*!
+ * \brief Add data at specified position of vector.
+ *
+ * \return .
+ */
 void
 vector_insert_many (vector_t * vector, int N,
 		    vector_element_t data[], int count)
@@ -209,7 +234,11 @@ vector_duplicate (vector_t * orig)
   return newone;
 }
 
-/* return and delete the *last* element of vector */
+/*!
+ * \brief And delete the *last* element of vector.
+ *
+ * \return .
+ */
 vector_element_t
 vector_remove_last (vector_t * vector)
 {
@@ -217,7 +246,11 @@ vector_remove_last (vector_t * vector)
   return vector_remove (vector, vector->size - 1);
 }
 
-/* return and delete data at specified position of vector */
+/*!
+ * \brief Return and delete data at specified position of vector.
+ *
+ * \return .
+ */
 vector_element_t
 vector_remove (vector_t * vector, int N)
 {
@@ -232,8 +265,12 @@ vector_remove (vector_t * vector, int N)
   return old;
 }
 
-/* replace the data at the specified position with the given data.
- * returns the old data. */
+/*!
+ * \brief Replace the data at the specified position with the given
+ * data.
+ *
+ * \return The old data.
+ */
 vector_element_t
 vector_replace (vector_t * vector, vector_element_t data, int N)
 {
