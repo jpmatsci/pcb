@@ -1,3 +1,11 @@
+/*!
+ * \file src/autoplace.c
+ *
+ * \author Copyright (c) 2001 C. Scott Ananian.
+ *
+ * \brief Functions used to autoplace elements.
+ */
+
 /*
  *                            COPYRIGHT
  *
@@ -23,14 +31,6 @@
  *  harry eaton, 6697 Buttonhole Ct, Columbia, MD 21044 USA
  *  haceaton@aplcomm.jhuapl.edu
  *
- */
-
-/*
- * This moduel, autoplace.c, was written by and is
- * Copyright (c) 2001 C. Scott Ananian
- */
-
-/* functions used to autoplace elements.
  */
 
 #ifdef HAVE_CONFIG_H
