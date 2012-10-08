@@ -1,3 +1,9 @@
+/*!
+ * \file src/dbus.h
+ *
+ * \brief D-Bus IPC logic.
+ */
+ 
 /*
  * PCB, an interactive printed circuit board editor
  * D-Bus IPC logic
@@ -17,6 +23,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
 #ifndef PCB_DBUS_H
 #define PCB_DBUS_H
 
