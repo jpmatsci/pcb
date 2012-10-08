@@ -1,3 +1,9 @@
+/*!
+ * \file src/draw.c
+ *
+ * \brief Drawing routines.
+ */
+
 /*
  *                            COPYRIGHT
  *
@@ -22,10 +28,6 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- */
-
-
-/* drawing routines
  */
 
 #ifdef HAVE_CONFIG_H
