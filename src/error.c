@@ -1,3 +1,12 @@
+/*!
+ * \file src/error.c
+ *
+ * \brief Error and debug functions.
+ *
+ * \todo getpid() needs a cast to (int) to get rid of compiler warnings
+ * on several architectures.
+ */
+
 /*
  *                            COPYRIGHT
  *
@@ -22,12 +31,6 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- */
-
-
-/* error and debug functions
- * getpid() needs a cast to (int) to get rid of compiler warnings
- * on several architectures
  */
 
 #ifdef HAVE_CONFIG_H
