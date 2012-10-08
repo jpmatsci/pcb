@@ -1,4 +1,17 @@
 /* -*- mode: C; c-file-style: "gnu" -*- */
+
+/*!
+ * \file src/dbus-pcbmain.c
+ *
+ * \author Copyright (C) 2002, 2003 CodeFactory AB.
+ *
+ * \author Copyright (C) 2005 Red Hat, Inc.
+ *
+ * \brief PCB HID main loop integration.
+ *
+ * Adapted from dbus-gmain.c from dbus-glib bindings:
+ */
+
 /* dbus-pcbmain.c PCB HID main loop integration
  *
  * Adapted from dbus-gmain.c from dbus-glib bindings:
