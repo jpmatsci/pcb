@@ -1,3 +1,9 @@
+/*!
+ * \file src/crosshair.h
+ *
+ * \brief Prototypes for crosshair routines.
+ */
+
 /*
  *                            COPYRIGHT
  *
@@ -22,9 +28,6 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- */
-
-/* prototypes for crosshair routines
  */
 
 #ifndef	PCB_CROSSHAIR_H
