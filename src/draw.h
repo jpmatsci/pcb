@@ -1,3 +1,9 @@
+/*!
+ * \file src/draw.h
+ *
+ * \brief Prototypes for drawing routines.
+ */
+
 /*
  *                            COPYRIGHT
  *
@@ -22,9 +28,6 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- */
-
-/* prototypes for drawing routines
  */
 
 #ifndef	PCB_DRAW_H
