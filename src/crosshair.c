@@ -1,3 +1,9 @@
+/*!
+ * \file src/crosshair.c
+ *
+ * \brief Crosshair stuff.
+ */
+
 /*
  *                            COPYRIGHT
  *
@@ -22,10 +28,6 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- */
-
-
-/* crosshair stuff
  */
 
 #ifdef HAVE_CONFIG_H
