@@ -1,3 +1,9 @@
+/*!
+ * \file src/file.h
+ *
+ * \brief Prototypes for file routines.
+ */
+
 /*
  *                            COPYRIGHT
  *
@@ -22,9 +28,6 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- */
-
-/* prototypes for file routines
  */
 
 #ifndef	PCB_FILE_H
