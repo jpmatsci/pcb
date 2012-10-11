@@ -1,3 +1,61 @@
+/*!
+ * \file src/find.c
+ *
+ * \brief Routines to find connections between pins, vias, lines ... .
+ *
+ * Short description:\n
+ * <ul>
+ * <li>
+ * Lists for pins and vias, lines, arcs, pads and for polygons are
+ * created.
+ * <li>
+ * Every object that has to be checked is added to its list.
+ * <li>
+ * Coarse searching is accomplished with the data rtrees.
+ * <li>
+ * There's no 'speed-up' mechanism for polygons because they are not
+ * used as often as other objects.
+ * <li>
+ * The maximum distance between line and pin ... would depend on the
+ * angle between them.\n
+ * To speed up computation the limit is set to one half of the thickness
+ * of the objects (cause of square pins).
+ * </ul>
+ * \n
+ * PV: means pin or via (objects that connect layers). \n
+ * LO: all non PV objects (layer objects like lines, arcs, polygons, pads).\n
+ * \n
+ * <ol>
+ * <li>
+ * First, the LO or PV at the given coordinates is looked up.
+ * <li>
+ * All LO connections to that PV are looked up next.
+ * <li>
+ * Lookup of all LOs connected to LOs from (2).\n
+ * This step is repeated until no more new connections are found.
+ * <li>
+ * Lookup all PVs connected to the LOs from (2) and (3).\n
+ * <li>
+ * Start again with (1) for all new PVs from (4).
+ * </ol>
+ * Intersection of line <--> circle:\n
+ * <ul>
+ * <li>
+ * Calculate the signed distance from the line to the center, return
+ * false if \f$ \left| distance \right| > R \f$.
+ * <li>
+ * Get the distance from the line <--> distancevector intersection to
+ * \f$ (X_1, Y_1) \f$ in range \f$ [0,1] \f$ , return \c true if 
+ * \f$ 0 \leq distance \leq 1 \f$.
+ * <li>
+ * Depending on \f$ (r > 1.0 or r < 0.0) \f$ check the distance of
+ * \f$ X_2, Y_2 \f$ or \f$ X_1, Y_1 \f$ to \f$ X,Y \f$ .
+ * </ul>
+ * \n
+ * Intersection of line <--> line:
+ * - see the description of 'LineLineIntersect()'
+ */
+
 /*
  *
  *                            COPYRIGHT
@@ -25,42 +83,6 @@
  *
  */
 
-
-/*
- * short description:
- * - lists for pins and vias, lines, arcs, pads and for polygons are created.
- *   Every object that has to be checked is added to its list.
- *   Coarse searching is accomplished with the data rtrees.
- * - there's no 'speed-up' mechanism for polygons because they are not used
- *   as often as other objects 
- * - the maximum distance between line and pin ... would depend on the angle
- *   between them. To speed up computation the limit is set to one half
- *   of the thickness of the objects (cause of square pins).
- *
- * PV:  means pin or via (objects that connect layers)
- * LO:  all non PV objects (layer objects like lines, arcs, polygons, pads)
- *
- * 1. first, the LO or PV at the given coordinates is looked up
- * 2. all LO connections to that PV are looked up next
- * 3. lookup of all LOs connected to LOs from (2).
- *    This step is repeated until no more new connections are found.
- * 4. lookup all PVs connected to the LOs from (2) and (3)
- * 5. start again with (1) for all new PVs from (4)
- *
- * Intersection of line <--> circle:
- * - calculate the signed distance from the line to the center,
- *   return false if abs(distance) > R
- * - get the distance from the line <--> distancevector intersection to
- *   (X1,Y1) in range [0,1], return true if 0 <= distance <= 1
- * - depending on (r > 1.0 or r < 0.0) check the distance of X2,Y2 or X1,Y1
- *   to X,Y
- *
- * Intersection of line <--> line:
- * - see the description of 'LineLineIntersect()'
- */
-
-/* routines to find connections between pins, vias, lines...
- */
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
