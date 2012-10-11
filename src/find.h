@@ -1,3 +1,9 @@
+/*!
+ * \file src/find.h
+ *
+ * \brief Prototypes for connection search routines.
+ */
+
 /*
  *                            COPYRIGHT
  *
@@ -22,9 +28,6 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- */
-
-/* prototypes connection search routines
  */
 
 #ifndef	PCB_FIND_H
