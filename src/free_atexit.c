@@ -1,3 +1,16 @@
+/*!
+ * \file src/free_atexit.c
+ *
+ * \brief This tiny library is to assist cleaning up harmless memory
+ * leaks caused by (growing) buffers allocated in static variables in
+ * functions.
+ *
+ * The library provides leaky_ prefixed variants of the common
+ * allocation routines.\n
+ * These wrappers will remember all pointers they return and can free
+ * all memory used, at the end of the applocation.
+ */
+
 /*                            COPYRIGHT
  *
  *  Copyright (C) 2010 PCB Contributors (see ChangeLog for details)
@@ -48,7 +61,10 @@ typedef union {
 static void         **free_list = NULL;
 static leaky_idx_t  free_size = 0;
 
-
+/*!
+ * \brief Allocate memory, remember the pointer and free it after exit
+ * from the application.
+ */
 void *leaky_malloc (size_t size)
 {
   void *new_memory = malloc(size + sizeof(leaky_admin_t));
@@ -61,6 +77,9 @@ void *leaky_malloc (size_t size)
   return new_memory + sizeof(leaky_admin_t);
 }
 
+/*!
+ * \brief Same as leaky_malloc but this one wraps calloc().
+ */
 void *leaky_calloc (size_t nmemb, size_t size)
 {
   size_t size_ = size * nmemb;
@@ -70,6 +89,10 @@ void *leaky_calloc (size_t nmemb, size_t size)
   return new_memory;
 }
 
+/*!
+ * \brief Reallocate memory, remember the new pointer and free it after
+ * exit from the application.
+ */
 void *leaky_realloc (void* old_memory, size_t size)
 {
   void *new_memory;
@@ -88,6 +111,9 @@ void *leaky_realloc (void* old_memory, size_t size)
   return new_memory + sizeof(leaky_admin_t);
 }
 
+/*!
+ * \brief Free all allocations.
+ */
 void leaky_uninit (void)
 {
   int i;
@@ -99,6 +125,11 @@ void leaky_uninit (void)
   free_size = 0;
 }
 
+/*!
+ * \brief Set up atexit() hook.
+ *
+ * Can be avoided if leaky_uninit() is called by hand.
+ */
 void leaky_init (void)
 {
   atexit(leaky_uninit);
