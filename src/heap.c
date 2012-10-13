@@ -1,4 +1,6 @@
 /*!
+ * \file src/heap.c
+ *
  * \brief Operations on heaps.
  *
  * \author Copyright (c) 2001 C. Scott Ananian.
@@ -237,6 +239,12 @@ heap_remove_smallest (heap_t * heap)
   return v.data;
 }
 
+/*!
+ * \brief Replace the smallest item with a new item and return the
+ * smallest item.
+ *
+ * If the new item is the smallest, than return it, instead.
+ */
 void *
 heap_replace (heap_t * heap, cost_t cost, void *data)
 {
