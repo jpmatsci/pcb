@@ -1,3 +1,11 @@
+/*!
+ * \file src/heap.h
+ *
+ * \author Copyright (c) 2001 C. Scott Ananian.
+ *
+ * \brief Prototypes for heap routines.
+ */
+
 /*
  *                            COPYRIGHT
  *
@@ -25,21 +33,18 @@
  *
  */
 
-/* this file, heap.h, was written and is
- * Copyright (c) 2001 C. Scott Ananian.
- */
-
-/* prototypes for heap routines.
- */
-
 #ifndef PCB_HEAP_H
 #define PCB_HEAP_H
 
 #include "global.h"
 
-/* type of heap costs */
+/*!
+ * \brief Type of heap costs.
+ */
 typedef double cost_t;
-/* what a heap looks like */
+/*!
+ * \brief What a heap looks like.
+ */
 typedef struct heap_struct heap_t;
 
 /* create an empty heap */
