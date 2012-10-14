@@ -486,17 +486,19 @@ int
 __r_search (struct rtree_node *node, const BoxType * query, r_arg * arg)
 {
   assert (node);
-  /** assert that starting_region is well formed */
+  /*! Assert that starting_region is well formed. */
   assert (query->X1 < query->X2 && query->Y1 < query->Y2);
   assert (node->box.X1 < query->X2 && node->box.X2 > query->X1 &&
           node->box.Y1 < query->Y2 && node->box.Y2 > query->Y1);
 #ifdef SLOW_ASSERTS
-  /** assert that node is well formed */
+  /*! Assert that node is well formed. */
   assert (__r_node_is_good (node));
 #endif
-  /* the check for bounds is done before entry. This saves the overhead
-   * of building/destroying the stack frame for each bounds that fails
-   * to intersect, which is the most common condition.
+  /*!
+   * The check for bounds is done before entry.\n
+   * This saves the overhead of building/destroying the stack frame for
+   * each bounds that fails to intersect, which is the most common
+   * condition.
    */
   if (node->flags.is_leaf)
     {
