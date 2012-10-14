@@ -1,3 +1,11 @@
+/*!
+ * \file src/intersect.h
+ *
+ * \author Copyright (c) 2001 C. Scott Ananian.
+ *
+ * \brief Prototypes for rectangle intersection/union routines.
+ */
+
 /*
  *                            COPYRIGHT
  *
@@ -23,13 +31,6 @@
  *  harry eaton, 6697 Buttonhole Ct, Columbia, MD 21044 USA
  *  haceaton@aplcomm.jhuapl.edu
  *
- */
-
-/* this file, intersect.h, was written and is
- * Copyright (c) 2001 C. Scott Ananian.
- */
-
-/* prototypes for rectangle intersection/union routines.
  */
 
 #ifndef PCB_INTERSECT_H
