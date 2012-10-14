@@ -1,3 +1,9 @@
+/*!
+ * \file src/line.c
+ *
+ * \brief Functions for inserting points into objects.
+ */
+
 /*
  *                            COPYRIGHT
  *
