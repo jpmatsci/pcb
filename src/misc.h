@@ -1,3 +1,9 @@
+/*!
+ * \file src/misc.h
+ *
+ * \brief Prototypes for misc routines.
+ */
+
 /*
  *                            COPYRIGHT
  *
@@ -22,9 +28,6 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- */
-
-/* prototypes for misc routines
  */
 
 #ifndef	PCB_MISC_H
