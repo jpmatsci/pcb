@@ -1,3 +1,9 @@
+/*!
+ * \file src/mirror.h
+ *
+ * \brief Prototypes to change objects mirror flag.
+ */
+
 /*
  *                            COPYRIGHT
  *
@@ -22,9 +28,6 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- */
-
-/* prototypes to change objects mirror flag
  */
 
 #ifndef	PCB_MIRROR_H
