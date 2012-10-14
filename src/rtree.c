@@ -476,7 +476,7 @@ typedef struct
 } r_arg;
 
 /*!
- * \brief Mmost of the auto-routing time is spent in this routine.
+ * \brief Most of the auto-routing time is spent in this routine.
  *
  * So some careful thought has been given to maximizing the speed.
  *
