@@ -1,3 +1,12 @@
+/*!
+ * \file src/lrealpath.c
+ *
+ * \brief Libiberty realpath.
+ *
+ * Like realpath, but more consistent behavior.\n
+ * Based on gdb_realpath from GDB.
+ */
+
 /* Libiberty realpath.  Like realpath, but more consistent behavior.
    Based on gdb_realpath from GDB.
 
@@ -49,7 +58,10 @@ components will be simplified.  The returned value will be allocated using
 #include <string.h>
 #endif
 
-/* On GNU libc systems the declaration is only visible with _GNU_SOURCE.  */
+/*!
+ * On GNU libc systems the declaration is only visible with
+ * \c _GNU_SOURCE.
+ */
 #if defined(HAVE_CANONICALIZE_FILE_NAME) \
     && defined(NEED_DECLARATION_CANONICALIZE_FILE_NAME)
 extern char *canonicalize_file_name (const char *);
