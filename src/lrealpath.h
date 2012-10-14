@@ -1,3 +1,7 @@
+/*!
+ * \file src/lrealpath.h
+ */
+
 #ifndef PCB_LREALPATH_H
 #define PCH_LREALPATH_H
 
