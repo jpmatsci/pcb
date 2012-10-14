@@ -1,3 +1,11 @@
+/*!
+ * \file src/macro.h
+ *
+ * \brief Some commonly used macros not related to a special C-file.
+ *
+ * The file is included by global.h after const.h.
+ */
+
 /*
  *                            COPYRIGHT
  *
@@ -22,10 +30,6 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- */
-
-/* some commonly used macros not related to a special C-file
- * the file is included by global.h after const.h
  */
 
 #ifndef	PCB_MACRO_H
@@ -88,13 +92,13 @@
 #define TEST_SILK_LAYER(layer)	(GetLayerNumber (PCB->Data, layer) >= max_copper_layer)
 
 
-/* ---------------------------------------------------------------------------
- * returns the object ID
+/*!
+ * Returns the object ID.
  */
 #define	OBJECT_ID(p)		(((AnyObjectType *) p)->ID)
 
-/* ---------------------------------------------------------------------------
- * access macro for current buffer
+/*!
+ * Access macro for current buffer.
  */
 #define	PASTEBUFFER		(&Buffers[Settings.BufferNumber])
 
@@ -138,21 +142,21 @@ extern int mem_any_set (unsigned char *, int);
 #define	NAMEONPCB_TEXT(e)	((e)->Name[NAMEONPCB_INDEX])
 #define	VALUE_TEXT(e)		((e)->Name[VALUE_INDEX])
 
-/* ---------------------------------------------------------------------------
- *  Determines if text is actually visible
+/*!
+ * Determines if text is actually visible.
  */
 #define TEXT_IS_VISIBLE(b, l, t) \
 	((l)->On)
 
-/* ---------------------------------------------------------------------------
- *  Determines if object is on front or back
+/*!
+ * Determines if object is on front or back.
  */
 #define FRONT(o)	\
 	((TEST_FLAG(ONSOLDERFLAG, (o)) != 0) == SWAP_IDENT)
 
-/* ---------------------------------------------------------------------------
- *  Determines if an object is on the given side. side is either SOLDER_LAYER
- *  or COMPONENT_LAYER.
+/*!
+ * Determines if an object is on the given side.\n
+ * \c side is either \c SOLDER_LAYER or \c COMPONENT_LAYER.
  */
 #define ON_SIDE(element, side) \
         (TEST_FLAG (ONSOLDERFLAG, element) == (side == SOLDER_LAYER))
