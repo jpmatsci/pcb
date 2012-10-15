@@ -1,5 +1,7 @@
 /*!
- * Main program, initializes some stuff and handles user input.
+ * \file src/main.c
+ *
+ * \brief Main program, initializes some stuff and handles user input.
  */
 
 /*
