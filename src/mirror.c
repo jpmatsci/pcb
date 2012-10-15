@@ -1,4 +1,6 @@
 /*!
+ * \file src/mirror.c
+ *
  * \brief Functions used to change the mirror flag of an object.
  *
  * An undo operation is not implemented because it's easy to recover an
