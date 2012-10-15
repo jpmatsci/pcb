@@ -1,3 +1,12 @@
+/*!
+ * \file src/mtspace.h
+ *
+ * \author Copyright (c) 2001 C. Scott Ananian.
+ *
+ * \brief Prototypes for "empty space" routines (needed for via-space
+ * tracking in the auto-router.
+ */
+
 /*
  *                            COPYRIGHT
  *
@@ -23,14 +32,6 @@
  *  harry eaton, 6697 Buttonhole Ct, Columbia, MD 21044 USA
  *  haceaton@aplcomm.jhuapl.edu
  *
- */
-
-/* this file, mtspace.h, was written and is
- * Copyright (c) 2001 C. Scott Ananian.
- */
-
-/* prototypes for "empty space" routines (needed for via-space tracking
- * in the auto-router.
  */
 
 #ifndef PCB_MTSPACE_H
