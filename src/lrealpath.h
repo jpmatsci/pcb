@@ -1,5 +1,7 @@
 /*!
  * \file src/lrealpath.h
+ *
+ * \brief Prototypes for Libiberty realpath.
  */
 
 #ifndef PCB_LREALPATH_H
