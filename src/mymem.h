@@ -1,3 +1,9 @@
+/*!
+ * \file src/mymem.h
+ *
+ * \brief Prototypes for memory routines.
+ */
+
 /*
  *                            COPYRIGHT
  *
@@ -22,9 +28,6 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- */
-
-/* prototypes for memory routines
  */
 
 #ifndef	PCB_MYMEM_H
