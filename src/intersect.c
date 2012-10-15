@@ -1,4 +1,6 @@
 /*!
+ * \file src/intersect.c
+ *
  * \brief Rectangle intersection/union routines.
  *
  * \author Copyright (c) 2001 C. Scott Ananian.
