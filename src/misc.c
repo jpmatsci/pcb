@@ -1,5 +1,7 @@
 /*!
- * Miscellaneous functions used by several modules.
+ * \file src/misc.c
+ *
+ * \brief Miscellaneous functions used by several modules.
  */
 
 /*
