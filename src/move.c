@@ -1,5 +1,7 @@
 /*!
- * Functions used to move pins, elements ...
+ * \file src/move.c
+ *
+ * \brief Functions used to move pins, elements ...
  */
 
 /*
