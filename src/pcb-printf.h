@@ -1,3 +1,50 @@
+/*!
+ * \file src/pcb-printf.h
+ *
+ * \brief This file defines a wrapper around sprintf, that defines new
+ * specifiers that take pcb Coord objects as input.
+ *
+ * There is a fair bit of nasty (repetitious) code in here, but I feel
+ * the gain in clarity for output code elsewhere in the project will
+ * make it worth it.\n
+ * \n
+ * The new specifiers are:\n
+ * <table>
+ * <tr><td> %mm </td><td> output a measure in mm. </td></tr>
+ * <tr><td>%mM </td><td> output a measure in scaled (mm /\f$\mu\f$m) metric. </td></tr>
+ * <tr><td>%ml </td><td> output a measure in mil. </td></tr>
+ * <tr><td>%mL </td><td> output a measure in scaled (mil / in) imperial. </td></tr>
+ * <tr><td>%ms </td><td> output a measure in most natural mm / mil units. </td></tr>
+ * <tr><td>%mS </td><td> output a measure in most natural scaled units. </td></tr>
+ * <tr><td>%md </td><td> output a pair of measures in most natural mm / mil units. </td></tr>
+ * <tr><td>%mD </td><td> output a pair of measures in most natural scaled units. </td></tr>
+ * <tr><td>%m3 </td><td> output 3 measures in most natural scaled units. </td></tr>
+ * <tr><td>... </td><td>  </td></tr>
+ * <tr><td>%m9 </td><td> output 9 measures in most natural scaled units. </td></tr>
+ * <tr><td>%m* </td><td> output a measure with unit given as an additional.\n
+ *            const char* parameter. </td></tr>
+ * <tr><td>%m+ </td><td> accepts an e_allow parameter that masks all subsequent
+ *            "natural" (S/D/3/.../9) specifiers to only use certain
+ *            units.\n
+ * <tr><td>%mr </td><td> output a measure in a unit readable by parse_l.l
+ *            (this will always append a unit suffix). </td></tr>
+ * <tr><td>%ma </td><td> output an angle in degrees (expects degrees). </td></tr>
+ * </table>
+ * \n
+ * These accept the usual printf modifiers for %f, as well as:\n
+ * <table>
+ * <tr><td> $ </td><td> output a unit suffix after the measure. </td></tr>
+ * <tr><td> # </td><td> prevents all scaling for %mS/D/1/.../9 (this should
+ *          ONLY be used for debug code since its output exposes
+ *          pcb's base units). </td></tr>
+ * <tr><td> ` </td><td> always use '.' as decimal separator (note that %mr uses
+ *          this by default). </td></tr>
+ * </table>
+ * \n
+ *
+ * \todo No support for %zu size_t printf spec.\n
+ */
+
 /*
  *                            COPYRIGHT
  *
@@ -22,48 +69,6 @@
  *  Andrew Poelstra, 16966 60A Ave, V3S 8X5 Surrey, BC, Canada
  *  asp11@sfu.ca
  *
- */
-
-/* This file defines a wrapper around sprintf, that
- *  defines new specifiers that take pcb Coord objects
- *  as input.
- *
- * There is a fair bit of nasty (repetitious) code in
- *  here, but I feel the gain in clarity for output
- *  code elsewhere in the project will make it worth
- *  it.
- *
- * The new specifiers are:
- *   %mm    output a measure in mm
- *   %mM    output a measure in scaled (mm/um) metric
- *   %ml    output a measure in mil
- *   %mL    output a measure in scaled (mil/in) imperial
- *   %ms    output a measure in most natural mm/mil units
- *   %mS    output a measure in most natural scaled units
- *   %md    output a pair of measures in most natural mm/mil units
- *   %mD    output a pair of measures in most natural scaled units
- *   %m3    output 3 measures in most natural scaled units
- *     ...
- *   %m9    output 9 measures in most natural scaled units
- *   %m*    output a measure with unit given as an additional
- *          const char* parameter
- *   %m+    accepts an e_allow parameter that masks all subsequent
- *          "natural" (S/D/3/.../9) specifiers to only use certain
- *          units
- *   %mr    output a measure in a unit readable by parse_l.l
- *          (this will always append a unit suffix)
- *   %ma    output an angle in degrees (expects degrees)
- *
- * These accept the usual printf modifiers for %f, as well as
- *     $    output a unit suffix after the measure
- *     #    prevents all scaling for %mS/D/1/.../9 (this should
- *          ONLY be used for debug code since its output exposes
- *          pcb's base units).
- *     `    always use '.' as decimal separator (note that %mr uses
- *          this by default).
- *
- * KNOWN ISSUES:
- *   No support for %zu size_t printf spec
  */
 
 #ifndef	PCB_PCB_PRINTF_H
@@ -99,16 +104,16 @@ enum e_allow {
 
 enum e_family { METRIC, IMPERIAL };
 enum e_suffix {
-  NO_SUFFIX,			/* no suffix  */
-  SUFFIX,			/* suffix, prefixed with ' ' */
-  FILE_MODE_NO_SUFFIX,		/* no suffix, force '.' as decimal */
-  FILE_MODE			/* suffix, force '.' as decimal */
+  NO_SUFFIX, /*!< No suffix.  */
+  SUFFIX, /*!< Suffix, prefixed with ' '. */
+  FILE_MODE_NO_SUFFIX, /*!< No suffix, force '.' as decimal. */
+  FILE_MODE /*!< Suffix, force '.' as decimal. */
 };
 
 struct unit {
-  int index;			/* Index into Unit[] list */
+  int index; /*!< Index into Unit[] list. */
   const char *suffix;
-  const char *in_suffix;	/* internationalized suffix */
+  const char *in_suffix; /*!< Internationalized suffix. */
   char printf_code;
   double scale_factor;
   enum e_family family;
@@ -120,8 +125,8 @@ struct unit {
   double step_medium;
   double step_large;
   double step_huge;
-  /* aliases -- right now we only need 1 ("inch"->"in"), add as needed */
-  const char *alias[1];
+  const char *alias[1]; /*!< Aliases, right now we only need 1 ("inch"->"in"), add as needed. */
+
 };
 
 struct increments {
