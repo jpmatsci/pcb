@@ -1,3 +1,11 @@
+/*!
+ * \file src/rats.h
+ *
+ * \brief Prototypes for rats routines.
+ *
+ * \author Copyright (C) 1997, Harry Eaton.
+ */
+
 /*
  *                            COPYRIGHT
  *
@@ -24,9 +32,6 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- */
-
-/* prototypes for rats routines
  */
 
 #ifndef	PCB_RATS_H
