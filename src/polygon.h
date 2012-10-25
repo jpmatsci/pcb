@@ -1,3 +1,9 @@
+/*!
+ * \file src/polygon.h
+ *
+ * \brief Prototypes for polygon editing routines.
+ */
+
 /*
  *                            COPYRIGHT
  *
@@ -24,9 +30,6 @@
  *
  */
 
-/* prototypes for polygon editing routines
- */
-
 #ifndef	PCB_POLYGON_H
 #define	PCH_POLYGON_H
 
@@ -37,13 +40,17 @@
 #define POLY_CIRC_SEGS 40
 #define POLY_CIRC_SEGS_F ((float)POLY_CIRC_SEGS)
 
-/* adjustment to make the segments outline the circle rather than connect
+/*!
+ * Adjustment to make the segments outline the circle rather than connect
  * points on the circle: 1 - cos (\alpha / 2) < (\alpha / 2) ^ 2 / 2
  */
 #define POLY_CIRC_RADIUS_ADJ (1.0 + M_PI / POLY_CIRC_SEGS_F * \
                                     M_PI / POLY_CIRC_SEGS_F / 2.0)
 
-/* polygon diverges from modelled arc no more than MAX_ARC_DEVIATION * thick */
+/*!
+ * Polygon diverges from modelled arc no more than
+ * MAX_ARC_DEVIATION * thick.
+ */
 #define POLY_ARC_MAX_DEVIATION 0.02
 
 /* Prototypes */
