@@ -1,3 +1,11 @@
+/*!
+ * \file src/polyarea.h
+ *
+ * \brief poly_Boolean: a polygon clip library.
+ *
+ * \author Copyright (C) 1997  Alexey Nikitin, Michael Leonov <leonov@propro.iis.nsk.su>
+ */
+
 /*
       poly_Boolean: a polygon clip library
       Copyright (C) 1997  Alexey Nikitin, Michael Leonov
@@ -51,8 +59,7 @@ enum {
 #endif
 
 
-typedef Coord vertex[2];  /* longing point representation of
-                             coordinates */
+typedef Coord vertex[2];  /*!< Longing point representation of coordinates. */
 typedef vertex Vector;
 
 #define VertexEqu(a,b) (memcmp((a),(b),sizeof(Vector))==0)
