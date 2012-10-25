@@ -1,3 +1,9 @@
+/*!
+ * \file src/print.h
+ *
+ * \brief Prototypes for printing routines.
+ */
+
 /*
  *                            COPYRIGHT
  *
@@ -22,9 +28,6 @@
  *  Thomas Nau, Schlehenweg 15, 88471 Baustetten, Germany
  *  Thomas.Nau@rz.uni-ulm.de
  *
- */
-
-/* prototypes for printing routines
  */
 
 #ifndef	PCB_PRINT_H
