@@ -1,3 +1,12 @@
+/*!
+ * \file src/rtree.h
+ *
+ * \author Copyright (c) 2004 Harry Eaton, it's based on C. Scott's
+ * kdtree.h template.
+ *
+ * \brief Prototypes for r-tree routines.
+ */
+
 /*
  *                            COPYRIGHT
  *
@@ -25,40 +34,42 @@
  *
  */
 
-/* this file, rtree.h, was written and is
- * Copyright (c) 2004 harry eaton, it's based on C. Scott's kdtree.h template
- */
-
-/* prototypes for r-tree routines.
- */
-
 #ifndef PCB_RTREE_H
 #define PCB_RTREE_H
 
 #include "global.h"
 
 
-/* create an rtree from the list of boxes.  if 'manage' is true, then
- * the tree will take ownership of 'boxlist' and free it when the tree
- * is destroyed. */
+/*!
+ * \brief Create a rtree from the list of boxes.
+ *
+ * If 'manage' is true, then the tree will take ownership of 'boxlist'
+ * and free it when the tree is destroyed.
+ */
 rtree_t *r_create_tree (const BoxType * boxlist[], int N, int manage);
-/* destroy an rtree */
+
+/*!
+ * \brief Destroy a rtree.
+ */
 void r_destroy_tree (rtree_t ** rtree);
 
 bool r_delete_entry (rtree_t * rtree, const BoxType * which);
 void r_insert_entry (rtree_t * rtree, const BoxType * which, int manage);
 
-/* generic search routine */
-/* region_in_search should return true if "what you're looking for" is
- * within the specified region; regions, like rectangles, are closed on
- * top and left and open on bottom and right.
- * rectangle_in_region should return true if the given rectangle is
- * "what you're looking for".
+/*!
+ * \brief Generic search routine.
+ *
+ * \c region_in_search should return true if "what you're looking for"
+ * is within the specified region; regions, like rectangles, are closed
+ * on top and left and open on bottom and right.\n
+ * \c rectangle_in_region should return true if the given rectangle is
+ * "what you're looking for".\n
  * The search will find all rectangles matching the criteria given
- * by region_in_search and rectangle_in_region and return a count of
- * how many things rectangle_in_region returned true for. closure is
- * used to abort the search if desired from within rectangel_in_region
- * Look at the implementation of r_region_is_empty for how to
+ * by \c region_in_search and \c rectangle_in_region and return a count
+ * of how many things \c rectangle_in_region returned true for.\n
+ * closure is used to abort the search if desired from within
+ * \c rectangel_in_region.\n
+ * Look at the implementation of \c r_region_is_empty for how to
  * abort the search if that is the desired behavior.
  */
 
@@ -82,8 +93,11 @@ static inline int r_search_pt (rtree_t * rtree, const PointType * pt,
   return r_search(rtree, &box, region_in_search, rectangle_in_region, closure);
 }
 
-/* -- special-purpose searches build upon r_search -- */
-/* return 0 if there are any rectangles in the given region. */
+/*!
+ * \brief Special-purpose searches build upon \c r_search.
+ *
+ * \return 0 if there are any rectangles in the given region.
+ */
 int r_region_is_empty (rtree_t * rtree, const BoxType * region);
 
 void __r_dump_tree (struct rtree_node *, int);
