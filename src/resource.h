@@ -1,3 +1,9 @@
+/*!
+ * \file src/resource.h
+ *
+ * \brief .
+ */
+
 #ifndef PCB_RESOURCE_H
 #define PCB_RESOURCE_H
 
@@ -27,7 +33,7 @@ extern "C"
     struct Resource *parent;
     void *user_ptr;
     int flags;
-    int c;			/* number of v[i] */
+    int c; /*!< Number of v[i]. */
     ResourceVal *v;
   } Resource;
 
