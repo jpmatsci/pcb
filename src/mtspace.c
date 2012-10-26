@@ -5,6 +5,8 @@
  * \author Copyright (c) 2001 C. Scott Ananian.
  *
  * \author Copyright (c) 2006 harry eaton.
+ *
+ * \c mtspace data structures are built on r-trees.
  */
 
 /*
@@ -52,8 +54,6 @@
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
-
-/* mtspace data structures are built on r-trees. */
 
 /* ---------------------------------------------------------------------------
  * some local types
@@ -113,7 +113,7 @@ mtspace_create_box (const BoxType * box, Coord keepaway)
 }
 
 /*!
- * Create an "empty space" representation.
+ * \brief Create an "empty space" representation.
  */
 mtspace_t *
 mtspace_create (void)
@@ -130,7 +130,7 @@ mtspace_create (void)
 }
 
 /*!
- * Destroy an "empty space" representation.
+ * \brief Destroy an "empty space" representation.
  */
 void
 mtspace_destroy (mtspace_t ** mtspacep)
@@ -184,7 +184,10 @@ which_tree (mtspace_t * mtspace, mtspace_type_t which)
 }
 
 /*!
- * Add a space-filler to the "empty space" representation.
+ * \brief Add a space-filler to the "empty space" representation.
+ *
+ * The given box should *not* be bloated; it should be "true".\n
+ * The feature will fill *at least* a radius of keepaway around it.
  */
 void
 mtspace_add (mtspace_t * mtspace, const BoxType * box, mtspace_type_t which,
@@ -195,7 +198,10 @@ mtspace_add (mtspace_t * mtspace, const BoxType * box, mtspace_type_t which,
 }
 
 /*!
- * Remove a space-filler from the "empty space" representation.
+ * \brief Remove a space-filler from the "empty space" representation.
+ *
+ * The given box should *not* be bloated; it should be "true".\n
+ * The feature will fill *at least* a radius of keepaway around it.
  */
 void
 mtspace_remove (mtspace_t * mtspace,
