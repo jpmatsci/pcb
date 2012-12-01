@@ -39,6 +39,9 @@
 
 #include <stdio.h>
 #include <stdarg.h>
+#ifdef HAVE_LOCALE_H
+#include <locale.h> /* setlocale() */
+#endif
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
