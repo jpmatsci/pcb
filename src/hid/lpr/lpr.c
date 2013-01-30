@@ -22,7 +22,9 @@
 #include <dmalloc.h>
 #endif
 
-#define CRASH fprintf(stderr, "HID error: pcb called unimplemented PS function %s.\n", __FUNCTION__); abort()
+#define CRASH fprintf(stderr, \
+    _("HID error: pcb called unimplemented PS function %s.\n"), \
+    __FUNCTION__); abort()
 
 static HID_Attribute base_lpr_options[] = {
 
@@ -36,7 +38,7 @@ PDF output with a virtual PDF printer. Example: @*
 @noindent In addition, all @ref{Postscript Export} options are valid.
 %end-doc
 */
-  {"lprcommand", "Command to use for printing",
+  {"lprcommand", N_("Command to use for printing"),
    HID_String, 0, 0, {0, 0, 0}, 0, 0},
 #define HA_lprcommand 0
 };
@@ -92,7 +94,7 @@ lpr_do_export (HID_Attr_Val * options)
 
   filename = options[HA_lprcommand].str_value;
 
-  printf ("LPR: open %s\n", filename);
+  printf (_("LPR: open %s\n"), filename);
   f = popen (filename, "w");
   if (!f)
     {
@@ -131,7 +133,7 @@ hid_lpr_init ()
 
   lpr_hid.struct_size         = sizeof (HID);
   lpr_hid.name                = "lpr";
-  lpr_hid.description         = "Postscript print";
+  lpr_hid.description         = N_("Postscript print");
   lpr_hid.printer             = 1;
   lpr_hid.poly_before         = 1;
 
