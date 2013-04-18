@@ -150,51 +150,46 @@ CleanBOMString (char *in)
 
 
 static double
-xyToAngle (double x, double y,int morethan2pins)
+xyToAngle (double x, double y, int morethan2pins)
 {
-  double d=atan2(-y,x)*180.0/3.1459265;
+  double d = atan2 (-y, x) * 180.0 / M_PI;
 
-    /* IPC 7351 defines different rules for 2 pin elements */
-    if (morethan2pins)
+  /* IPC 7351 defines different rules for 2 pin elements */
+  if (morethan2pins)
     {
-	/*
-	Multi pin case  
-	
-         output 0 degrees if pin1 in is top left or top
-	 i.e. between angles of 80 to 170
-	
-	pin1 can be at dead top (e.g. certain PLCCs)
-	or anywhere in the top left
+      /* Multi pin case:
+       * Output 0 degrees if pin1 in is top left or top, i.e. between angles of
+       * 80 to 170 degrees.
+       * Pin #1 can be at dead top (e.g. certain PLCCs) or anywhere in the top
+       * left.
        */	    
-        if (d<-100)
-            return 90;   /* -180 to -100 */
-        else if (d<-10)
-            return 180;  /* -100 to -10 */
-        else if (d<80)
-            return 270;  /* -10 to 80 */
-        else if (d<170)
-            return 0;	 /* 80 to 170 */
-        else
-            return 90;	 /* 170 to 180 */
+      if (d < -100)
+        return 90; /* -180 to -100 */
+      else if (d < -10)
+        return 180; /* -100 to -10 */
+      else if (d < 80)
+        return 270; /* -10 to 80 */
+      else if (d < 170)
+        return 0; /* 80 to 170 */
+      else
+        return 90; /* 170 to 180 */
     }
-    else
+  else
     {
-	/*
-	    2 pin element
-	    
-          output 0 degrees if pin 1 is in top left or left
-	  i.e. in sector between angles of 95 and 185
-	*/
-        if (d<-175)
-            return 0;		/* -180 to -175 */
-        else if (d<-85)
-            return 90;		/* -175 to -85 */
-        else if (d<5)
-            return 180;	/* -85 to 5 */
-        else if (d<95)
-            return 270;	/* 5 to 95 */
-        else
-            return 0;		/* 95 to 180 */
+      /* 2 pin element:
+       * Output 0 degrees if pin #1 is in top left or left, i.e. in sector
+       * between angles of 95 and 185 degrees.
+       */
+      if (d < -175)
+        return 0; /* -180 to -175 */
+      else if (d < -85)
+        return 90; /* -175 to -85 */
+      else if (d < 5)
+        return 180; /* -85 to 5 */
+      else if (d < 95)
+        return 270; /* 5 to 95 */
+      else
+        return 0; /* 95 to 180 */
     }
 }
 
@@ -326,10 +321,13 @@ print_and_free (FILE *fp, BomList *bom)
     }
 }
 
-/* In order of preference.  Includes numbered and BGA pins.   Possibly BGA pins can 
-be missing, so we add a few to try */
-#define MAXREFPINS 32	/* max length of following list */
-static char *reference_pin_names[]={ "1","2","A1","A2","B1","B2",0};
+/*
+ * In order of preference.
+ * Includes numbered and BGA pins.
+ * Possibly BGA pins can be missing, so we add a few to try.
+ */
+#define MAXREFPINS 32 /* max length of following list */
+static char *reference_pin_names[] = {"1", "2", "A1", "A2", "B1", "B2", 0};
 
 static int
 PrintBOM (void)
@@ -378,33 +376,32 @@ PrintBOM (void)
 
   /*
    * For each element we calculate the centroid of the footprint.
-   * In addition, we need to extract some notion of rotation.  
+   * In addition, we need to extract some notion of rotation.
    * While here generate the BOM list
    */
 
   ELEMENT_LOOP (PCB->Data);
   {
 
-    /* initialize our pin count and our totals for finding the
-       centriod */
+    /* Initialize our pin count and our totals for finding the centroid. */
     pin_cnt = 0;
     sumx = 0.0;
     sumy = 0.0;
-    for (rpindex = 0; rpindex< MAXREFPINS; rpindex++)
-	  pinfound[rpindex]=0;
+    for (rpindex = 0; rpindex < MAXREFPINS; rpindex++)
+      pinfound[rpindex] = 0;
 
-    /* insert this component into the bill of materials list */
+    /* Insert this component into the bill of materials list. */
     bom = bom_insert ((char *)UNKNOWN (NAMEONPCB_NAME (element)),
-		      (char *)UNKNOWN (DESCRIPTION_NAME (element)),
-		      (char *)UNKNOWN (VALUE_NAME (element)), bom);
+                      (char *)UNKNOWN (DESCRIPTION_NAME (element)),
+                      (char *)UNKNOWN (VALUE_NAME (element)), bom);
 
 
     /*
-     * iterate over the pins and pads keeping a running count of how
+     * Iterate over the pins and pads keeping a running count of how
      * many pins/pads total and the sum of x and y coordinates
-     * 
+     *
      * While we're at it, store the location of pin/pad #1 and #2 if
-     * we can find them
+     * we can find them.
      */
 
     PIN_LOOP (element);
@@ -413,18 +410,16 @@ PrintBOM (void)
       sumy += (double) pin->Y;
       pin_cnt++;
 
-      for (rpindex=0;  
-	    reference_pin_names[rpindex]; 
-	    rpindex++)
+      for (rpindex = 0; reference_pin_names[rpindex]; rpindex++)
         {
-	  if (NSTRCMP (pin->Number, reference_pin_names[rpindex]) == 0)
-	     {
-		pinx[rpindex] = (double) pin->X;
-		piny[rpindex] = (double) pin->Y;
-		pinangle[rpindex] = 0.0;	/* pins have no notion of angle */
-		pinfound[rpindex] = 1;
-	    }	
-	}
+          if (NSTRCMP (pin->Number, reference_pin_names[rpindex]) == 0)
+            {
+                pinx[rpindex] = (double) pin->X;
+                piny[rpindex] = (double) pin->Y;
+                pinangle[rpindex] = 0.0; /* pins have no notion of angle */
+                pinfound[rpindex] = 1;
+            }
+        }
     }
     END_LOOP;
 
@@ -434,26 +429,24 @@ PrintBOM (void)
       sumy += (pad->Point1.Y + pad->Point2.Y) / 2.0;
       pin_cnt++;
 
-      for (rpindex=0;  
-	    reference_pin_names[rpindex]; 
-	    rpindex++)
-	{
-	  if (NSTRCMP (pad->Number, reference_pin_names[rpindex]) == 0)
-	    {
-		padcentrex = (double) (pad->Point1.X + pad->Point2.X) / 2.0;
-		padcentrey = (double) (pad->Point1.Y + pad->Point2.Y) / 2.0;
-		pinx[rpindex] = padcentrex;
-		piny[rpindex] = padcentrey;
-		 /*
-		   * NOTE:  We swap the Y points because in PCB, the Y-axis
-		   * is inverted.  Increasing Y moves down.  We want to deal
-		   * in the usual increasing Y moves up coordinates though.
-		 */
-		pinangle[rpindex] = (180.0 / M_PI) * atan2 (pad->Point1.Y - pad->Point2.Y,
-						      pad->Point2.X - pad->Point1.X);
-		pinfound[rpindex]=1;
-	    }
-	}
+      for (rpindex = 0; reference_pin_names[rpindex]; rpindex++)
+        {
+          if (NSTRCMP (pad->Number, reference_pin_names[rpindex]) == 0)
+            {
+              padcentrex = (double) (pad->Point1.X + pad->Point2.X) / 2.0;
+              padcentrey = (double) (pad->Point1.Y + pad->Point2.Y) / 2.0;
+              pinx[rpindex] = padcentrex;
+              piny[rpindex] = padcentrey;
+              /*
+               * NOTE: We swap the Y points because in PCB, the Y-axis
+               * is inverted.  Increasing Y moves down.  We want to deal
+               * in the usual increasing Y moves up coordinates though.
+               */
+              pinangle[rpindex] = (180.0 / M_PI) * atan2 (pad->Point1.Y - pad->Point2.Y,
+                pad->Point2.X - pad->Point1.X);
+              pinfound[rpindex]=1;
+            }
+        }
     }
     END_LOOP;
 
@@ -462,7 +455,7 @@ PrintBOM (void)
 	centroidx = sumx / (double) pin_cnt;
 	centroidy = sumy / (double) pin_cnt;
 	      
-	if (NSTRCMP( AttributeGetFromList(&element->Attributes,"xy-centre"),"origin")==0 )
+	if (NSTRCMP( AttributeGetFromList (&element->Attributes,"xy-centre"), "origin") == 0 )
 	  {
             x = element->MarkX;
             y = element->MarkY;
@@ -473,52 +466,52 @@ PrintBOM (void)
             y = centroidy;
 	  }
 	
-	fixed_rotation = AttributeGetFromList(&element->Attributes,"xy-fixed-rotation");
+	fixed_rotation = AttributeGetFromList (&element->Attributes, "xy-fixed-rotation");
 	if (fixed_rotation)
 	  {	
-            /* the user specified a fixed rotation */
-	      theta=atof( fixed_rotation );
-              found_any_not_at_centroid = 1;
-              found_any= 1;
+            /* The user specified a fixed rotation */
+            theta = atof (fixed_rotation);
+            found_any_not_at_centroid = 1;
+            found_any = 1;
 	  } 
 	else
 	  {
-            /* find first reference pin not at the  centroid  */
+            /* Find first reference pin not at the  centroid  */
             found_any_not_at_centroid = 0;
             found_any = 0;
             theta = 0.0;
-	    for (	rpindex=0;  
-			reference_pin_names[rpindex] && !found_any_not_at_centroid; 
-			rpindex++)
+            for (rpindex = 0;
+                 reference_pin_names[rpindex] && !found_any_not_at_centroid;
+                 rpindex++)
               {
-		  if ( pinfound[rpindex] )
+		if (pinfound[rpindex])
 		  {
                     found_any = 1;
-                      
-                    /* recenter pin "#1" onto the axis which cross at the part
-                            centroid */
+
+                    /* Recenter pin "#1" onto the axis which cross at the part
+                       centroid */
                     pin1x = pinx[rpindex] - x;
                     pin1y = piny[rpindex] - y;
 
                     /* flip x, to reverse rotation for elements on back */
                     if (FRONT (element) != 1)
-                        pin1x=-pin1x;
- 
+                        pin1x = -pin1x;
+
                     /* if only 1 pin, use pin 1's angle */
                     if (pin_cnt == 1)
                       {
                         theta = pinangle[rpindex];
                         found_any_not_at_centroid = 1;
-                      }                    
+                      }
                     else if ((pin1x != 0.0) || (pin1y != 0.0))
                       {
-                        theta = xyToAngle (pin1x, pin1y,pin_cnt>2);
+                        theta = xyToAngle (pin1x, pin1y, pin_cnt > 2);
                         found_any_not_at_centroid = 1;
                       }
                   }
               }
-              
-            if (!found_any)      
+
+            if (!found_any)
               {
                 Message
                   ("PrintBOM(): unable to figure out angle because I could\n"
@@ -533,7 +526,7 @@ PrintBOM (void)
                        "     %s because the reference pin(s) are at the centroid of the part.\n"
                        "     Setting to %g degrees\n",
                        UNKNOWN (NAMEONPCB_NAME (element)), theta);
-	      }            
+	      }
           }
 	name = CleanBOMString ((char *)UNKNOWN (NAMEONPCB_NAME (element)));
 	descr = CleanBOMString ((char *)UNKNOWN (DESCRIPTION_NAME (element)));
