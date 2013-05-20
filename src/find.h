@@ -59,5 +59,6 @@ void InitConnectionLookup (void);
 void FreeConnectionLookupMemory (void);
 void RatFindHook (int, void *, void *, void *, bool, int flag, bool);
 int DRCAll (void);
+void LookupConnectionsByPin (int type, void *ptr1);
 
 #endif

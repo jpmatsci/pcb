@@ -13,7 +13,7 @@ noinst_LIBRARIES = @HIDLIBS@
 EXTRA_LIBRARIES = \
 	libgtk.a liblesstif.a libbatch.a \
 	liblpr.a libgerber.a libbom.a libpng.a libps.a libnelma.a \
-	libgcode.a
+	libgcode.a libipcd356.a
 
 pcblib_DATA= \
 	default_font \
@@ -228,6 +228,7 @@ EXTRA_DIST= \
 	$(srcdir)/hid/gtk/gui-icons-mode-buttons.data \
 	$(srcdir)/hid/gtk/hid.conf \
 	$(srcdir)/hid/gtk/pcb.rc \
+	$(srcdir)/hid/ipcd356/hid.conf \
 	$(srcdir)/hid/lesstif/hid.conf \
 	$(srcdir)/hid/lpr/hid.conf \
 	$(srcdir)/hid/png/hid.conf \
@@ -389,6 +390,14 @@ libbom_a_SOURCES = \
 	hid/hidint.h \
 	hid/bom/bom.c
 
+
+LIBIPCD356_SRCS = \
+	hid/hidint.h \
+	hid/ipcd356/ipcd356.c
+
+libipcd356_a_SOURCES = ${LIBIPCD356_SRCS}
+
+
 libps_a_CPPFLAGS = -I./hid/ps
 LIBPS_SRCS = \
 	dolists.h \
@@ -462,6 +471,7 @@ DISTCLEANFILES= pcbtest.sh gpcb-menu.h pcb-menu.h \
 	hid/batch/batch_lists.h \
 	hid/common/hidlist.h \
 	hid/gtk/gtk_lists.h \
+	hid/ipcd356/ipcd356_lists.h \
 	hid/lesstif/lesstif_lists.h \
 	hid/png/png_lists.h \
 	hid/gcode/gcode_lists.h \
