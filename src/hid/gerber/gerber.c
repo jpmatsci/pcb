@@ -338,6 +338,8 @@ static const char *name_style_names[] = {
   "first",
 #define NAME_STYLE_EAGLE 3
   "eagle",
+#define NAME_STYLE_HACKVANA 4
+  "Hackvana",
   NULL
 };
 
@@ -496,6 +498,111 @@ assign_eagle_file_suffix (char *dest, int idx)
   strcpy (dest, suff);
 }
 
+/**
+ * \brief Assign file suffices (for Hackvana).
+ *
+ * Very similar to layer_type_to_file_name() but appends only a
+ * three-character suffix compatible with Hackvana's defaults,
+ * for more information see http://www.hackvana.com).
+ *
+ * Suffix  Description
+ * asb     Assembly Bottom
+ * ast     Assembly Top
+ *
+ * fab     Fabrication
+ *
+ * g1      Mid-layer 1
+ * g2      etc.
+ *
+ * gbl     Bottom Layer
+ * gbo     Bottom Overlay (silkscreen)
+ * gbp     Bottom Paste Mask
+ * gbs     Bottom Solder Mask
+ *
+ * gd1     Drill Drawing (assignment based on order of drill pairs appearing in the Drill-Pair Manager dialog)
+ * gd2     etc.
+ *
+ * gg1     Drill Guide (assignment based on order of drill pairs appearing in the Drill-Pair Manager dialog)
+ * gg2     etc.
+ *
+ * gko     Keep Out Layer
+ *
+ * gm1     Mechanical Layer 1
+ * gm2     etc.
+ *
+ * gp1     Internal Plane Layer 1
+ * gp2     etc.
+ *
+ * gpb     Pad Master Bottom
+ * gpt     Pad Master Top
+ * gtl     Top Layer
+ * gto     Top Overlay (silkscreen)
+ * gtp     Top Paste Mask
+ * gts     Top Solder Mask
+ *
+ * p01     Gerber Panels
+ * p02     etc.
+ */
+static void
+assign_hackvana_file_suffix (char *dest, int idx)
+{
+  int group;
+  int nlayers;
+  char *suff = "out";
+
+  switch (idx)
+    {
+    case SL (SILK,      TOP):    suff = "gto"; break;
+    case SL (SILK,      BOTTOM): suff = "gbo"; break;
+    case SL (MASK,      TOP):    suff = "gts"; break;
+    case SL (MASK,      BOTTOM): suff = "gbs"; break;
+    case SL (PDRILL,    0):      suff = "cnc"; break;
+    case SL (UDRILL,    0):      suff = "drl"; break;
+    case SL (PASTE,     TOP):    suff = "gtp"; break;
+    case SL (PASTE,     BOTTOM): suff = "gbp"; break;
+    case SL (INVISIBLE, 0):      suff = "gbr"; break;
+    case SL (FAB,       0):      suff = "fab"; break;
+    case SL (ASSY,      TOP):    suff = "ast"; break;
+    case SL (ASSY,      BOTTOM): suff = "asb"; break;
+
+    default:
+      group = GetLayerGroupNumberByNumber(idx);
+      nlayers = PCB->LayerGroups.Number[group];
+      if (group == GetLayerGroupNumberByNumber(component_silk_layer))
+	{
+	  suff = "gtl";
+	}
+      else if (group == GetLayerGroupNumberByNumber(solder_silk_layer))
+	{
+	  suff = "gbl";
+	}
+      else if (nlayers == 1
+	       && (strcmp (PCB->Data->Layer[idx].Name, "route") == 0))
+	{
+	  suff = "gbr";
+	}
+      else if (nlayers == 1
+	       && (strcmp (PCB->Data->Layer[idx].Name, "outline") == 0))
+	{
+	  suff = "oln";
+	}
+      else if (nlayers == 1
+	       && (strcmp (PCB->Data->Layer[idx].Name, "keepout") == 0))
+	{
+	  suff = "gko";
+	}
+      else
+	{
+	  static char buf[20];
+	  sprintf (buf, "g%d", group);
+	  suff = buf;
+	}
+      break;
+    }
+
+  strcpy (dest, suff);
+}
+
 static void
 assign_file_suffix (char *dest, int idx)
 {
@@ -510,6 +617,9 @@ assign_file_suffix (char *dest, int idx)
     case NAME_STYLE_FIRST:  fns_style = FNS_first;  break;
     case NAME_STYLE_EAGLE:
       assign_eagle_file_suffix (dest, idx);
+      return;
+    case NAME_STYLE_HACKVANA:
+      assign_hackvana_file_suffix (dest, idx);
       return;
     }
 
