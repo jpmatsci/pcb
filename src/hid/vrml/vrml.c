@@ -27,6 +27,7 @@
 #include "create.h"
 
 #include "hid.h"
+#include "hid_draw.h"
 #include "../hidint.h"
 #include "hid/common/hidnogui.h"
 #include "hid/common/draw_helpers.h"
@@ -58,6 +59,7 @@ static const char *colors[] = {
 FILE *vrml_output;
 
 static HID vrml_hid;
+static HID_DRAW vrml_graphics;
 
 static int color_silk_emited, color_hole_emited, color_copper_emited,
   color_mask_emited;
@@ -1331,42 +1333,46 @@ vrml_set_crosshair (int x, int y, int action)
 {
 }
 
-static HID vrml_hid;
+#include "dolists.h"
 
 void
 hid_vrml_init ()
 {
+  memset (&vrml_hid, 0, sizeof (HID));
+  memset (&vrml_graphics, 0, sizeof (HID_DRAW));
+
   common_nogui_init (&vrml_hid);
-  common_draw_helpers_init (&vrml_hid);
+  common_draw_helpers_init (&vrml_graphics);
 
 
-  vrml_hid.struct_size = sizeof (vrml_hid);
+  vrml_hid.struct_size = sizeof (HID);
   vrml_hid.name = "vrml";
   vrml_hid.description = "VRML 3D export";
   vrml_hid.exporter = 1;
+  vrml_hid.poly_before = 1;
 
   vrml_hid.get_export_options = vrml_get_export_options;
   vrml_hid.do_export = vrml_do_export;
   vrml_hid.parse_arguments = vrml_parse_arguments;
   vrml_hid.set_layer = vrml_set_layer;
-  vrml_hid.make_gc = vrml_make_gc;
-  vrml_hid.destroy_gc = vrml_destroy_gc;
-  vrml_hid.use_mask = vrml_use_mask;
-  vrml_hid.set_color = vrml_set_color;
-  vrml_hid.set_line_cap = vrml_set_line_cap;
-  vrml_hid.set_line_width = vrml_set_line_width;
-  vrml_hid.set_draw_xor = vrml_set_draw_xor;
-
-  vrml_hid.draw_line = vrml_draw_line;
-  vrml_hid.draw_arc = vrml_draw_arc;
-  vrml_hid.draw_rect = vrml_draw_rect;
-  vrml_hid.fill_circle = vrml_fill_circle;
-  vrml_hid.fill_polygon = vrml_fill_polygon;
-
-  vrml_hid.fill_rect = vrml_fill_rect;
   vrml_hid.calibrate = vrml_calibrate;
   vrml_hid.set_crosshair = vrml_set_crosshair;
 
+  vrml_hid.graphics            = &vrml_graphics;
+
+  vrml_graphics.make_gc = vrml_make_gc;
+  vrml_graphics.destroy_gc = vrml_destroy_gc;
+  vrml_graphics.use_mask = vrml_use_mask;
+  vrml_graphics.set_color = vrml_set_color;
+  vrml_graphics.set_line_cap = vrml_set_line_cap;
+  vrml_graphics.set_line_width = vrml_set_line_width;
+  vrml_graphics.set_draw_xor = vrml_set_draw_xor;
+  vrml_graphics.draw_line = vrml_draw_line;
+  vrml_graphics.draw_arc = vrml_draw_arc;
+  vrml_graphics.draw_rect = vrml_draw_rect;
+  vrml_graphics.fill_circle = vrml_fill_circle;
+  vrml_graphics.fill_polygon = vrml_fill_polygon;
+  vrml_graphics.fill_rect = vrml_fill_rect;
 
   hid_register_hid (&vrml_hid);
 }
